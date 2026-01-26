@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Contacto | Portafolio Seguridad Informática</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+/* FONDO DIFUMINADO */
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+  animation-delay: 0s;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+/* CONTENEDOR */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+/* TARJETA 3D */
+.card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 55px;
+  box-shadow:
+    0 40px 80px rgba(255, 122, 168, 0.25),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  transform: translateY(0);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255, 122, 168, 0.35);
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* BOTÓN VOLVER */
+.back-btn-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 30px;
+}
+
+.back-btn {
+  background: rgba(255, 79, 154, 0.1);
+  color: #ff4f9a;
+  border: 2px solid #ff4f9a;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: rgba(255, 79, 154, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 79, 154, 0.2);
+}
+
+/* CONTENIDO PRINCIPAL */
+.main-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.main-title h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.main-title p {
+  font-size: 1.1rem;
+  color: #6b3a52;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* FORMULARIO DE CONTACTO */
+.contact-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.info-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.1);
+  transition: transform 0.3s ease;
+  border-top: 5px solid #ff4f9a;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(255,79,154,0.2);
+}
+
+.info-card h4 {
+  font-size: 1.3rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-card p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 15px;
+  color: #6b3a52;
+}
+
+.contact-methods {
+  list-style: none;
+  margin-top: 15px;
+}
+
+.contact-methods li {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 79, 154, 0.05);
+  transition: all 0.2s ease;
+}
+
+.contact-methods li:hover {
+  background: rgba(255, 79, 154, 0.1);
+  transform: translateX(5px);
+}
+
+.contact-methods i {
+  color: #ff4f9a;
+  font-size: 1.2rem;
+  width: 30px;
+}
+
+.contact-methods span {
+  color: #3a1c2b;
+  font-weight: 500;
+}
+
+/* FORMULARIO */
+.contact-form {
+  background: rgba(255,255,255,0.9);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.1);
+  border-top: 5px solid #ff8fc4;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #3a1c2b;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid rgba(255, 79, 154, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  color: #3a1c2b;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #ff4f9a;
+  box-shadow: 0 0 0 3px rgba(255, 79, 154, 0.2);
+  background: white;
+}
+
+textarea.form-control {
+  min-height: 150px;
+  resize: vertical;
+  font-family: 'Inter', sans-serif;
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ff4f9a' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(255,79,154,0.3);
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(255,79,154,0.4);
+}
+
+.submit-btn:active {
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.success-message {
+  display: none;
+  background: rgba(76, 175, 80, 0.1);
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 20px;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.error-message {
+  display: none;
+  background: rgba(244, 67, 54, 0.1);
+  border: 2px solid #F44336;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.success-message i,
+.error-message i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.success-message i {
+  color: #4CAF50;
+}
+
+.error-message i {
+  color: #F44336;
+}
+
+.success-message h4 {
+  color: #4CAF50;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.error-message h4 {
+  color: #F44336;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.success-message p,
+.error-message p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.success-message p {
+  color: #2d5a2d;
+}
+
+.error-message p {
+  color: #8a1c1c;
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.loading i {
+  font-size: 2rem;
+  color: #ff4f9a;
+  margin-bottom: 10px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* BLOQUE VISUAL 3D (como en el portafolio principal) */
+.visual-block {
+  margin-top: 50px;
+  height: 180px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow:
+    0 25px 50px rgba(255,79,154,0.45),
+    inset 0 2px 5px rgba(255,255,255,0.4);
+  transform: perspective(800px) rotateY(-6deg);
+  transition: transform 0.5s ease;
+  padding: 20px;
+}
+
+.visual-block:hover {
+  transform: perspective(800px) rotateY(0deg);
+}
+
+.visual-block i {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+/* ANIMACIONES */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .contact-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .main-title h3 {
+    font-size: 1.8rem;
+  }
+  
+  .card {
+    padding: 35px 25px;
+  }
+  
+  .visual-block {
+    transform: none;
+    height: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .wrapper {
+    padding: 15px;
+  }
+  
+  .card {
+    padding: 25px 20px;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .main-title h3 {
+    font-size: 1.6rem;
+  }
+  
+  .info-card, .contact-form {
+    padding: 20px 15px;
+  }
+  
+  .visual-block {
+    height: 120px;
+    font-size: 1rem;
+  }
+  
+  .visual-block i {
+    font-size: 2rem;
+  }
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  margin-top: 40px;
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer-content a {
+  color: #f3f3f3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivón <span class="alias">| LivTech</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> Ingeniería en Tecnologías · Universidad ______</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <div class="back-btn-container">
+      <a href="index5.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Volver al Portafolio
+      </a>
+    </div>
+
+    <div class="main-title">
+      <h3><i class="fas fa-envelope"></i> Formulario de Contacto</h3>
+      <p>
+        Si deseas contactarme para colaboraciones, preguntas académicas o oportunidades profesionales, 
+        completa el siguiente formulario. Te responderé en un plazo de 24-48 horas.
+      </p>
+    </div>
+
+    <div class="contact-content">
+      <div class="contact-info">
+        <div class="info-card">
+          <h4><i class="fas fa-info-circle"></i> Información de Contacto</h4>
+          <p>Puedes contactarme directamente a través de los siguientes métodos:</p>
+          <ul class="contact-methods">
+            <li><i class="fas fa-envelope"></i> <span>correo@ejemplo.com</span></li>
+            <li><i class="fas fa-phone"></i> <span>+52 123 456 7890</span></li>
+            <li><i class="fab fa-github"></i> <span>github.com/livtech</span></li>
+            <li><i class="fas fa-university"></i> <span>Universidad ______</span></li>
+          </ul>
+        </div>
+        
+        <div class="info-card">
+          <h4><i class="fas fa-clock"></i> Tiempo de Respuesta</h4>
+          <p>Normalmente respondo en un plazo de <strong>24-48 horas</strong> durante días hábiles.</p>
+          <p>Todos los mensajes recibirán una <strong>confirmación automática</strong> por correo electrónico.</p>
+          <p><strong>Horario de atención:</strong> Lunes a Viernes, 9:00 - 18:00 hrs</p>
+          <p><strong>Tipos de consultas:</strong> Académicas, Colaboraciones, Proyectos, Feedback</p>
+        </div>
+        
+        <div class="visual-block">
+          <i class="fas fa-paper-plane"></i>
+          Tu mensaje<br>llegará directamente<br>a mi bandeja de entrada
+        </div>
+      </div>
+      
+      <div class="contact-form">
+
+        <!-- FORMULARIO FORMPSREE -->
+        <form id="contactForm" action="https://formspree.io/f/xaqoqbby" method="POST">
+          
+          <div class="form-group">
+            <label for="nombre"><i class="fas fa-user"></i> Nombre Completo</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required placeholder="Ingresa tu nombre completo">
+          </div>
+          
+          <div class="form-group">
+            <label for="email"><i class="fas fa-envelope"></i> Correo Electrónico</label>
+            <input type="email" id="email" name="email" class="form-control" required placeholder="ejemplo@correo.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="asunto"><i class="fas fa-tag"></i> Asunto</label>
+            <select id="asunto" name="asunto" class="form-control" required>
+              <option value="" disabled selected>Selecciona un asunto</option>
+              <option value="colaboracion">Colaboración Académica</option>
+              <option value="proyecto">Propuesta de Proyecto</option>
+              <option value="consulta">Consulta Técnica</option>
+              <option value="feedback">Feedback sobre Portafolio</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="mensaje"><i class="fas fa-comment"></i> Mensaje</label>
+            <textarea id="mensaje" name="mensaje" class="form-control" required placeholder="Escribe tu mensaje aquí..."></textarea>
+          </div>
+
+          <!-- CAMPOS NECESARIOS PARA FORMPSREE -->
+          <input type="hidden" name="_subject" value="Nuevo mensaje desde tu portafolio">
+          <input type="hidden" name="_captcha" value="false">
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            <i class="fas fa-paper-plane"></i> Enviar Mensaje
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivón</strong> · Portafolio</p>
+    <p>
+      <a href="index5.html">Inicio</a> ·
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> ·
+      <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
