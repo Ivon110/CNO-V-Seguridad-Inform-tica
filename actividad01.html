@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 01 · Ciberataque Colonial Pipeline · COMPLETO</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 500;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.4rem;
+  color: #4a2a36;
+  margin: 30px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-container {
+  overflow-x: auto;
+  margin: 25px 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.5);
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+th {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 600;
+  padding: 15px 12px;
+  text-align: left;
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #ffe0ec;
+  background: rgba(255,255,255,0.7);
+}
+
+tr:hover td {
+  background: rgba(255,225,235,0.9);
+}
+
+.grid-multimedia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
+}
+
+.tarjeta-media {
+  background: white;
+  border-radius: 24px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.15);
+  border: 1px solid rgba(255,79,154,0.2);
+}
+
+.tarjeta-media i {
+  font-size: 2.5rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.tarjeta-media h6 {
+  font-size: 1.2rem;
+  color: #3a1c2b;
+  margin-bottom: 12px;
+}
+
+.mapa-ducto {
+  background: #ffeef2;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  font-style: italic;
+  color: #6b3a52;
+}
+
+.caja-reflexion {
+  background: linear-gradient(145deg, #fff5f9, #ffe9f0);
+  padding: 35px;
+  border-radius: 28px;
+  border: 2px dashed #ff4f9a;
+  margin: 30px 0;
+  font-style: italic;
+}
+
+.caja-reflexion i {
+  color: #ff4f9a;
+  font-size: 2.5rem;
+  float: left;
+  margin-right: 20px;
+}
+
+.ref-item {
+  background: rgba(255,255,255,0.8);
+  padding: 16px 25px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  border-left: 5px solid #ff8fc4;
+}
+
+.ref-item i {
+  color: #ff4f9a;
+  min-width: 28px;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #ffe0ec;
+}
+
+.lista-personalizada li i {
+  color: #ff4f9a;
+  width: 24px;
+  text-align: center;
+}
+
+/* Estilo para el índice de contenido */
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.indice-contenido:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(255,79,154,0.25);
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.indice-subitem {
+  margin-left: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px dotted #ffd9e6;
+  font-size: 0.9rem;
+}
+
+.indice-subitem .titulo {
+  color: #6b3a52;
+}
+
+.indice-subitem .pagina {
+  color: #b3778c;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
+  .indice-grid { grid-template-columns: 1fr; }
+}
+
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  margin-top: 40px;
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer-content a {
+  color: #f3f3f3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+}
+
+
+.page-marker {
+  text-align: right;
+  color: #b3778c;
+  font-size: 0.85rem;
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px dashed #ffb3d9;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias"> | Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV ========= -->
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li><a href="actividades.html" class="activo"><i class="fas fa-laptop-code"></i> Actividades</a></li>
+        <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li><a href="#"><i class="fas fa-project-diagram"></i> Proyectos</a></li>
+        <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+
+    <!-- ========== TÍTULO ACTIVIDAD 01 ========= -->
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-bug"></i> Actividad 01 · Colonial Pipeline: Análisis de ciberataque real</h3>
+    </div>
+
+     <!-- ========== BOTÓN EXPORTAR PDF ========= -->
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('actividad01.pdf', '_blank')">
+        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
+      </button>
+    </div>
+
+    <!-- ========== PÁGINA 1 ========= -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-flag"></i> Actividad 01</h4>
+      <h5>Análisis en grupo de un ciberataque real y su impacto empresarial</h5>
+      <p style="margin-top: 20px; font-size: 1.2rem;"><strong>Equipo 3</strong></p>
+    </div>
+
+    <!-- ========== ÍNDICE DE CONTENIDO (NUEVO CUADRO) ========= -->
+    <div class="indice-contenido">
+      <h4><i class="fas fa-list-ul"></i> Contenido</h4>
+      <div class="indice-doble-columna">
+        <div>
+          <div class="indice-item"><span class="titulo">Introducción</span> <span class="pagina">5</span></div>
+          <div class="indice-item"><span class="titulo">1.1 Investigación y Documentación</span> <span class="pagina">6</span></div>
+          <div class="indice-item"><span class="titulo">Contexto general del ataque</span> <span class="pagina">8</span></div>
+          <div class="indice-item"><span class="titulo">Tabla Técnica del ataque</span> <span class="pagina">10</span></div>
+          <div class="indice-item"><span class="titulo">Evaluación del Impacto</span> <span class="pagina">11</span></div>
+          <div class="indice-item"><span class="titulo">Costo total del ciberataque</span> <span class="pagina">12</span></div>
+          <div class="indice-subitem"><span class="titulo">1. Coste de Ruptura (CTB)</span> <span class="pagina">12</span></div>
+          <div class="indice-subitem"><span class="titulo">2. Coste de Construcción (B)</span> <span class="pagina">12</span></div>
+          <div class="indice-item"><span class="titulo">5. Relación con marcos normativos</span> <span class="pagina">18</span></div>
+          <div class="indice-item"><span class="titulo">ISO 27001 – Controles relevantes</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Control ISO 27001</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Relación con el incidente</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Prevención / Mitigación posible</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">A.9.2.3 – Gestión de credenciales</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">La cuenta VPN sin MFA</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Habría exigido MFA</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">A.13.1.1 – Controles de red</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Falta de segmentación</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Segmentación adecuada</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">A.12.3.1 – Copias de seguridad</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Respaldos eliminados</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Respaldos offline</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">A.16.1.5 – Respuesta a incidentes</span> <span class="pagina">18</span></div>
+        </div>
+        <div>
+          <div class="indice-subitem"><span class="titulo">Respuesta reactiva</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Plan de respuesta probado</span> <span class="pagina">18</span></div>
+          <div class="indice-item"><span class="titulo">NIST CSF – Controles relevantes</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Función NIST CSF</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Controles aplicables</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Prevención / Mitigación</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Protect</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">PR.AC-1 y PR.AC-7</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">MFA y revisión de cuentas</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Detect</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">DE.CM-1</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">SIEM con detección</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Respond</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">RS.RP-1</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Plan con simulacros</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Recover</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">RC.RP-1</span> <span class="pagina">18</span></div>
+          <div class="indice-subitem"><span class="titulo">Respaldos validados</span> <span class="pagina">18</span></div>
+          <div class="indice-item"><span class="titulo">6. Lecciones aprendidas</span> <span class="pagina">20</span></div>
+          <div class="indice-subitem"><span class="titulo">6.1 Fallas críticas</span> <span class="pagina">20</span></div>
+          <div class="indice-subitem"><span class="titulo">Fallas técnicas</span> <span class="pagina">20</span></div>
+          <div class="indice-subitem"><span class="titulo">Fallas humanas</span> <span class="pagina">20</span></div>
+          <div class="indice-subitem"><span class="titulo">6.2 Buenas prácticas</span> <span class="pagina">21</span></div>
+          <div class="indice-subitem"><span class="titulo">6.3 Lecciones estratégicas</span> <span class="pagina">21</span></div>
+          <div class="indice-subitem"><span class="titulo">6.4 Recomendaciones MX/LA</span> <span class="pagina">21</span></div>
+          <div class="indice-subitem"><span class="titulo">Infraestructura crítica MX</span> <span class="pagina">21</span></div>
+          <div class="indice-subitem"><span class="titulo">Empresas privadas LA</span> <span class="pagina">22</span></div>
+          <div class="indice-subitem"><span class="titulo">6.5 Conclusión del punto</span> <span class="pagina">22</span></div>
+          <div class="indice-item"><span class="titulo">Referencias</span> <span class="pagina">23</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 5 - INTRODUCCIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-book-open"></i> Introducción</h4>
+      <p>En un entorno empresarial caracterizado por la alta dependencia de sistemas digitales y la interconexión entre tecnologías de la información (TI) y tecnologías operativas (OT), la ciberseguridad se ha convertido en un factor crítico para la continuidad del negocio, la estabilidad financiera y la protección de activos estratégicos. Para las organizaciones que operan infraestructura crítica, una disrupción cibernética no solo representa un incidente tecnológico, sino un evento con potencial de impacto económico, reputacional y operativo a gran escala.</p>
+      <p>Durante los últimos años, los ataques de tipo ransomware han evolucionado hacia esquemas altamente sofisticados, impulsados por grupos criminales organizados que operan bajo modelos empresariales estructurados, como el Ransomware as a Service (RaaS). Estos ataques combinan técnicas de acceso no autorizado, exfiltración de información y cifrado de sistemas, con el objetivo de maximizar la presión financiera y operativa sobre las organizaciones afectadas. Como resultado, incluso empresas con capacidades técnicas avanzadas pueden verse obligadas a interrumpir operaciones críticas ante la falta de controles preventivos y de resiliencia adecuados.</p>
+      <p>El presente análisis tiene como objetivo evaluar de manera técnica, económica y estratégica un ciberataque real ocurrido en una infraestructura crítica, con el fin de identificar las causas raíz, el desarrollo del incidente, su impacto sobre los principios fundamentales de la seguridad de la información y las consecuencias operativas y financieras asociadas. El caso seleccionado corresponde al ataque de ransomware sufrido por Colonial Pipeline Company en 2021, considerado un referente a nivel internacional por su impacto directo en el suministro energético y por las implicaciones que generó en materia de gestión de riesgos cibernéticos.</p>
+      <p>A partir de fuentes técnicas verificables, reportes oficiales y análisis especializados, este documento examina los actores involucrados, los vectores de ataque empleados y las debilidades estructurales que facilitaron el incidente. Asimismo, se evalúan los efectos del ataque sobre la confidencialidad, integridad y disponibilidad (CIA) de los sistemas afectados, se estiman los costos directos e indirectos derivados del evento y se contrasta la postura de seguridad de la organización con marcos internacionales de referencia, como NIST Cybersecurity Framework, ISO/IEC 27001 y regulaciones aplicables en materia de protección de la información. Finalmente, se formulan recomendaciones estratégicas orientadas al fortalecimiento de la gobernanza de ciberseguridad y a la mitigación de riesgos futuros en organizaciones que operan activos críticos.</p>
+    </div>
+
+    <!-- ========== PÁGINA 6 - TABLA CRONOLÓGICA ========= -->
+    <div class="seccion">
+      <h4>1.1 Investigación y Documentación.</h4>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Fase</th><th>Fecha / Periodo</th><th>Hito o Evento Clave</th><th>Descripción del Suceso</th></tr></thead>
+          <tbody>
+            <tr><td>I. Infiltración</td><td>Antes del 7 de mayo</td><td>Acceso inicial</td><td>Los atacantes vulneran la red (probablemente vía VPN/RDP robado o Phishing).</td></tr>
+            <tr><td></td><td>7 de mayo (Madrugada)</td><td>Exfiltración masiva</td><td>Se roban aproximadamente 100 GB de información en un lapso cercano a dos horas antes de ejecutar el cifrado de los sistemas.</td></tr>
+            <tr><td>II. El Ataque</td><td>7 de mayo (Mañana)</td><td>Activación de DarkSide</td><td>El grupo DarkSide ejecuta el ransomware, cifrando los sistemas de Tecnologías de la Información (TI) internos y externos de Colonial Pipeline.</td></tr>
+            <tr><td></td><td>7 de mayo (Día)</td><td>Parada preventiva</td><td>Aunque el ataque afectó sistemas TI, la insuficiente segmentación entre entornos TI y OT obliga a Colonial Pipeline a detener preventivamente la operación del oleoducto para evitar una posible propagación.<br>Colonial avisa inmediatamente al Gobierno, el Departamento de Energía y al FBI que están siendo atacados.<br>Colonial Contrata a FireEye para mitigar los efectos del ransomware. (Empresa de ciberseguridad privada).</td></tr>
+            <tr><td></td><td>7 de mayo</td><td>Efectos del Hackeo</td><td>Colonial Pipeline detuvo la operación de aproximadamente 5500 Millas (8850 Km) de oleoducto, el cual proveía a la costa este en aproximadamente 45% del petróleo total en la zona.<br>Colonial Pipeline debe de dar una explicación a sus clientes sobre el hackeo y como esto evitara que se suministre gasolina y combustible de avión, lo cual crea especulaciones sobre el precio de estos.</td></tr>
+            <tr><td></td><td>7-8 de mayo (Noche)</td><td>Pago del rescate</td><td>La empresa paga 75 BTC (~$5M USD) a las pocas horas del ataque.</td></tr>
+            <tr><td>III. Crisis</td><td>8-10 de mayo</td><td>Escasez, pánico y respuesta gubernamental</td><td>La interrupción del oleoducto provoca desabasto progresivo en la Costa Este. Se registran compras de pánico en gasolineras, afectaciones al sector aéreo y reuniones de emergencia en la Casa Blanca. El impacto en el precio del combustible es inicialmente limitado, con incrementos marginales durante los primeros días.</td></tr>
+            <tr><td></td><td>8 de mayo</td><td>Confirmación</td><td>Colonial Pipeline confirma al estado que el ransomware no puede ser desencriptado sin ayuda de los hackers, además de confirmar los 100Gb de información robada antes del ataque.<br>Colonial indicó que reactivaría el servicio en segmentos del ducto "de forma escalonada" y consultando con el Departamento de Energía. Dijo que el objetivo de su plan era "restaurar sustancialmente el servicio operacional para el final de la semana".</td></tr>
+            <tr><td></td><td>9 de mayo</td><td>Sin éxito en la restauración, especulaciones</td><td>Colonial Pipeline hace el intento de restaurar sus sistemas sin suerte, las gasolineras empiezan a quedarse secas, puesto que el último abasto de gasolina fue alrededor de dos días antes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- ========== PÁGINA 7 ========= -->
+    <div class="seccion">
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Fase</th><th>Fecha / Periodo</th><th>Hito o Evento Clave</th><th>Descripción del Suceso</th></tr></thead>
+          <tbody>
+            <tr><td></td><td></td><td></td><td>Se estimó que nada menos que el 7 % de las gasolineras solo en Virginia se quedarían sin combustible al día siguiente.<br>Se cree que los atacantes fueron rusos, Joe Biden sostiene una llamada con Vladimir Putin para preguntar si Rusia estaba involucrada; no se cuenta con información para apuntar a que el gobierno ruso estuviera involucrado, pero se cree que los atacantes residen y operan en rusia, por lo cual se le pide a Vladimir Putin que tome la responsabilidad de atender la situación.</td></tr>
+            <tr><td></td><td>10 de mayo</td><td>Investigación forense y atribución</td><td>Se confirma por parte del FBI que los atacantes, en efecto, son el grupo conocido como "DarkSide", proveedores de ransomware in-home, el FBI publica un comunicado para advertir a otras empresas petroleras del potencial peligro.<br>Por su parte, DarkSide declara públicamente ser un grupo "apolítico" cuyo objetivo es exclusivamente financiero. Paralelamente, Colonial Pipeline establece como meta la restauración sustancial del servicio para finales de esa misma semana.</td></tr>
+            <tr><td></td><td>11 de mayo</td><td>Estados de Emergencia</td><td>Carolina del Norte, Virginia, Georgia y Florida declaran emergencia.<br>La escasez empeora. Se autoriza a los conductores de camiones cisterna a trabajar más horas para transportar combustible por carretera<br>El oleoducto número 4 comienza a operar de forma manual y limitada</td></tr>
+            <tr><td>IV. Retorno</td><td>12 de mayo</td><td>Reanudación parcial</td><td>Colonial anuncia el reinicio de operaciones tras recibir la llave de descifrado.</td></tr>
+            <tr><td></td><td>13 de mayo</td><td>Entrega de combustible</td><td>Se restablece el suministro en la mayoría de los mercados.</td></tr>
+            <tr><td></td><td>14 de mayo</td><td>Caída de DarkSide</td><td>Los hackers anuncian el cierre de su grupo tras perder acceso a su infraestructura.<br>Darkside vendió su plataforma a otro grupo de hackers</td></tr>
+            <tr><td></td><td>19 de mayo</td><td>Confirmación oficial</td><td>Colonial Pipeline confirma públicamente ante el gobierno el pago del rescate.</td></tr>
+            <tr><td></td><td>7 de junio</td><td>Recuperación</td><td>El Departamento de Justicia recupera 63,7 bitcoins (Aproximadamente 2,3 Millones de dólares) de los atacantes.</td></tr>
+            <tr><td></td><td>8 de junio</td><td>Audiencia del Congreso.</td><td>La administración Biden emitió una orden ejecutiva para las agencias del gobierno de Estados Unidos. Que tomen una serie de medidas proactivas para reforzar la ciberseguridad.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 8 ========= -->
+    <div class="seccion">
+      <h4>Contexto general del ataque</h4>
+      <p>En el año 2021, la empresa Colonial Pipeline Company, operadora de infraestructura crítica en Estados Unidos, fue víctima de un ciberataque de tipo ransomware, atribuido a la familia de malware conocida como DarkSide.</p><br>
+      <p>Colonial Pipeline administra el mayor sistema de oleoductos de productos petrolíferos refinados del país, responsable de aproximadamente el 45 % del suministro de combustible de la Costa Este, lo que convirtió al incidente en un evento de alto impacto a nivel nacional. El ataque fue detectado el 7 de mayo de 2021, fecha en la que la empresa emitió un comunicado oficial informando sobre la afectación a sus sistemas informáticos.</p><br>
+       <img src="mapa.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      <div class="mapa-ducto"><i class="fas fa-map-marked-alt" style="margin-right: 10px;"></i> Ruta del oleoducto Colonial Pipeline a lo largo de la costa este de Estados Unidos.</div><br>
+      <p>El compromiso inicial ocurrió en la red de tecnología de la información (TI) de la organización. Tras confirmarse la presencia del malware, los operadores decidieron desconectar de manera preventiva determinados sistemas de tecnología operativa (OT) con el objetivo de evitar una posible propagación del ataque hacia los entornos industriales.</p>
+      <p>Esta medida provocó la suspensión total de las operaciones del oleoducto entre el 7 y el 12 de mayo. De acuerdo con la Cybersecurity and Infrastructure Security Agency (CISA), no se identificaron evidencias de que los atacantes hayan obtenido acceso directo a los sistemas OT; sin embargo, la interrupción fue considerada necesaria ante el riesgo potencial para la infraestructura crítica. Reportes especializados indicaron, además, que los atacantes lograron filtrar aproximadamente 100 GB de información durante las primeras etapas del incidente.</p><br>
+      <p>En relación con el rescate, el 12 de mayo de 2021, medios de comunicación como CNN informaron que los atacantes habían exigido un pago cercano a los 5 millones de dólares estadounidenses. De acuerdo con fuentes citadas por dicho medio, existía la posibilidad de que la empresa, con apoyo de las autoridades, hubiese logrado recuperar parte de los datos sustraídos que aún no habían sido transferidos fuera de servidores intermedios ubicados en Estados Unidos, lo que habría reducido la necesidad de negociar con los atacantes. No obstante, al día siguiente, Bloomberg publicó información indicando que Colonial Pipeline habría efectuado el pago del rescate en criptomonedas el mismo 7 de mayo, pocas horas después de detectado el ataque, y que funcionarios del gobierno estadounidense tenían conocimiento de dicha transacción.</p><br>
+      <p>Posteriormente, la firma especializada en análisis de transacciones en blockchain Elliptic reportó que identificó la billetera de Bitcoin utilizada por el grupo DarkSide, la cual habría recibido un pago aproximado de 75 BTC por parte de </p>
+      <P>Colonial Pipeline el 8 de mayo de 2021, una porción significativa del cual fue transferida a otras direcciones al día 
+siguiente. Finalmente, el 19 de mayo, un representante de Colonial Pipeline confirmó públicamente que la empresa 
+había realizado el pago del rescate. Tanto la compañía como representantes del Consejo de Seguridad Nacional de 
+Estados Unidos se abstuvieron de proporcionar comentarios detallados sobre el proceso de negociación. </p><br>
+        <p>A pesar de haber recibido una herramienta de descifrado por parte de los atacantes, la restauración de los sistemas se 
+vio retrasada, ya que dicha herramienta resultó ser extremadamente lenta e ineficiente, lo que obligó a la empresa a 
+continuar el proceso de recuperación principalmente mediante el uso de respaldos propios. Esta situación contribuyó a 
+prolongar la interrupción del servicio y evidenció limitaciones en las capacidades de recuperación ante incidentes.</p><br>
+          <p>Desde la perspectiva de las condiciones de ciberseguridad previas, la organización presentaba un nivel de madurez 
+insuficiente para enfrentar amenazas cibernéticas avanzadas. Reportes técnicos de CISA y análisis especializados de 
+Kaspersky señalan la carencia de controles de seguridad preventivos adecuados, particularmente en los mecanismos de 
+acceso remoto. Entre las principales deficiencias se identificó la ausencia de autenticación multifactor (MFA) en al 
+menos una cuenta comprometida, así como una segmentación inadecuada entre los entornos de TI y OT, lo que 
+incrementó el riesgo de impacto operativo.</p><br>
+            <p>Adicionalmente, las políticas de monitoreo continuo, detección de intrusiones y respuesta a incidentes no se 
+encontraban plenamente integradas, y la estrategia de respaldo y recuperación no garantizó una restauración oportuna 
+de los sistemas críticos. La empresa tampoco contaba con un esquema maduro de gestión de identidades y accesos 
+(IAM) ni con una adopción integral de marcos de referencia reconocidos, como el NIST Cybersecurity Framework o los 
+estándares ISA/IEC 62443, esenciales para operadores de infraestructura crítica. </p><br>
+              <p>En conjunto, los factores que facilitaron el ataque corresponden principalmente a fallas técnicas y de política de 
+seguridad, incluyendo el uso de credenciales válidas sin mecanismos de autenticación reforzada, controles insuficientes 
+sobre accesos remotos y una gobernanza de ciberseguridad limitada. Estas condiciones reflejan un enfoque 
+predominantemente reactivo, que redujo la capacidad de prevención y resiliencia de la organización frente a un ataque 
+dirigido contra infraestructura crítica de importancia estratégica nacional.</p><br>
+</div>
+
+    <!-- ========== PÁGINA 10 - TABLA TÉCNICA ========= -->
+    <div class="seccion">
+      <h4>Tabla Técnica del ataque  </h4>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Elemento</th><th>Descripción Técnica Ampliada</th></tr></thead>
+          <tbody>
+            <tr><td>Tipo de ataque</td><td>Ransomware de doble extorsión el cual consistió en el robo masivo de datos confidenciales y el cifrado de los sistemas importantes.</td></tr>
+            <tr><td>Actor o grupo atacante</td><td>El grupo criminal DarkSide que trabaja mediante el sistema de Ransomware as a Service (RaaS) y se cree que es de origen ruso.</td></tr>
+            <tr><td>Vector de entrada</td><td>Acceso remoto mediante una cuenta de VPN antigua(legacy) que estaba activa pero no estaba siendo utilizada facilitando el acceso a los intrusos a la red.</td></tr>
+            <tr><td>Vulnerabilidad explotada</td><td>Se tuvo la falla de políticas de identidad ya que la cuenta carecía de autenticación multifactor (MFA) y utilizaba una contraseña filtrada previamente en la dark web.</td></tr>
+            <tr><td>Etapas del ataque (MITRE ATT&amp;CK)</td><td>El primer acceso fue el 29 de abril seguido de la exfiltración de casi 100 GB de datos y el impacto final con el cifrado de archivos el 7 de mayo.</td></tr>
+            <tr><td>Sistemas o servicios comprometidos</td><td>La red administrativa de IT, servidores de archivos y sistemas de acceso remoto y los sistemas de control OT se apagaron por precaución.</td></tr>
+            <tr><td>Duración del incidente</td><td>Tuvo impacto durante 14 días de crisis desde la infiltración inicial del 29 de abril hasta el reinicio de las operaciones principales el 12 de mayo.</td></tr>
+            <tr><td>Mecanismos de detección y respuesta</td><td>Investigación forense de Mandiant colaboración con CISA FBI, usaron restauración mediante backups y el pago de un rescate de aproximadamente 4.4 y 5 millones.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+      <!-- ========== PÁGINA 11 - IMPACTO CIA ========= -->
+    <div class="seccion">
+      <h4>Evaluación del impacto</h4>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Principio</th><th>Descripción Del Impacto</th><th>Evidencia del Caso</th></tr></thead>
+          <tbody>
+            <tr><td>Confidencialidad</td><td>Exfiltración masiva de datos y extorsión de su publicación.<br>Los Atacantes robaron aproximadamente 100GB de datos en una ventana de solo 2 horas antes de cifrar los sistemas.<br>Esto habilitó la "doble extorsión (cifrado y amenaza de publicación) lo cual presionó a la empresa a pagar rápidamente.</td><td>"En el caso de Colonial Pipeline, los atacantes extrajeron unos 100GB de datos de la red corporativa". (Pankov N., 12 de mayo 2021).</td></tr>
+            <tr><td>Integridad</td><td>Eliminación de respaldos.<br>Los respaldos fueron eliminados o fueron poco eficientes para una rápida recuperación.</td><td>"Tras el Robo de datos, los atacantes infectaron la red informática de Colonial Pipeline con ransomware que afectó a muchos sistemas informáticos, incluidos los de facturación y contabilidad". (Kerner M., 26 de abril de 2022).<br>"La herramienta de descifrado era tan lenta que la compañía continuó utilizando sus propios respaldos para restaurar el sistema". (Turton W., Et Al, 13 de mayo, 2021).</td></tr>
+            <tr><td>Disponibilidad</td><td>Se obligó a detener operaciones y congelar sistemas IT.<br>La herramienta de desencriptación tomó mucho tiempo de procesamiento, no podía restablecer el sistema lo suficientemente rápido.<br>Provocó escasez de combustible en diferentes estaciones y afectó varios aeropuertos.</td><td>"Esto provocó retrasos en el suministro de combustible a lo largo de la Costa Oeste, lo que provocó un aumento del 4% en los futuros de gasolina". (N. Pankov, 12 de mayo 2021).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+     <!-- ========== PÁGINA 12 - COSTOS CTB Y CONSTRUCCIÓN ========= -->
+    <div class="seccion">
+      <h4>4. Costo total del ciberataque</h4>
+      <p>Aplicando el marco económico de Adrian Mizzi, se hizo el cálculo de cuál fue el gasto total del ciberataque.</p>
+      <img src="costoTotal.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+
+      <h5>1. Coste de Ruptura (CTB)</h5>
+      <div class="tabla-container">
+        <p>El coste de ruptura es el costo total que enfrenta el atacante para romper la seguridad, incluyendo dinero, 
+        tiempo, esfuerzo técnico y los riesgos, para nuestro contexto, los atacantes Darkside usaron ransomware ya 
+        desarrollado, por lo que se determina que el CTB es de rango medio-bajo, haciendo estimaciones, se proponen 
+        estos precios con ayuda de referencias como Kaspersky, SQ Maganize, y Purplesec.</p><br>
+        <table>
+          <thead><tr><th>Componente</th><th>Estimación (MXN)</th></tr></thead>
+          <tbody>
+            <tr><td>Acceso inicial (phishing/credenciales)</td><td>$50,000 a $100,000</td></tr>
+            <tr><td>RaaS / herramientas criminales</td><td>$100,000 a $200,000</td></tr>
+            <tr><td>Herramientas avanzadas / exploits</td><td>$300,000 a $800,000</td></tr>
+            <tr><td>Tiempo y operación (reconocimiento + lateral)</td><td>$200,000 a $600,000</td></tr>
+            <tr><td><strong>Total CTB</strong></td><td><strong>$650,000 a $1,700,000</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h5>2. Coste de Construcción (B)</h5>
+      <p>Para los costes de construcción, se deben de tomar en cuenta Firewalls, IDS, políticas, cifrado, personal y procesos para mantener segura la infraestructura y los sistemas OT. En la página oficial de Colonial Pipeline, relatan algunos de sus servicios y productos.</p>
+      <img src="costoContruccion.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+    </div>
+
+
+    <!-- ========== PÁGINA 13-14 - SERVICIOS PIPELINE ========= -->
+    <div class="seccion">
+      <h5>Pipeline Services</h5>
+      <p>Colonial provides energy logistics and solutions to our shippers and customers. We also offer system storage (tank leasing services), New York Intra Harbor Transfer service, exchange, title transfer, and other support services. Regardless of the service, our goal remains the same—helping our shippers safely and efficiently transport refined petroleum products to their destination.</p>
+      
+      <h5>Pipeline Products</h5>
+      <p>We safely transport various grades of gasoline, diesel, home heating oil and jet fuel, as well as fuels designated for the U.S. military through our pipeline system. These products are primarily received from refineries located on the Gulf Coast and are transported to customers and markets throughout the Southeast and East Coast. Importantly, the various products we transport are tested both as they enter and exit our system to ensure they are delivered on-specification.</p>
+      
+      <h5>Terminals</h5>
+      <p>Colonial entered the terminal business in 2020 through the acquisition of several refined product terminals. Branded as Colonial Pipeline Terminals, the terminal business is a natural extension of our overall business, providing the opportunity to serve our customers in new ways while building and strengthening relationships in the industry.</p>
+      <p>We provide terminal services in the Southeast and Mid-Atlantic markets. Two of our terminals - located in Austell, Ga. and Chattanooga - are exclusively connected to the Colonial Pipeline system; another terminal, located in Fredericksburg, Va., is connected to the SE Products Pipeline, and our Charlotte terminal is connected to both Colonial Pipeline and the SE Products Pipeline. Each of these locations provides throughput, storage, and distribution solutions for gasoline, diesel, and renewable fuels.</p><br>
+      <p>En resumen, Colonial Pipeline ofrece servicios de refinado de combustible en diferentes grados, almacenamiento de combustible, logistica de energia, transporte de producto, terminales de combustible, consistiendo en 8850 Km de oleoducto repartidos en 3 lineas, con capacidad de proveer 3 millones de barriles de combustible entre texas y new york. Con todo esto en mente, podemos suponer que la infraestructura de Colonial Pipeline necesita una inversion muy alta en Seguridad, puesto que casi la mitad del sur dependen de sus servicios.</p><br>
+      <p>Toda la infraestructura requiere sistemas OT (desaladoras, hornos, torres de destilación, unidades de conversión y de tratamiento, junto con tanques de almacenamiento y antorchas de seguridad), por ende, estos sistemas necesitan un Firewall.</p><br>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check"></i> IDS/IPS para los sistemas OT.</li>
+        <li><i class="fas fa-check"></i> Seguridad dedicada TI.</li>
+        <li><i class="fas fa-check"></i> SOC y monitoreo.</li>
+        <li><i class="fas fa-check"></i> Personal especializado y consultorías.</li>
+        <li><i class="fas fa-check"></i> Políticas, procesos y hardening.</li>
+      </ul>
+      <br>
+      <p>Para una infraestructura segura, se requiere inversión en infraestructura física de red que soporte 
+      segmentación, control de acceso y visibilidad, especialmente en entornos donde TI y OT conviven. El catálogo de 
+      Panduit ofrece productos clave para esto, y sus precios nos permiten estimar el coste de Construcción de forma 
+      objetiva. </p><br>
+
+    
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Categoría</th><th>Cantidad estimada</th><th>Total estimado (MXN)</th></tr></thead>
+          <tbody>
+            <tr><td>Cables y conectores</td><td>6 sets</td><td>$120,000 a $186,000</td></tr>
+            <tr><td>Gabinetes + racks</td><td>4 c/u</td><td>$160,000 a $320,000</td></tr>
+            <tr><td>Gestión de cables</td><td>-</td><td>$60,000 a $100,000</td></tr>
+            <tr><td>Seguridad física puertos</td><td>-</td><td>$24,000 a $48,000</td></tr>
+            <tr><td>UPS y energía</td><td>4 c/u</td><td>$120,000 a $240,000</td></tr>
+            <tr><td><strong>Total infraestructura física</strong></td><td></td><td><strong>$484,000 a $894,000</strong></td></tr>
+          </tbody>
+        </table>
+        <h5>3. Coste de Protección (F)</h5>
+        <p>El Coste de Protección (F) representa los gastos anuales continuos necesarios para mantener y operar eficazmente los 
+          mecanismos de defensa que protegen la infraestructura de TI y OT. Esto incluye licencias de software de seguridad 
+          (firewalls, IDS/IPS, SIEM, autenticación multifactor), contratos de soporte y mantenimiento, el salario de personal 
+          especializado en ciberseguridad, servicios de monitoreo 24/7 (SOC), auditorías periódicas de cumplimiento 
+          (ISO/NIST/ISA/IEC 62443) y capacitación continua del personal técnico. 
+          Con base en rangos de mercado para organizaciones de gran escala, se estima que el coste total anual de protección (F) se 
+          sitúa entre $9,200,000 y $16,600,000 pesos mexicanos por año, con un valor representativo de aproximadamente 
+          $12,500,000 MXN anuales. Este rango considera tanto licencias y servicios gestionados como personal interno y 
+          actividades de mejoramiento continuo. </p><br>
+        <div class="tabla-container">
+          <table>
+            <thead><tr><th>Categoría</th><th>Rango anual (MXN)</th></tr></thead>
+            <tbody>
+              <tr><td>Licencias</td><td>$2,600,000 a $5,200,000</td></tr>
+              <tr><td>Soporte</td><td>$500,000 a $1,200,000</td></tr>
+              <tr><td>Personal</td><td>$300,000 a $4,500,000</td></tr>
+              <tr><td>SOC / Monitoreo</td><td>$200,000 a $3,500,000</td></tr>
+              <tr><td>Auditorías</td><td>$800,000 a $1,500,000</td></tr>
+              <tr><td>Capacitación</td><td>$300,000 a $700,000</td></tr>
+              <tr><td><strong>Total F</strong></td><td><strong>$9,200,000 a $16,600,000 por año</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h5>4. Perdida de beneficio inmediata (L)</h5><br>
+        <p>Las Perdida de beneficio inmediata (L) representa el impacto económico directo sufrido por Colonial Pipeline como 
+          resultado de la interrupción operativa causada por el ataque de ransomware. Esto incluye los ingresos no generados durante los aproximadamente cinco días de paralización de operaciones, el impacto de mercado derivado de la escasez 
+          temporal de combustible, así como costos regulatorios y legales posteriores al incidente. 
+          Con base en estimaciones de ingresos diarios de la operación normal del oleoducto, convertidos a pesos mexicanos, y 
+          apoyados en análisis económicos de interrupciones de servicios críticos, se estima que el costo total de pérdidas se sitúa 
+          en un rango aproximado de 1,062.5 millones a 2,006.25 millones de pesos mexicanos, con un valor representativo de 
+          1,500 millones MXN para fines de análisis cuantitativo. 
+          </p><br>
+        <div class="tabla-container">
+          <table>
+              <thead><tr><th>Componente</th><th>Estimación (MXN)</th></tr></thead>
+              <tbody>
+                <tr><td>L1 - Ingresos operativos perdidos</td><td>875 M a 1,312.5 M</td></tr>
+                <tr><td>L2 - Impacto de mercado/reputación</td><td>87.5 M a 393.75 M</td></tr>
+                <tr><td>L3 - Costos regulatorios y legales</td><td>100 M a 300 M</td></tr>
+                <tr><td><strong>Total L</strong></td><td><strong>1,062.5 M a 2,006.25 M</strong></td></tr>
+              </tbody>
+            </table>
+        </div>
+        <div class="tabla-container">
+           <h5>Coste de reconstrucción (R)</h5><br>
+           <p>El Coste de Reconstrucción (R) representa los gastos incurridos después del incidente para restaurar operatividad, reforzar 
+            controles y documentar acciones de recuperación. Este costo incluye la restauración de sistemas TI y OT, servicios de 
+            análisis forense y consultoría especializada, implementación de mejoras de seguridad y configuración, además de 
+            actividades administrativas y cumplimiento posterior al incidente.</p><br>
+            <p>Basado en rangos de proyectos de recuperación y respuesta a incidentes de ransomware de gran escala, se estima que R 
+              se sitúa entre $150 millones y $480 millones de pesos mexicanos, con un valor representativo de $300 millones MXN. Este 
+                rango contempla tanto trabajo técnico especializado como actualizaciones estructurales necesarias tras el ataque. </p><br>
+          <table>
+            <thead><tr><th>Componente</th><th>Estimación (MXN)</th></tr></thead>
+            <tbody>
+              <tr><td>R1 - Restauración técnica</td><td>$87.5M - $262.5M</td></tr>
+              <tr><td>R2 - Forense/Consultoría</td><td>$17.5M - $87.5M</td></tr>
+              <tr><td>R3 - Hardening/Mejoras</td><td>$35M - $105M</td></tr>
+              <tr><td>R4 - Administración y documentación</td><td>$10M - $25M</td></tr>
+              <tr><td><strong>Total R</strong></td><td><strong>$150M - $480M MXN</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tabla-container">
+           <h5>Conclusión del costo total del ciberataque </h5><br>
+           <p>El análisis económico del ataque de ransomware a Colonial Pipeline, utilizando el marco de Adrian Mizzi, evidencia 
+              que el impacto financiero total del incidente, estimado entre 2,525 y 3,800 millones de pesos mexicanos, superó 
+              ampliamente el presupuesto anual típico de ciberseguridad del sector energético, el cual suele ubicarse alrededor 
+              de los 400 a 500 millones de pesos anuales. Esto implica que el costo del ataque fue entre cinco y ocho veces mayor 
+              que una inversión anual razonable en controles preventivos, monitoreo y resiliencia. El caso demuestra que la 
+              ciberseguridad no debe considerarse un gasto operativo opcional, sino una inversión estratégica esencial para la 
+              continuidad del negocio, especialmente en organizaciones que operan infraestructura crítica, donde una 
+              interrupción tecnológica puede traducirse en crisis económicas, sociales y de seguridad nacional. </p><br>
+           
+          <table>
+            <thead>
+              <tr>
+                <th>Componente</th>
+                <th>Estimación (MXN)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>R1 - Restauración técnica</strong></td>
+                <td>$87.5M - $262.5M</td>
+              </tr>
+              <tr>
+                <td><strong>R2 - Forense/Consultoría</strong></td>
+                <td>$17.5M - $87.5M</td>
+              </tr>
+              <tr>
+                <td><strong>R3 - Hardening/Mejoras</strong></td>
+                <td>$35M - $105M</td>
+              </tr>
+              <tr>
+                <td><strong>R4 - Administración y documentación</strong></td>
+                <td>$10M - $25M</td>
+              </tr>
+              <tr style="background: linear-gradient(145deg, #ff4f9a20, #ff8fc420);">
+                <td><strong style="color: #ff4f9a; font-size: 1.1rem;">TOTAL R</strong></td>
+                <td><strong style="color: #ff4f9a; font-size: 1.1rem;">$150M - $480M MXN</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+
+      </div>
+
+    </div>
+    
+    <div class="seccion">
+      <h4>5. Relación con marcos normativos </h4>
+      <h5>ISO 27001 – Controles relevantes aplicables al incidente:</h5>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Control ISO 27001</th><th>Relación con el incidente</th><th>Prevención / Mitigación posible</th></tr></thead>
+          <tbody>
+            <tr><td>A.9.2.3 – Gestión de credenciales de acceso</td><td>La cuenta VPN sin MFA y con contraseña filtrada permitió el acceso inicial.</td><td>Habría exigido MFA y rotación de contraseñas, bloqueando el acceso con credenciales robadas.</td></tr>
+            <tr><td>A.13.1.1 – Controles de red</td><td>Falta de segmentación entre TI y OT.</td><td>Una segmentación adecuada habría contenido el ataque en la red administrativa.</td></tr>
+            <tr><td>A.12.3.1 – Copias de seguridad</td><td>Los respaldos fueron eliminados o no eran eficientes para recuperación rápida.</td><td>Respaldos offline y pruebas regulares habrían permitido restaurar sin depender del rescate.</td></tr>
+            <tr><td>A.16.1.5 – Respuesta a incidentes</td><td>La respuesta fue reactiva y no evitó la exfiltración de datos.</td><td>Un plan de respuesta probado habría acelerado la contención y reducido el tiempo de inactividad.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h5>NIST Cybersecurity Framework (CSF) – Controles relevantes:</h5>
+      <div class="tabla-container">
+       <table>
+          <thead><tr><th>Función NIST CSF</th><th>Controles aplicables</th><th>Prevención / Mitigación posible</th></tr></thead>
+          <tbody>
+            <tr><td>Protect</td><td>PR.AC-1 (Gestión de identidades) y PR.AC-7 (Protección de accesos remotos)</td><td>MFA y revisión de cuentas habrían evitado el acceso no autorizado.</td></tr>
+            <tr><td>Detect</td><td>DE.CM-1 (Monitoreo de red)</td><td>Un SIEM con detección de exfiltración habría alertado antes del cifrado.</td></tr>
+            <tr><td>Respond</td><td>RS.RP-1 (Plan de respuesta)</td><td>Un plan ejecutado con simulacros habría reducido la paralización operativa.</td></tr>
+            <tr><td>Recover</td><td>RC.RP-1 (Plan de recuperación)</td><td>Respaldos validados y herramientas de recuperación eficientes habrían acelerado el retorno.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h5>GDPR (aplicación contextual):</h5>
+      <p>Aunque Colonial Pipeline no está sujeta al GDPR, los principios de notificación de violaciones de datos y protección de datos personales son relevantes. La exfiltración de 100 GB pudo incluir datos personales de empleados o clientes. Bajo</p>
+      <p>GDPR, esto habría exigido notificación a autoridades en 72 horas, lo que podría haber acelerado la respuesta y la transparencia pública.</p>
+      <h5>Conclusión</h5>
+      <p>La aplicación estructurada de marcos como ISO 27001 y NIST CSF habría fortalecido la postura de seguridad de Colonial Pipeline, especialmente en gestión de accesos, segmentación, monitoreo y recuperación. La adopción de estos marcos no es solo un requisito normativo, sino una estrategia de resiliencia operativa ante amenazas como el ransomware.</p>
+    </div>
+
+    <!-- ========== PÁGINA 20 - LECCIONES APRENDIDAS ========= -->
+    <div class="seccion">
+      <h4>6. Lecciones aprendidas y recomendaciones</h4>
+      <p>El incidente de Colonial Pipeline evidenció que incluso operadores de infraestructura crítica pueden verse comprometidos cuando la ciberseguridad no es tratada como un componente estratégico del negocio. El ataque no fue producto de una sola vulnerabilidad, sino de una cadena de fallas técnicas, operativas y de gobernanza.</p>
+
+      <h5>6.1 Fallas críticas detectadas</h5>
+      <h6>Fallas técnicas</h6>
+      <ol>
+        <li><strong>Ausencia de autenticación multifactor (MFA) en accesos remotos</strong><br>El acceso inicial se produjo mediante una cuenta VPN antigua que solo utilizaba usuario y contraseña. Esta credencial estaba filtrada en la dark web. Esto permitió que los atacantes ingresaran como un usuario legítimo.</li>
+        <li><strong>Gestión deficiente de identidades y accesos (IAM)</strong><br>a. Cuenta obsoleta aún activa<br>b. Falta de revisión periódica de accesos<br>c. Ausencia de principio de mínimo privilegio</li>
+        <li><strong>Segmentación insuficiente entre TI y OT</strong><br>Aunque el malware no llegó a sistemas industriales, el riesgo de propagación obligó a detener la operación del oleoducto.</li>
+        <li><strong>Monitoreo y detección tardíos</strong><br>Los atacantes exfiltraron 100 GB de información antes de activar el cifrado sin ser detectados oportunamente.</li>
+        <li><strong>Estrategia de respaldo y recuperación poco efectiva</strong><br>a. La herramienta de descifrado fue lenta<br>b. Dependencia parcial del pago del rescate<br>c. Restauración prolongada</li>
+        <li><strong>Controles de acceso remoto débiles</strong><br>VPN sin MFA, sin políticas estrictas de dispositivos confiables o verificación adicional.</li>
+      </ol>
+      <br>
+      <h5>Fallas humanas y organizacionales</h5>
+      <ol>
+        <li><strong>Gobernanza de ciberseguridad débil</li></strong><br>La ciberseguridad no estaba plenamente integrada en la gestión de riesgos corporativos.
+        <li><strong>Enfoque reactivo, no preventivo</li></strong><br>No se priorizaron controles básicos a pesar de operar infraestructura crítica.
+        <li><strong>Falta de cultura de seguridad</li></strong><br>Las cuentas antiguas no deberían existir si hubiera procesos estrictos de revisión.
+        <li><strong>Planes de continuidad no probados a nivel realista</li></strong><br> La interrupción operativa mostró que los planes no estaban optimizados para un escenario de 
+ransomware. 
+      </ol>
+    </div>
+
+    <!-- ========== PÁGINA 21 - BUENAS PRÁCTICAS Y LECCIONES ========= -->
+    <div class="seccion">
+      <h5>6.2 Buenas prácticas que habrían reducido el daño</h5><br>
+      <p>Si se hubieran aplicado correctamente, estas medidas habrían evitado o minimizado el impacto:</p><br>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Área</th><th>Buena práctica</th><th>Impacto que habría mitigado</th></tr></thead>
+          <tbody>
+            <tr><td>Accesos remotos</td><td>MFA obligatorio</td><td>Habría bloqueado el acceso inicial</td></tr>
+            <tr><td>Identidades</td><td>Auditoría periódica de cuentas</td><td>La VPN obsoleta habría sido eliminada</td></tr>
+            <tr><td>Red</td><td>Segmentación TI/OT estricta</td><td>Menor necesidad de detener operaciones</td></tr>
+            <tr><td>Monitoreo</td><td>SIEM + detección de exfiltración</td><td>Alerta antes del cifrado</td></tr>
+            <tr><td>Respaldo</td><td>Backups offline y pruebas periódicas</td><td>Recuperación sin pagar rescate</td></tr>
+            <tr><td>Respuesta a incidentes</td><td>Simulacros de ransomware</td><td>Reducción del tiempo de inactividad</td></tr>
+            <tr><td>Gobernanza</td><td>Alineación con NIST CSF e ISA/IEC 62443</td><td>Mejor preparación estructural</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h5>6.3 Lecciones estratégicas clave</h5>
+      <ol>
+        <li>El ransomware es un riesgo operativo, no solo informático</li>
+        <li>Las credenciales robadas son el vector más peligroso hoy en día</li>
+        <li>Pagar rescate no garantiza recuperación rápida</li>
+        <li>TI y OT están conectados a nivel de riesgo</li>
+        <li>La ciberseguridad es un asunto de seguridad nacional</li>
+      </ol>
+
+      <h5>6.4 Recomendaciones para el contexto mexicano y latinoamericano</h5>
+      <p><strong>MX Infraestructura crítica en México (energía, transporte, gobierno)</strong></p>
+      <ol>
+        <li>Implementar MFA obligatorio en todos los accesos remotos</li>
+        <li>Eliminar cuentas heredadas y accesos no utilizados</li>
+        <li>Adoptar el marco NIST CSF como base mínima</li>
+        <li>Separar redes TI y OT físicamente cuando sea posible</li>
+        <li>Establecer monitoreo continuo con detección de exfiltración</li>
+        <li>Mantener respaldos offline (air-gapped)</li>
+        <li>Realizar simulacros anuales de ciberataques</li>
+        <li>Crear equipos CSIRT internos o sectoriales</li>
+        <li>Invertir en capacitación del personal</li>
+        <li>Integrar la ciberseguridad en la alta dirección (gobernanza)</li>
+      </ol>
+      <h5>Para empresas privadas latinoamericanas</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check"></i> No depender solo de antivirus tradicional</li>
+        <li><i class="fas fa-check"></i> Revisar accesos VPN cada mes</li>
+        <li><i class="fas fa-check"></i> Usar Zero Trust para accesos externos</li>
+        <li><i class="fas fa-check"></i> Contratar auditorías de ciberseguridad anuales</li>
+        <li><i class="fas fa-check"></i> Tener seguro de riesgo cibernético</li>
+      </ul>
+
+      <h5>6.5 Conclusión del punto</h5>
+      <p>El ataque a Colonial Pipeline demuestra que:</p>
+      <p>La ausencia de controles básicos puede generar crisis nacionales.<br>No fue un ataque técnicamente imposible de prevenir, sino el resultado de fallas acumuladas de gestión, monitoreo y gobernanza.<br>Las organizaciones latinoamericanas que operan servicios esenciales pueden aprender de este caso implementando controles preventivos antes de enfrentar un evento de alto impacto.</p>
+    </div>
+
+
+    <!-- ========== PÁGINA 23 - BIBLIOGRAFÍA INICIO ========= -->
+    <div class="seccion">
+      <h4>Referencias</h4>
+      <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+        <div class="ref-item"><i class="fas fa-file-alt"></i> CISA. (2021a, mayo 11). Alert AA21-131A: DarkSide ransomware best practices. Cybersecurity and Infrastructure Security Agency. https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-131a</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> CISA. (2021b). DarkSide ransomware: Best practices for preventing business disruption from ransomware attacks. Cybersecurity and Infrastructure Security Agency. https://www.cisa.gov/resources-tools/resources/darkside-ransomware-best-practices-preventing-business-disruption-ransomware</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> ENISA. (2023). Threat landscape report 2023. European Union Agency for Cybersecurity. https://www.enisa.europa.eu/publications/enisa-threat-landscape-2023</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> FBI. (2021, mayo 10). DarkSide ransomware: Indicators of compromise. Federal Bureau of Investigation. https://www.ic3.gov/Media/News/2021/210511.pdf</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> NIST. (2017). Digital identity guidelines (Publicación SP 800-63B). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-63b</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> NIST. (2018). Contingency planning guide for federal information systems (Publicación SP 800-34 Rev. 1). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-34r1</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> NIST. (2020a). Glossary: Malware. National Institute of Standards and Technology. https://csrc.nist.gov/glossary/term/malware</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> NIST. (2020b). Zero trust architecture (Publicación SP 800-207). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-207</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> U.S. Department of Energy. (2021). Colonial Pipeline cyber incident summary. https://www.energy.gov/sites/default/files/2021-06/Colonial%20Pipeline%20Cyber%20Incident%20Summary.pdf</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> ISO/IEC. (2022). Information security, cybersecurity and privacy protection — Information security management systems — Requirements (ISO/IEC 27001:2022). International Organization for Standardization.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> ISA/IEC 62443. (2018). Security for industrial automation and control systems (Serie de Estándares IEC 62443). International Society of Automation / International Electrotechnical Commission.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> MITRE. (s.f.). Exfiltration (TA0010). MITRE ATT&CK Framework. https://attack.mitre.org/tactics/TA0010/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Gartner. (2022). Magic quadrant for security information and event management.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Kaspersky. (2022). Ransomware explained: What it is and how it works. https://www.kaspersky.com/resource-center/threats/ransomware-attacks-and-types</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> MITRE Engenuity. (2023). MITRE Engenuity ATT&CK evaluations for endpoint detection and response. https://attackevals.mitre-engenuity.org/</div>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 24 - BIBLIOGRAFÍA COMPLETA ========= -->
+    <div class="seccion">
+      <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Verizon. (2023). 2023 Data breach investigations report. https://www.verizon.com/business/resources/reports/dbr/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Kaspersky ICS CERT. (2021, 21 de mayo). DarkChronicles: the consequences of the Colonial Pipeline attack. Kaspersky. https://ics-cert.kaspersky.com/publications/reports/2021/05/21/darkchronicles-the-consequences-of-the-colonial-pipeline-attack/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> The New York Times. (2021, 8 de mayo). Cyberattack forces a shutdown of a top U.S. pipeline. NYTimes.com. https://www.nytimes.com/2021/05/08/us/politics/cyberattack-colonial-pipeline.html</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> The New York Times. (2021, 11 de mayo). Ciberataque al oleoducto Colonial Pipeline: esto sabemos [Edición en español]. NYTimes.com. https://www.nytimes.com/es/2021/05/11/espanol/colonial-pipeline-ransomware.html</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> The New York Times. (2021, 14 de mayo). DarkSide, blamed for gas pipeline attack, says it is shutting down. NYTimes.com. https://www.nytimes.com/2021/05/14/business/darkside-pipeline-hack.html</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> The New York Times. (2021, 15 de mayo). Hacked pipeline is now delivering 'millions of gallons' an hour, owner says. NYTimes.com. https://www.nytimes.com/2021/05/15/business/colonial-pipeline-hack-southeast.html</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> The New York Times. (2021, 2 de junio). El caso DarkSide: Rusia se está convirtiendo en el paraíso del cibersecuestro [Edición en español]. NYTimes.com. https://www.nytimes.com/es/2021/06/02/espano/darkside-rusia-ciber-ataque.html</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Cybersecurity and Infrastructure Security Agency (CISA). (2022, 1 de abril). The attack on Colonial Pipeline: What we've learned & what we've done over the past two years. https://www.cisa.gov/news-events/news/attack-colonial-pipeline-what-weve-learned-what-weve-done-over-past-two-years</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Sophos. (2021, 11 de mayo). A defender's view inside a DarkSide ransomware attack. https://www.sophos.com/en-us/blog/a-defenders-view-inside-a-darkside-ransomware-attack</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Federal Bureau of Investigation. (2021, 10 de mayo). FBI statement on compromise of Colonial Pipeline networks. https://www.fbi.gov/news/pressrel/press-releases/fbi-statement-on-compromise-of-colonial-pipeline-networks</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Sanger, D. E., & Krauss, C. (2021, 14 de mayo). Cyberattack forces a shutdown of a vital U.S. pipeline. The New York Times. https://www.nytimes.com/2021/05/08/us/politics/cyberattack-colonial-pipeline.html</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Amaya, J. (2022, 7 de septiembre). Mercado de acceso inicial: ¿Cómo entran los atacantes a sus víctimas? Kaspersky Daily. https://lalam.kaspersky.com/blog/initial-access-market-2022/24941/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> St John, D. (2023, 25 de mayo). Cyberattacks and ransomware statistics – UK & worldwide. SQ Magazine. https://sqmagazine.co.uk/ransomware-statistics/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> PurpleSec. (2023, 12 de junio). Average cost of ransomware attacks in 2023. PurpleSec. https://purplesec.us/learn/average-cost-of-ransomware-attacks/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Panduit. (2025). Infraestructura de redes corporativas [Catálogo de productos, CPCB295-SA-ROLATAM-01-2025]. https://www.panduit.com/content/dam/panduit/es/website/support/documents/infraestructura-de-redes-corporatologico-cpcb295-sa-rolatam-01-2025.pdf</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Arzate Noticias. (2026, 29 de enero). Solo 49% de las organizaciones invierten en ciberseguridad tras filtración de datos. https://arzetanoticias.com/index.php/2026/01/29/solo-49-de-las-organizaciones-invierten-en-ciberseguridad-tras-filtracion-de-datos/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> EY Australia. (2022, 1 de junio). How cyber security can keep pace with the energy transition. EY. https://www.ey.com/en_au/insights/cybersecurity/how-cyber-security-can-keep-pace-with-the-energy-transition</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Pankov N. (2021, 12 de mayo). "How Colonial Pipeline managed its ransomware attack". https://www.kaspersky.com/blog/pipeline-ransomware-mitigation/39907/</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Kerner M. (2022, 26 de abril). "Colonial Pipeline hack explained: Everything you need to know". https://www.techtarget.com/whatis/feature/Colonial-Pipeline-hack-explained-Everything-you-need-to-know</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Turton W. Et al. (2021, 13 de mayo) "Colonial Pipeline paid hackers nearly $5 Million in Random". https://archive.is/20210514165246/https://www.bloomberg.com/news/articles/2021-05-13/colonial-pipeline-paid-hackers-nearly-5-million-in-ransom</div>
+      </div>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+    <p>
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> 
+      <!-- <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>-->
+    </p>
+    <p>
+      Sitio seguro con certificado SSL
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
+    btn.addEventListener('click', function() {
+      console.log('✅ Abriendo PDF de la actividad 01...');
+    });
+  });
+</script>
+
+</body>
+</html>
