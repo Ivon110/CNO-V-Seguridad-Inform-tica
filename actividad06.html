@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 06 · IPSEC VPN · Implementación</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 500;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.4rem;
+  color: #4a2a36;
+  margin: 30px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seccion h6 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 25px 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-container {
+  overflow-x: auto;
+  margin: 25px 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.5);
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 600;
+  padding: 15px 12px;
+  text-align: left;
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #ffe0ec;
+  background: rgba(255,255,255,0.7);
+  vertical-align: top;
+}
+
+tr:hover td {
+  background: rgba(255,225,235,0.9);
+}
+
+.code-container {
+  background: #2d1b21;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 6px solid #ff4f9a;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  overflow-x: auto;
+}
+
+.code-container pre {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.code-container code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #ffe0ec;
+  background: transparent;
+  padding: 0;
+  display: block;
+  line-height: 1.6;
+}
+
+.grid-multimedia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
+}
+
+.tarjeta-media {
+  background: white;
+  border-radius: 24px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.15);
+  border: 1px solid rgba(255,79,154,0.2);
+}
+
+.tarjeta-media i {
+  font-size: 2.5rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.tarjeta-media h6 {
+  font-size: 1.2rem;
+  color: #3a1c2b;
+  margin-bottom: 12px;
+}
+
+.mapa-ducto {
+  background: #ffeef2;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  font-style: italic;
+  color: #6b3a52;
+}
+
+.caja-reflexion {
+  background: linear-gradient(145deg, #fff5f9, #ffe9f0);
+  padding: 35px;
+  border-radius: 28px;
+  border: 2px dashed #ff4f9a;
+  margin: 30px 0;
+  font-style: italic;
+}
+
+.caja-reflexion i {
+  color: #ff4f9a;
+  font-size: 2.5rem;
+  float: left;
+  margin-right: 20px;
+}
+
+.ref-item {
+  background: rgba(255,255,255,0.8);
+  padding: 16px 25px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  border-left: 5px solid #ff8fc4;
+}
+
+.ref-item i {
+  color: #ff4f9a;
+  min-width: 28px;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #ffe0ec;
+}
+
+.lista-personalizada li i {
+  color: #ff4f9a;
+  width: 24px;
+  text-align: center;
+}
+
+.nota-iptables {
+  background: #ffe9f0;
+  border-radius: 14px;
+  padding: 15px 20px;
+  margin-top: 15px;
+  border-left: 4px solid #ff8fc4;
+  font-size: 0.95rem;
+  color: #6b3a52;
+}
+
+.nota-iptables i {
+  color: #ff4f9a;
+  margin-right: 10px;
+}
+
+.footer {
+  width: 100%;
+  padding: 25px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+.page-marker {
+  text-align: right;
+  color: #b3778c;
+  font-size: 0.85rem;
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px dashed #ffb3d9;
+  font-style: italic;
+}
+
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.indice-contenido:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(255,79,154,0.25);
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder i {
+  font-size: 4rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.img-placeholder p {
+  color: #6b3a52;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV ========= -->
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li><a href="actividades.html" class="activo"><i class="fas fa-laptop-code"></i> Actividades</a></li>
+        <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li><a href="#"><i class="fas fa-project-diagram"></i> Proyectos</a></li>
+        <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+
+    <!-- ========== TÍTULO ACTIVIDAD 06 ========= -->
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-lock"></i> Actividad 06 · IMPLEMENTACIÓN IPSEC VPN</h3>
+    </div>
+
+    <!-- ========== BOTÓN EXPORTAR PDF ========= -->
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('177291-act06.pdf', '_blank')">
+        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
+      </button>
+    </div>
+
+    <!-- ========== PÁGINA 1 ========= -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-flag"></i>Introducción Contextual</h4>
+      <p>Las VPN (Redes Privadas Virtuales) son una de esas tecnologías que siempre escuchamos mencionar pero que pocas veces entendemos cómo funcionan realmente. En un mundo donde todo está conectado a Internet, enviar información sensible a través de la red pública es como mandar una carta sin sobre: cualquiera podría leerla.</p><br>
+      <p>Aquí es donde entra IPSec, un protocolo que permite crear túneles seguros entre dos puntos, cifrando toda la comunicación. En esta actividad, implementamos un túnel IPSec VPN entre dos routers Cisco 1941, simulando dos sedes de una empresa conectadas a través de un ISP.</p><br>
+      <p>El objetivo era que las PCs de ambas redes pudieran comunicarse como si estuvieran en la misma red local, pero con la tranquilidad de que sus datos viajan encriptados. Esto implicó configurar direcciones IP, rutas estáticas, políticas ISAKMP, transform-sets y crypto maps, todo un reto técnico pero súper gratificante.</p>
+    </div>
+
+    <!-- ========== PÁGINA 2 - ÍNDICE ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-list"></i> Índice</h4>
+      <div class="indice-doble-columna">
+        <div>
+          <div class="indice-item"><span class="titulo">Índice</span> <span class="pagina">2</span></div>
+          <div class="indice-item"><span class="titulo">Objetivos</span> <span class="pagina">3</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Objetivo General</span> <span class="pagina">3</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Objetivos Específicos</span> <span class="pagina">3</span></div>
+          <div class="indice-item"><span class="titulo">Topología</span> <span class="pagina">3</span></div>
+          <div class="indice-item"><span class="titulo">Tabla de direccionamiento</span> <span class="pagina">4</span></div>
+          <div class="indice-item"><span class="titulo">Configuración de dispositivos</span> <span class="pagina">5</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Configuración del ISP</span> <span class="pagina">5</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Configuración de R1</span> <span class="pagina">6</span></div>
+        </div>
+        <div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Configuración de R3</span> <span class="pagina">7</span></div>
+          <div class="indice-item"><span class="titulo">Verificaciones y pruebas</span> <span class="pagina">8</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Verificación de Conectividad Básica</span> <span class="pagina">8</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Verificación del Túnel VPN - Fase 1</span> <span class="pagina">13</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Verificación del Túnel VPN</span> <span class="pagina">17</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Pruebas de Conectividad entre PCs</span> <span class="pagina">19</span></div>
+          <div class="indice-item"><span class="titulo">Conclusión</span> <span class="pagina">21</span></div>
+          <div class="indice-item"><span class="titulo">Referencias</span> <span class="pagina">21</span></div>
+          <div class="indice-item"><span class="titulo">Anexos</span> <span class="pagina">22</span></div>
+          <div class="indice-subitem" style="margin-left: 15px;"><span class="titulo">Solución de Problemas Comunes</span> <span class="pagina">22</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 3 - OBJETIVOS Y TOPOLOGÍA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-bullseye"></i> Objetivos</h4>
+      
+      <h5>Objetivo General</h5>
+      <p>Implementar un túnel IPSec VPN entre dos routers Cisco 1941 para asegurar la comunicación entre dos redes LAN separadas geográficamente a través de un ISP</p>
+      
+      <h5>Objetivos Específicos</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check-circle"></i> Configurar direccionamiento IP en routers, switches y PCs.</li>
+        <li><i class="fas fa-check-circle"></i> Establecer rutas estáticas para garantizar conectividad extremo a extremo.</li>
+        <li><i class="fas fa-check-circle"></i> Configurar túneles IPSec VPN con encriptación AES 256.</li>
+        <li><i class="fas fa-check-circle"></i> Verificar el correcto funcionamiento del túnel mediante pruebas de conectividad.</li>
+        <li><i class="fas fa-check-circle"></i> Comprobar que el tráfico entre las LANs viaja encriptado.</li>
+      </ul>
+      
+      <h5 style="margin-top: 30px;"><i class="fas fa-network-wired"></i> Topología</h5>
+      <div class="img-placeholder">
+        <i class="fas fa-diagram-project"></i>
+        <p>La topología implementada está compuesta por tres segmentos principales:</p>
+        <p style="font-size: 0.9rem;">[Imagen de topología de red: R1 - ISP - R3 con switches y PCs]</p>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 4 - DESCRIPCIÓN DE REDES Y TABLA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-sitemap"></i> Descripción de la Red</h4>
+      
+      <h5>Red Local A (Sede Izquierda)</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-router"></i> Router R1 (1941): Gateway de la sede con IP 192.168.1.1/24 en G0/1 (LAN) y 209.165.100.1/24 en G0/0 (WAN)</li>
+        <li><i class="fas fa-network-wired"></i> Switch0 (2960): Conecta R1 con PC-A mediante puerto Fa0/19</li>
+        <li><i class="fas fa-desktop"></i> PC-A: Estación de trabajo con IP 192.168.1.10/24</li>
+      </ul>
+      
+      <h5>Red Pública (ISP)</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-router"></i> Router ISP (1941): Simula la infraestructura de Internet</li>
+        <li><i class="fas fa-arrow-right"></i> G0/0: 209.165.100.2/24 hacia R1</li>
+        <li><i class="fas fa-arrow-right"></i> G0/1: 209.165.200.2/24 hacia R3</li>
+      </ul>
+      
+      <h5>Red Local B (Sede Derecha)</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-router"></i> Router R3 (1941): Gateway de la sede con IP 192.168.3.1/24 en G0/1 (LAN) y 209.165.200.1/24 en G0/0 (WAN)</li>
+        <li><i class="fas fa-network-wired"></i> Switch1 (2960): Conecta R3 con PC-C mediante puerto Fa0/19</li>
+        <li><i class="fas fa-desktop"></i> PC-C: Estación de trabajo con IP 192.168.3.10/24</li>
+      </ul>
+      
+      <h5>Tabla de direccionamiento</h5>
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Dispositivo</th>
+              <th>Interfaz</th>
+              <th>Dirección IP</th>
+              <th>Máscara</th>
+              <th>Gateway</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>R1</td><td>G0/0</td><td>209.165.100.1</td><td>255.255.255.0</td><td>N/A</td></tr>
+            <tr><td>R1</td><td>G0/1</td><td>192.168.1.1</td><td>255.255.255.0</td><td>N/A</td></tr>
+            <tr><td>ISP</td><td>G0/0</td><td>209.165.100.2</td><td>255.255.255.0</td><td>N/A</td></tr>
+            <tr><td>ISP</td><td>G0/1</td><td>209.165.200.2</td><td>255.255.255.0</td><td>N/A</td></tr>
+            <tr><td>R3</td><td>G0/0</td><td>209.165.200.1</td><td>255.255.255.0</td><td>N/A</td></tr>
+            <tr><td>R3</td><td>G0/1</td><td>192.168.3.1</td><td>255.255.255.0</td><td>N/A</td></tr>
+            <tr><td>PC-A</td><td>Fa0</td><td>192.168.1.10</td><td>255.255.255.0</td><td>192.168.1.1</td></tr>
+            <tr><td>PC-C</td><td>Fa0</td><td>192.168.3.10</td><td>255.255.255.0</td><td>192.168.3.1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 5 - CONFIGURACIÓN ISP ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-code"></i> Configuración de dispositivos</h4>
+      
+      <h5><i class="fas fa-cloud"></i> Configuración del ISP</h5>
+      <div class="code-container">
+        <pre><code>enable
+configure terminal
+hostname ISP
+
+! Configuración de interfaces
+interface GigabitEthernet0/0
+ ip address 209.165.100.2 255.255.255.0
+ no shutdown
+ description Conexión a R1
+
+interface GigabitEthernet0/1
+ ip address 209.165.200.2 255.255.255.0
+ no shutdown
+ description Conexión a R3
+
+! Rutas estáticas hacia las LANs
+ip route 192.168.1.0 255.255.255.0 209.165.100.1
+ip route 192.168.3.0 255.255.255.0 209.165.200.1
+
+end
+write memory</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 6 - CONFIGURACIÓN R1 ========= -->
+    <div class="seccion">
+      <h5><i class="fas fa-router"></i> Configuración de R1</h5>
+      <div class="code-container">
+        <pre><code>enable
+configure terminal
+
+! Lista de acceso para tráfico a encriptar
+access-list 100 permit ip 192.168.1.0 0.0.0.255 192.168.3.0 0.0.0.255
+
+! Fase 1 - ISAKMP Policy
+crypto isakmp policy 10
+ encryption aes 256
+ authentication pre-share
+ group 5
+ lifetime 86400
+ exit
+
+! Clave pre-compartida con R3
+crypto isakmp key cisco123 address 209.165.200.1
+
+! Fase 2 - Transform Set
+crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+
+! Crypto Map
+crypto map VPN-MAP 10 ipsec-isakmp
+ set peer 209.165.200.1
+ set transform-set VPN-SET
+ match address 100
+ exit
+
+! Aplicar Crypto Map a la interfaz pública
+interface GigabitEthernet0/0
+ crypto map VPN-MAP
+ exit
+
+end
+write memory</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 7 - CONFIGURACIÓN R3 ========= -->
+    <div class="seccion">
+      <h5><i class="fas fa-router"></i> Configuración de R3</h5>
+      <div class="code-container">
+        <pre><code>enable
+configure terminal
+
+! Lista de acceso para tráfico a encriptar (LAN Derecha → LAN Izquierda)
+access-list 100 permit ip 192.168.3.0 0.0.0.255 192.168.1.0 0.0.0.255
+
+! Fase 1 - ISAKMP Policy
+crypto isakmp policy 10
+ encryption aes 256
+ authentication pre-share
+ group 5
+ lifetime 86400
+ exit
+
+! Clave pre-compartida con R1
+crypto isakmp key cisco123 address 209.165.100.1
+
+! Fase 2 - Transform Set
+crypto ipsec transform-set VPN-SET esp-aes esp-sha-hmac
+
+! Crypto Map
+crypto map VPN-MAP 10 ipsec-isakmp
+ set peer 209.165.100.1
+ set transform-set VPN-SET
+ match address 100
+ exit
+
+! Aplicar Crypto Map a la interfaz pública
+interface GigabitEthernet0/0
+ crypto map VPN-MAP
+ exit
+
+end
+write memory</code></pre>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 8-12 - VERIFICACIONES ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-check-circle"></i> Verificaciones y pruebas</h4>
+      
+      <h5>Verificación de Conectividad Básica</h5>
+      
+      <div style="background: white; border-radius: 16px; padding: 20px; margin: 20px 0;">
+        <p><strong><i class="fas fa-terminal" style="color: #ff4f9a;"></i> Origen: R1</strong></p>
+        <p><strong>Destino: ISP</strong></p>
+        <p><strong>Comando:</strong> <code style="background: #ffe0ec; padding: 5px 10px; border-radius: 8px;">ping 209.165.200.2</code></p>
+      </div>
+      
+      <h5>Resultado Obtenido</h5>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_1.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      
+      <div style="background: white; border-radius: 16px; padding: 20px; margin: 20px 0;">
+        <p><strong><i class="fas fa-terminal" style="color: #ff4f9a;"></i> Origen: R3</strong></p>
+        <p><strong>Destino: ISP</strong></p>
+        <p><strong>Comando:</strong> <code style="background: #ffe0ec; padding: 5px 10px; border-radius: 8px;">ping 209.165.200.2</code></p>
+      </div>
+      
+      <h5>Resultado Obtenido</h5>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_2.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <div style="background: white; border-radius: 16px; padding: 20px; margin: 20px 0;">
+        <p><strong><i class="fas fa-terminal" style="color: #ff4f9a;"></i> Origen: R1</strong></p>
+        <p><strong>Destino: R3</strong></p>
+        <p><strong>Comando:</strong> <code style="background: #ffe0ec; padding: 5px 10px; border-radius: 8px;">ping 209.165.200.1</code></p>
+      </div>
+      
+      <h5>Resultado Obtenido</h5>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_3.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <div style="background: white; border-radius: 16px; padding: 20px; margin: 20px 0;">
+        <p><strong><i class="fas fa-terminal" style="color: #ff4f9a;"></i> Origen: R3</strong></p>
+        <p><strong>Destino: R1</strong></p>
+        <p><strong>Comando:</strong> <code style="background: #ffe0ec; padding: 5px 10px; border-radius: 8px;">ping 209.165.100.1</code></p>
+      </div>
+      
+      <h5>Resultado Obtenido</h5>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_4.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      
+    </div>
+
+    <!-- ========== PÁGINA 13-16 - VERIFICACIÓN FASE 1 ========= -->
+    <div class="seccion">
+      <h5>Verificación del Túnel VPN - Fase 1 (ISAKMP)</h5>
+      <h4>Para R1</h4>
+      <h3>1. Genereamos el tráfico</h3>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_5.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <h3>Verificamos</h3>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_6.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <br>
+      <h4>Para R3</h4>
+      <h3>1. Genereamos el tráfico</h3>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_7.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <h3>Verificamos</h3>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_8.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      
+    </div>
+
+    <!-- ========== PÁGINA 17-18 - VERIFICACIÓN TÚNEL ========= -->
+    <div class="seccion">
+      <h4>Para R1</h4>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_5.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <h3>Verificamos</h3>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_9.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <br>
+
+      <h4>Para R3</h4>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_5.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <h3>Verificamos</h3>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_10.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <br>
+      <p>Interpretación: Los contadores encaps y decaps mayores a cero indican que el tráfico se está encriptando y desencriptando correctamente.</p>
+    </div>
+
+    <!-- ========== PÁGINA 19-20 - PRUEBAS ENTRE PCS ========= -->
+    <div class="seccion">
+      <h5>Pruebas de Conectividad entre PCs</h5>
+      
+      <div style="background: white; border-radius: 16px; padding: 20px; margin: 20px 0;">
+        <p><strong><i class="fas fa-desktop" style="color: #ff4f9a;"></i> Origen: PC-A</strong></p>
+        <p><strong>Destino: PC-C</strong></p>
+        <p><strong>Comando:</strong> <code style="background: #ffe0ec; padding: 5px 10px; border-radius: 8px;">ping 192.168.3.10</code></p>
+      </div>
+      
+      <h5>Resultado</h5>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_11.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      
+      <div style="background: white; border-radius: 16px; padding: 20px; margin: 20px 0;">
+        <p><strong><i class="fas fa-desktop" style="color: #ff4f9a;"></i> Origen: PC-C</strong></p>
+        <p><strong>Destino: PC-A</strong></p>
+        <p><strong>Comando:</strong> <code style="background: #ffe0ec; padding: 5px 10px; border-radius: 8px;">ping 192.168.1.10</code></p>
+      </div>
+      
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act06_12.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      
+    </div>
+
+    <!-- ========== PÁGINA 21 - CONCLUSIÓN Y REFERENCIAS ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-check-double"></i> Conclusión</h4>
+      <p>La implementación del túnel IPSec VPN entre dos routers Cisco 1941 constituyó un reto técnico significativo, al ser mi primera experiencia con tecnologías de encriptación y redes privadas virtuales. A través de un proceso de investigación autodidacta y resolución de problemas, se logró establecer exitosamente una comunicación segura entre dos redes LAN separadas geográficamente.</p><br>
+      <p>La configuración de rutas estáticas resultó fundamental para garantizar la conectividad extremo a extremo antes de activar el túnel, mientras que el protocolo IPSec con encriptación demostró ser una solución robusta para proteger la transmisión de datos a través de una red pública simulada por el ISP. Las verificaciones realizadas confirmaron el correcto establecimiento del túnel, la encriptación efectiva del tráfico entre las LANs y la comunicación transparente entre las PCs de ambas redes.</p><br>
+      <p>Esta experiencia permitió no solo adquirir competencias técnicas en tecnologías VPN, sino también desarrollar habilidades de diagnóstico y resolución de problemas aplicables a entornos profesionales reales.</p>
+
+      <h4 style="margin-top: 30px;"><i class="fas fa-book"></i> Referencias</h4>
+      <div class="ref-item">
+        <i class="fas fa-file-alt"></i>
+        <span>PacketTracerNetwork. (2024, 16 diciembre). IPSEC VPN tunneling in Cisco Packet Tracer - Packet Tracer Network. Packet Tracer Network. https://www.packettracernetwork.com/tutorials/ipsec-vpn.html#google_vignette</span>
+      </div>
+    </div>
+
+    <!-- ========== PÁGINA 22 - ANEXOS Y SOLUCIÓN DE PROBLEMAS ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-paperclip"></i> Anexos</h4>
+      
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Comando</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>show ip interface brief</code></td><td>Ver estado de interfaces</td></tr>
+            <tr><td><code>show ip route</code></td><td>Ver tabla de enrutamiento</td></tr>
+            <tr><td><code>show running-config | section crypto</code></td><td>Ver configuración crypto</td></tr>
+            <tr><td><code>show crypto isakmp sa</code></td><td>Muestra el estado de las asociaciones de seguridad de la Fase 1 (ISAKMP), permitiendo verificar si el túnel se ha establecido correctamente.</td></tr>
+            <tr><td><code>show crypto ipsec sa</code></td><td>Muestra las estadísticas de la Fase 2 (IPsec), incluyendo la cantidad de paquetes encriptados y desencriptados.</td></tr>
+            <tr><td><code>show crypto map</code></td><td>Muestra la configuración de las crypto maps aplicadas a las interfaces del router.</td></tr>
+            <tr><td><code>show crypto isakmp policy</code></td><td>Muestra las políticas ISAKMP configuradas para la negociación del túnel.</td></tr>
+            <tr><td><code>show crypto ipsec transform-set</code></td><td>Muestra los transform-sets configurados, especificando los algoritmos de encriptación y autenticación.</td></tr>
+            <tr><td><code>clear crypto isakmp</code></td><td>Elimina las asociaciones de seguridad ISAKMP activas, forzando el reinicio de la negociación.</td></tr>
+            <tr><td><code>show crypto isakmp peers</code></td><td>Muestra información sobre los peers ISAKMP configurados.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <h5 style="margin-top: 30px;">Solución de Problemas Comunes</h5>
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Problema</th>
+              <th>Posible Causa</th>
+              <th>Solución</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ping R1 → R3 falla</td><td>Faltan rutas en ISP</td><td>Agregar rutas estáticas</td></tr>
+            <tr><td><code>show crypto isakmp sa</code> vacío</td><td>No se generó tráfico</td><td>Hacer ping extendido desde R1</td></tr>
+            <tr><td>Estado MM_NO_STATE</td><td>IP de peer incorrecta</td><td>Verificar set peer en ambos routers</td></tr>
+            <tr><td>Múltiples peers en crypto map</td><td>Configuración redundante</td><td>Limpiar con <code>no crypto map</code> y rehacer</td></tr>
+            <tr><td>Ping desde PC falla</td><td>Gateway mal configurado</td><td>Verificar IP y gateway en PCs</td></tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+      <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-flag"></i>Reflexión Técnica</h4>
+      <p>La verdad es que al principio me sentía un poco abrumada con tanta configuración: listas de acceso, fases 1 y 2, claves compartidas, transform-sets, parecía otro idioma. Pero cuando empecé a hacerlo paso a paso y fui entendiendo la lógica detrás de cada comando, todo comenzó a tener sentido. Lo que más me sorprendió fue ver cómo algo tan complejo como un túnel VPN se puede resumir en comandos claros si entiendes la teoría.</p><br>
+      <p>Cuando hice el primer ping entre las PCs y luego revisé los contadores con show crypto ipsec sa y vi que los paquetes se estaban encriptando, sentí una satisfacción enorme. También me ayudó a valorar la importancia de las pruebas: si no hubiera verificado la conectividad básica antes de activar el túnel, nunca hubiera sabido si el problema era de ruteo o de VPN. Al final, esta actividad me enseñó que la seguridad en redes no es magia, es pura configuración bien hecha.</p>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p>
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Actividad 06 · IPSEC VPN
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
+    btn.addEventListener('click', function() {
+      console.log('✅ Abriendo PDF de la actividad 06...');
+    });
+  });
+</script>
+
+</body>
+</html>
