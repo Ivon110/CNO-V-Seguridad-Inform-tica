@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Portafolio | Seguridad Informática</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fffaf6, #ffe8d6);
+  color: #2e1a12;
+}
+
+/* FONDO DECORATIVO */
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: 0;
+}
+
+.circle.one {
+  width: 320px;
+  height: 320px;
+  background: #ff9a76;
+  top: -100px;
+  left: -100px;
+}
+
+.circle.two {
+  width: 280px;
+  height: 280px;
+  background: #ffd166;
+  bottom: -80px;
+  right: -80px;
+}
+
+/* CONTENEDOR */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+/* TARJETA PRINCIPAL */
+.card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 50px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff7a4d;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff7a4d;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b4a3d;
+}
+
+/* NAV */
+nav {
+  margin-top: 35px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: #fff3ea;
+  color: #2e1a12;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  background: linear-gradient(135deg, #ff7a4d, #ffb347);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(255,122,77,0.35);
+}
+
+/* SECCIÓN BIENVENIDA */
+.main {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.main-text h3 {
+  font-size: 2rem;
+  color: #ff7a4d;
+  margin-bottom: 15px;
+}
+
+.main-text p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 18px;
+  border-radius: 20px;
+  background: #fff3ea;
+  color: #ff7a4d;
+  font-weight: 600;
+}
+
+/* BLOQUE VISUAL */
+.visual {
+  height: 240px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #ff7a4d, #ffb347);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 20px 40px rgba(255,122,77,0.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 800px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="circle one"></div>
+<div class="circle two"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <div class="header">
+      <h1>Laura Ivón <span class="alias">| LivTech</span></h1>
+      <h2>CNO V – Seguridad Informática</h2>
+      <p class="meta">Ingeniería en Tecnologías · Universidad ______</p>
+      <p class="meta">Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#">Prácticas</a></li>
+        <li><a href="#">Evidencias</a></li>
+        <li><a href="#">Proyectos</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </nav>
+
+    <section class="main">
+      <div class="main-text">
+        <h3>Bienvenida</h3>
+        <p>
+          Este portafolio digital es el espacio académico destinado a la
+          documentación y presentación de las evidencias desarrolladas en la
+          asignatura de <strong>Seguridad Informática</strong>, integrando
+          organización técnica, claridad estructural y una identidad visual
+          profesional.
+        </p>
+        <span class="badge">PF01 · Portafolio Digital</span>
+      </div>
+
+      <div class="visual">
+        Seguridad · Tecnología · Evidencias
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</body>
+</html>
