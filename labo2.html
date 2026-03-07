@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACTIVIDAD 3 · iptables · Flujo de paquetes y comandos</title>
+<title>Actividad 07 · SQL Injection · Bypass de Autenticación</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -236,6 +236,15 @@ nav a:hover, nav a.activo {
   gap: 10px;
 }
 
+.seccion h6 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 25px 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .tabla-container {
   overflow-x: auto;
   margin: 25px 0;
@@ -247,7 +256,7 @@ nav a:hover, nav a.activo {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.98rem;
+  font-size: 0.9rem;
 }
 
 th {
@@ -262,6 +271,7 @@ td {
   padding: 14px 12px;
   border-bottom: 1px solid #ffe0ec;
   background: rgba(255,255,255,0.7);
+  vertical-align: top;
 }
 
 tr:hover td {
@@ -275,6 +285,7 @@ tr:hover td {
   margin: 20px 0;
   border-left: 6px solid #ff4f9a;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  overflow-x: auto;
 }
 
 .code-container pre {
@@ -282,11 +293,13 @@ tr:hover td {
   padding: 0;
   background: transparent;
   border: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .code-container code {
   font-family: 'Courier New', monospace;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: #ffe0ec;
   background: transparent;
   padding: 0;
@@ -294,81 +307,74 @@ tr:hover td {
   line-height: 1.6;
 }
 
-.nota-iptables {
-  background: #ffe9f0;
-  border-radius: 14px;
-  padding: 15px 20px;
-  margin-top: 15px;
-  border-left: 4px solid #ff8fc4;
-  font-size: 0.95rem;
-  color: #6b3a52;
+.grid-multimedia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
 }
 
-.nota-iptables i {
-  color: #ff4f9a;
-  margin-right: 10px;
-}
-
-.flujo-paquetes {
+.tarjeta-media {
   background: white;
   border-radius: 24px;
-  padding: 30px;
-  margin: 25px 0;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(255,79,154,0.1);
-  font-size: 1.3rem;
-}
-
-.flujo-paquetes span {
-  display: inline-block;
-  background: #ff4f9a;
-  color: white;
-  padding: 12px 30px;
-  border-radius: 50px;
-  margin: 0 10px;
-  font-weight: 600;
-  box-shadow: 0 5px 0 #b2356b;
-}
-
-.flujo-paquetes i {
-  color: #ff4f9a;
-  font-size: 2rem;
-  margin: 0 15px;
-}
-
-.variables-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin: 25px 0;
-}
-
-.variable-card {
-  background: white;
-  border-radius: 20px;
   padding: 25px;
-  border-left: 6px solid #ff4f9a;
-  box-shadow: 0 5px 15px rgba(255,79,154,0.1);
+  box-shadow: 0 10px 25px rgba(255,79,154,0.15);
+  border: 1px solid rgba(255,79,154,0.2);
 }
 
-.variable-card i {
-  font-size: 2rem;
+.tarjeta-media i {
+  font-size: 2.5rem;
   color: #ff4f9a;
   margin-bottom: 15px;
 }
 
-.variable-card p {
-  font-size: 1.1rem;
-  margin: 10px 0;
+.tarjeta-media h6 {
+  font-size: 1.2rem;
+  color: #3a1c2b;
+  margin-bottom: 12px;
 }
 
-.variable-card code {
-  background: #f9e0e9;
-  padding: 8px 15px;
-  border-radius: 50px;
-  display: inline-block;
-  font-size: 0.9rem;
-  color: #b2356b;
+.mapa-ducto {
+  background: #ffeef2;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  font-style: italic;
+  color: #6b3a52;
+}
+
+.caja-reflexion {
+  background: linear-gradient(145deg, #fff5f9, #ffe9f0);
+  padding: 35px;
+  border-radius: 28px;
+  border: 2px dashed #ff4f9a;
+  margin: 30px 0;
+  font-style: italic;
+}
+
+.caja-reflexion i {
+  color: #ff4f9a;
+  font-size: 2.5rem;
+  float: left;
+  margin-right: 20px;
+}
+
+.ref-item {
+  background: rgba(255,255,255,0.8);
+  padding: 16px 25px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  border-left: 5px solid #ff8fc4;
+}
+
+.ref-item i {
+  color: #ff4f9a;
+  min-width: 28px;
 }
 
 .lista-personalizada {
@@ -390,6 +396,20 @@ tr:hover td {
   text-align: center;
 }
 
+.nota-iptables {
+  background: #ffe9f0;
+  border-radius: 14px;
+  padding: 15px 20px;
+  margin-top: 15px;
+  border-left: 4px solid #ff8fc4;
+  font-size: 0.95rem;
+  color: #6b3a52;
+}
+
+.nota-iptables i {
+  color: #ff4f9a;
+  margin-right: 10px;
+}
 
 .footer {
   width: 100%;
@@ -421,13 +441,97 @@ tr:hover td {
   font-style: italic;
 }
 
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.indice-contenido:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(255,79,154,0.25);
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder i {
+  font-size: 4rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.img-placeholder p {
+  color: #6b3a52;
+  font-weight: 500;
+}
+
 @media (max-width: 900px) {
   .card { padding: 30px 20px; }
   .header h1 { font-size: 2rem; flex-direction: column; }
   .titulo-actividad h3 { font-size: 1.8rem; }
   .seccion { padding: 25px; }
   .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
 }
+
 
     /* NAV (con submenú mejorado) */
     nav {
@@ -525,7 +629,7 @@ tr:hover td {
     </div>
 
     <!-- ========== NAV ========= -->
-     <nav>
+    <nav>
         <ul>
           <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
           <li>
@@ -556,214 +660,112 @@ tr:hover td {
         </ul>
       </nav>
  
-    <!-- ========== TÍTULO ACTIVIDAD 03 ========= -->
+
+    <!-- ========== TÍTULO ACTIVIDAD 07 ========= -->
     <div class="titulo-actividad">
-      <h3><i class="fas fa-network-wired"></i> ACTIVIDAD 03 · iptables: flujo de paquetes y comandos</h3>
+      <h3><i class="fas fa-database"></i> Laboratorio: SQL Injection vulnerability in WHERE clause allowing retrieval of hidden data</h3>
     </div>
 
-    <!-- ========== BOTÓN EXPORTAR PDF ========= -->
-    <div class="pdf-export">
-      <button class="btn-pdf" onclick="window.open('177291-act03.pdf', '_blank')">
-        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
-      </button>
-    </div>
-
+    <!-- ========== INTRODUCCIÓN ========= -->
     <div class="seccion" style="margin-top: 20px;">
-      <h4><i class="fas fa-flag"></i>Introducción Contextual</h4>
-      <p>Los firewall son como los guardias de seguridad de una red: deciden quién entra, quién sale y qué pueden hacer. En Linux, una de las herramientas más poderosas para esto es iptables, que nos permite filtrar paquetes, traducir direcciones, alterar cabeceras y hasta controlar el seguimiento de conexiones.</p><br>
-      <p>Para usarlo bien, hay que entender su estructura: las tablas (filter, nat, mangle, raw, security), las cadenas (INPUT, OUTPUT, FORWARD) y las acciones (ACCEPT, DROP, REJECT). Además, iptables tiene muchas opciones para cosas prácticas como limitar intentos por minuto, filtrar por IP de origen o ver estadísticas. </p><br>
-      <p>Esta actividad me ayudó a entender que no basta con saber comandos, sino que hay que comprender cómo viaja un paquete por el sistema y en qué momento se aplican las reglas.</p>
+      <h4><i class="fas fa-flag"></i>Detalles</h4>
+      <p><b>* Nivel:</b> Apprentice  </p>
+      <p><b>* Tipo de SQLi:</b> Error-based / Classic SQL Injection  </p>
     </div>
 
-    <!-- ========== 1. FLUJO DEL PAQUETE ========= -->
-    <div class="seccion" style="margin-top: 20px;">
-      <h4><i class="fas fa-arrow-right-arrow-left"></i> 1. Flujo del paquete</h4>
-      <p><strong>Completa los espacios conforme se explica el flujo del paquete:</strong></p>
-      
-      <div class="flujo-paquetes">
-        <span>TABLA</span> <i class="fas fa-arrow-right"></i> <span>CADENA</span> <i class="fas fa-arrow-right"></i> <span>ACCIÓN</span>
-      </div>
-      
-      <p style="font-size: 1.1rem;">Cuando un paquete llega al sistema, primero pasa por una <strong style="color: #ff4f9a;">tabla</strong> después por una <strong style="color: #ff4f9a;">cadena</strong> y finalmente se ejecuta una <strong style="color: #ff4f9a;">acción</strong>.</p>
-      <div class="page-marker"><i class="fas fa-file"></i> Punto 1</div>
-    </div>
-
-    <!-- ========== 2. TABLAS Y PROPÓSITOS ========= -->
+    <!-- ========== OBJETIVOS ========= -->
     <div class="seccion">
-      <h4><i class="fas fa-table"></i> 2. Tablas de iptables</h4>
-      <p><strong>Relaciona cada tabla con su propósito principal:</strong></p>
-      
-      <div class="tabla-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Tabla</th>
-              <th>Propósito principal</th>
-              <th>Ejemplo de uso (01 palabra o frase corta)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>FILTER</strong></td>
-              <td>Decir que paquetes pasan o no</td>
-              <td><i class="fas fa-shield" style="color: #ff4f9a;"></i> Control accesos a puertos</td>
-            </tr>
-            <tr>
-              <td><strong>NAT</strong></td>
-              <td>Traducción de direcciones</td>
-              <td><i class="fas fa-arrows-spin" style="color: #ff4f9a;"></i> Redirigir puertos</td>
-            </tr>
-            <tr>
-              <td><strong>MANGLE</strong></td>
-              <td>Hacer la alteración de paquetes</td>
-              <td><i class="fas fa-pen" style="color: #ff4f9a;"></i> Pre-routing / Routing</td>
-            </tr>
-            <tr>
-              <td><strong>RAW</strong></td>
-              <td>Control seguimiento de conexiones</td>
-              <td><i class="fas fa-eye-slash" style="color: #ff4f9a;"></i> Excluir tráfico de sistemas</td>
-            </tr>
-            <tr>
-              <td><strong>SECURITY</strong></td>
-              <td>Analizar el Servicio</td>
-              <td><i class="fas fa-lock" style="color: #ff4f9a;"></i> Reforzar políticas de seguridad</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="page-marker"><i class="fas fa-file"></i> Punto 2</div>
+      <h4><i class="fas fa-bullseye"></i> Objetivo</h4>
+      <p> Explotar una vulnerabilidad SQL Injection en el formulario de login para autenticarse como el usuario administrator sin conocer su contraseña real, modificando la lógica de la consulta SQL de autenticación y logrando acceso no autorizado a la aplicación. </p>
     </div>
 
-    <!-- ========== 3. ANATOMÍA DE UN COMANDO ========= -->
+    <!-- ========== DETALLE DE LA VULNERABILIDAD ========= -->
     <div class="seccion">
-      <h4><i class="fas fa-code"></i> 3. Anatomía de un comando iptables</h4>
-      
-      <div class="code-container">
-        <pre><code>iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT</code></pre>
-      </div>
-      
-      <p><strong>Este comando permite:</strong></p>
-      <div class="nota-iptables" style="background: #ffe9f0; font-size: 1.1rem;">
-        <i class="fas fa-check-circle"></i> Crear una regla para la tabla, creando una cadena de tipo INPUT específica donde pase por TCP para los puertos 80 y 443, y finalmente aceptarlo.
-      </div>
-      <div class="page-marker"><i class="fas fa-file"></i> Puntos 3-4</div>
+      <h4><i class="fas fa-bug"></i> Vulnerabilidad</h4>
+      <p> El formulario de login construye una consulta SQL dinámica concatenando directamente los valores de los campos username y password sin sanitización ni uso de sentencias preparadas. La consulta típica es del tipo: SELECT * FROM users WHERE username = 'input_username' AND password = 'input_password' Al inyectar un cierre de comilla simple (') en el campo username seguido de un comentario SQL (--), se altera la lógica: el -- comenta el resto de la consulta (incluyendo la verificación de contraseña), convirtiendo la condición en verdadera siempre que exista el usuario administrator.  
+
+Esto permite bypass de autenticación sin necesidad de conocer la contraseña, aprovechando que la aplicación no escapa caracteres especiales y refleja errores o resultados directamente. Se trata de una inyección in-band clásica con manipulación lógica (no requiere UNION ni extracción de datos adicionales). </p>
     </div>
 
-    <!-- ========== 5. VARIABLES Y OPCIONES COMUNES ========= -->
+    <!-- ========== PROCEDIMIENTO PASO A PASO ========= -->
     <div class="seccion">
-      <h4><i class="fas fa-sliders"></i> 5. Variables y opciones comunes</h4>
+      <h4><i class="fas fa-list-ol"></i> Procedimiento</h4>
       
-      <div class="variables-grid">
-        <div class="variable-card">
-          <i class="fas fa-clock"></i>
-          <p><strong>Limitar intentos por minuto</strong></p>
-          <code>--limit 5/minute</code>
-        </div>
-        
-        <div class="variable-card">
-          <i class="fas fa-ip"></i>
-          <p><strong>Filtrar por IP de origen</strong></p>
-          <code>-s 192.168.1.0/24</code>
-        </div>
-        
-        <div class="variable-card">
-          <i class="fas fa-globe"></i>
-          <p><strong>Ver solo números, sin DNS</strong></p>
-          <code>-L -n</code>
-        </div>
-        
-        <div class="variable-card">
-          <i class="fas fa-chart-simple"></i>
-          <p><strong>Ver reglas con contadores</strong></p>
-          <code>-L -v</code>
-        </div>
+      <h5>Paso 1: Acceder a la sección "My Account"</h5>
+      <p>Dirígete a la página de login de la aplicación vulnerable.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="lab2_1.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Paso 2: Ingresar en el campo Username: administrator'--</h5>
+      <p>El cierre de comilla simple termina la cadena del username, y -- comenta el resto de la consulta, incluyendo la cláusula AND password = '...'). </p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="lab2_2.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Paso 3: Ingresar cualquier valor en Password</h5>
+      <p>En el campo contraseña coloca un valor arbitrario, por ejemplo <code>123</code> o déjalo vacío.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="lab2_3.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Paso 4: Enviar el formulario (Log in). </h5>
+      <p>La consulta efectiva se convierte en algo como: SELECT * FROM users WHERE username = 'administrator'--' AND password = 'cualquiercosa' .</p>
+      <p>El -- comenta todo lo posterior, por lo que la condición se reduce a username = 'administrator', autenticando como administrador si el usuario existe.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="lab2_4.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+    </div>
+
+    <!-- ========== EXPLICACIÓN DEL PAYLOAD ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-code"></i> Explicación del Payload</h4>
+      <p>El payload principal utilizado es:</p><br>
+      <p>Username: administrator'-- Password: cualquier valor arbitrario (ej. 123, vacío o cualquier cadena)</p><br>
+      <p>El carácter ' cierra la cadena literal del campo username en la consulta SQL original.</p><br>
+      <p>El operador -- inicia un comentario de línea en SQL, descartando todo el código restante de la consulta, incluyendo la cláusula AND password = '...'.</p><br>
+      <p>Como resultado, la consulta efectiva se reduce a: SELECT * FROM users WHERE username = 'administrator' Esta condición es verdadera si el usuario administrator existe en la tabla, permitiendo autenticación exitosa sin verificar la contraseña.</p><br>
+      <p>El payload explota la concatenación insegura de entradas en la consulta SQL y la falta de escape de caracteres especiales, logrando un bypass lógico de la autenticación sin necesidad de extraer datos ni usar técnicas más avanzadas como UNION o blind injection.</p><br>
+    </div>
+
+    <!-- ========== MITIGACIÓN RECOMENDADA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-shield-virus"></i> Medidas de Mitigación</h4>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check"></i> <strong>Consultas parametrizadas (prepared statements): Implementar consultas parametrizadas o sentencias preparadas en el código de autenticación (ej. PreparedStatement en Java, cursor.execute() con placeholders en Python, PDO en PHP).</li>
+        <li><i class="fas fa-check"></i> <strong>Validación de entradas:</strong> Restringir caracteres permitidos en username (por ejemplo, solo alfanuméricos) mediante expresiones regulares y rechazar comillas simples o dobles.</li>
+        <li><i class="fas fa-check"></i> <strong>Almacenamiento seguro de contraseñas:</strong> Usar funciones de hashing fuertes (bcrypt, Argon2, PBKDF2) y nunca comparar contraseñas en texto plano.</li>
+        <li><i class="fas fa-check"></i> <strong>Principio de menor privilegio:</strong> La cuenta de base de datos utilizada por la aplicación debe tener solo los permisos estrictamente necesarios.</li>
+        <li><i class="fas fa-check"></i> <strong>Web Application Firewall (WAF):</strong> Desplegar un WAF con reglas para detectar patrones de SQLi (comillas simples, <code>--</code>, <code>OR 1=1</code>, etc.).</li>
+      </ul>
+    </div>
+
+    <!-- ========== EVIDENCIA DE FINALIZACIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-certificate"></i> Evidencia</h4>
+      <p>A continuación se muestra la captura de pantalla que acredita la realización exitosa del laboratorio.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="lab2Evidencia.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
       </div>
     </div>
 
-    <!-- ========== 6. REGLA COMPLEJA ========= -->
-    <div class="seccion">
-      <h4><i class="fas fa-diagram-project"></i> 6. Regla con múltiples condiciones</h4>
-      
-      <div class="code-container">
-        <pre><code style="font-size: 0.95rem;">iptables -A INPUT -i eth0 -p tcp -m multiport --dports 22,80,443 -m state --state NEW,ESTABLISHED -j ACCEPT</code></pre>
-      </div>
-      
-      <p><strong>¿Qué hace esta regla?</strong></p>
-      <div class="nota-iptables" style="background: #ffe9f0;">
-        <i class="fas fa-info-circle"></i> Primero se define el paquete que pasará por la interfaz eth0, en el cual se permite el tráfico de TCP a los puertos 22, 80 y 443.
-        <p style="margin-top: 10px; padding-left: 25px;">(22 es el servicio SSH, 80 es HTTP y 443 es HTTPS) que sea parte de una conexión nueva o establecida, para finalmente aceptar los paquetes en la interfaz.</p>
-      </div>
-      <div class="page-marker"><i class="fas fa-file"></i> Punto 6</div>
-    </div>
-
-    <!-- ========== 7-11. REGLAS PRÁCTICAS ========= -->
-    <div class="seccion">
-      <h4><i class="fas fa-terminal"></i> 7-11. Reglas prácticas iptables</h4>
-      
-      <div style="display: flex; flex-direction: column; gap: 25px;">
-        <div style="background: white; border-radius: 20px; padding: 20px;">
-          <p style="font-weight: bold; color: #ff4f9a;"><i class="fas fa-globe"></i> 7. Permitir tráfico HTTP entrante</p>
-          <div class="code-container" style="margin: 10px 0;">
-            <pre><code>iptables -A INPUT -p tcp --dport 80 -j ACCEPT</code></pre>
-          </div>
-        </div>
-        
-        <div style="background: white; border-radius: 20px; padding: 20px;">
-          <p style="font-weight: bold; color: #ff4f9a;"><i class="fas fa-arrow-right"></i> 8. Permitir todo el tráfico saliente</p>
-          <div class="code-container" style="margin: 10px 0;">
-            <pre><code>iptables -A OUTPUT -j ACCEPT</code></pre>
-          </div>
-        </div>
-        
-        <div style="background: white; border-radius: 20px; padding: 20px;">
-          <p style="font-weight: bold; color: #ff4f9a;"><i class="fas fa-lock"></i> 9. Permitir SSH solo desde IP 192.168.1.50</p>
-          <div class="code-container" style="margin: 10px 0;">
-            <pre><code>iptables -A INPUT -p tcp -s 192.168.1.50 --dport 22 -j ACCEPT</code></pre>
-          </div>
-        </div>
-        
-        <div style="background: white; border-radius: 10px; padding: 20px;">
-          <p style="font-weight: bold; color: #ff4f9a;"><i class="fas fa-handshake"></i> 10. Permitir TCP a puertos 80 y 443 solo si es conexión establecida o relacionada</p>
-          <div class="code-container" style="margin: 9px 0;">
-            <pre><code style="font-size: 0.95rem;">iptables -A INPUT -p tcp -m multiport --dports 80,443 --m state --state ESTABLISHED, RELATED -j ACCEPT</code></pre>
-          </div>
-        </div>
-        
-        <div style="background: white; border-radius: 20px; padding: 20px;">
-          <p style="font-weight: bold; color: #ff4f9a;"><i class="fas fa-pen-to-square"></i> 11. Permitir tráfico TCP por eth0 a 22,80,443, registrar intentos y permitir solo NEW</p>
-          <div class="code-container" style="margin: 10px 0;">
-            <pre><code style="font-size: 0.95rem;">iptables -A INPUT -i eth0 -p tcp -m multiport 22,80,443 --m state --state NEW, ESTABLISHED -j ACCEPT</code></pre>
-          </div>
-      </div>
-    </div>
   </div> <!-- fin card -->
-  <div class="seccion" style="margin-top: 20px;">
-      <h4><i class="fas fa-flag"></i>Reflexión Técnica</h4>
-      <p>La verdad es que al principio iptables se me hacía bien complicado, con tantas tablas, cadenas y opciones. Pero cuando empecé a hacer los ejercicios, me di cuenta de que todo tiene lógica. Por ejemplo, entender que la tabla filter es la que decide qué paquetes pasan o no, y que la cadena INPUT es para lo que entra al sistema, me ayudó a armar reglas sin tanto miedo. </p><br>
-      <p>Lo que más me gustó fue practicar con reglas para permitir SSH solo desde una IP específica o limitar intentos por minuto, porque son cosas que en la vida real se usan un montón. También me pareció curioso que una regla mal escrita puede dejar todo el sistema incomunicado, así que hay que tener cuidado. En resumen, esta actividad me enseñó que iptables es como un superpoder, pero hay que usarlo con responsabilidad.</p>
-    </div>
 </div> <!-- fin wrapper -->
-
 
 <footer class="footer">
   <div class="footer-content">
-    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
     <p>
-      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> 
-      <!-- <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>-->
-    </p>
-    <p>
-      Sitio seguro con certificado SSL
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Actividad 07 · SQL Injection
     </p>
   </div>
 </footer>
 
-
-
 <script>
   document.querySelectorAll('.btn-pdf').forEach(btn => {
     btn.addEventListener('click', function() {
-      console.log('✅ Generando PDF con la actividad 03 de iptables...');
+      console.log('✅ Abriendo PDF de la actividad 07...');
     });
   });
 </script>

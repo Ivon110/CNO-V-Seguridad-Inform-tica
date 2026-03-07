@@ -141,7 +141,7 @@ nav ul {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 2px;
   list-style: none;
 }
 
@@ -1399,6 +1399,84 @@ select.form-control {
   text-decoration: underline;
 }
 
+
+    /* NAV (con submenú mejorado) */
+    nav {
+      margin-top: 40px;
+    }
+    nav ul {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      list-style: none;
+    }
+    nav a {
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+    nav ul li {
+      position: relative;
+    }
+    .submenu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 10px 0;
+      min-width: 200px;
+      box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 100;
+      list-style: none;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav ul li:hover .submenu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .submenu a {
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .submenu a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+
 </style>
 </head>
 
@@ -1538,15 +1616,37 @@ select.form-control {
       <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
     </div>
 
-    <nav>
-      <ul>
-        <li><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
-        <li><a href="actividades.html"><i class="fas fa-laptop-code"></i> Actividades</a></li>
-        <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
-        <li><a href="#"><i class="fas fa-project-diagram"></i> Proyectos</a></li>
-        <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
-      </ul>
-    </nav>
+     <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+ 
 
     <section class="main">
       <div>

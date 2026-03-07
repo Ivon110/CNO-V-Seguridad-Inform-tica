@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Road to Hall of Fame | SQL Injection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+      overflow-x: hidden;
+      color: #3a1c2b;
+    }
+
+    /* FONDOS DIFUMINADOS (mejorados) */
+    .blur {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      z-index: 0;
+      animation: float 8s ease-in-out infinite;
+    }
+    .blur.one { width: 400px; height: 400px; background: #ff6eb4; top: -150px; left: -150px; animation-delay: 0s; }
+    .blur.two { width: 350px; height: 350px; background: #ffb347; bottom: -120px; right: -120px; animation-delay: 2s; }
+    .blur.three { width: 280px; height: 280px; background: #7b68ee; top: 30%; right: 10%; animation-delay: 4s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.1); }
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 70px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(16px);
+      border-radius: 48px;
+      padding: 55px;
+      box-shadow: 0 40px 80px rgba(255,79,154,0.3), inset 0 2px 0 rgba(255,255,255,0.8);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 60px 120px rgba(255,79,154,0.5);
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      position: relative;
+    }
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #ff4f9a, #ffb347, #7b68ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .alias {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #ff4f9a;
+      -webkit-text-fill-color: #ff4f9a;
+    }
+    .header h2 {
+      margin-top: 12px;
+      font-size: 1.4rem;
+      color: #ff4f9a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .meta {
+      margin-top: 6px;
+      font-size: 0.95rem;
+      color: #6b3a52;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+
+    /* NAV (con submenú mejorado) */
+    nav {
+      margin-top: 40px;
+    }
+    nav ul {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2px;
+      list-style: none;
+    }
+    nav a {
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+    nav ul li {
+      position: relative;
+    }
+    .submenu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 10px 0;
+      min-width: 200px;
+      box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 100;
+      list-style: none;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav ul li:hover .submenu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .submenu a {
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .submenu a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+
+    /* TÍTULO DE LA SECCIÓN con brillo */
+    .roadmap-title {
+      text-align: center;
+      margin: 60px 0 40px;
+    }
+    .roadmap-title h3 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      background: linear-gradient(135deg, #ff4f9a, #ffb347, #7b68ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 10px 20px rgba(255,79,154,0.3));
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 10px rgba(255,79,154,0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(255,79,154,0.8)); }
+    }
+    .roadmap-title p {
+      font-size: 1.3rem;
+      color: #6b3a52;
+      max-width: 700px;
+      margin: 15px auto 0;
+      background: rgba(255,255,255,0.5);
+      padding: 10px 20px;
+      border-radius: 50px;
+      backdrop-filter: blur(5px);
+    }
+
+    /* BOTÓN DE DESCARGA PDF con neón */
+    .pdf-btn-container {
+      text-align: center;
+      margin: 30px 0 50px;
+    }
+    .pdf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 15px;
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 22px 50px;
+      border-radius: 60px;
+      text-decoration: none;
+      box-shadow: 0 0 20px #ff4f9a, 0 20px 40px rgba(255,79,154,0.4);
+      transition: all 0.4s ease;
+      border: 2px solid rgba(255,255,255,0.5);
+      letter-spacing: 1px;
+    }
+    .pdf-btn:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 0 30px #ff4f9a, 0 30px 60px rgba(255,79,154,0.6);
+      background: linear-gradient(135deg, #ff3b8a, #ff7ab9);
+    }
+    .pdf-btn i {
+      font-size: 2.2rem;
+    }
+
+    /* ===== NUEVO ROADMAP ESTILO INFOGRAFÍA ===== */
+    .roadmap-timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 20px 0;
+    }
+
+    /* Línea central curva (simulada con gradiente) */
+    .timeline-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 8px;
+      background: linear-gradient(180deg, #ff4f9a, #ffb347, #7b68ee, #ff4f9a);
+      transform: translateX(-50%);
+      border-radius: 8px;
+      box-shadow: 0 0 20px #ff4f9a, 0 0 40px #ffb347;
+      animation: lineGlow 3s infinite alternate;
+      z-index: 1;
+    }
+    @keyframes lineGlow {
+      from { opacity: 0.6; box-shadow: 0 0 20px #ff4f9a; }
+      to { opacity: 1; box-shadow: 0 0 40px #ffb347, 0 0 60px #7b68ee; }
+    }
+
+    /* Cada elemento del timeline */
+    .timeline-item {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 80px;
+      z-index: 2;
+    }
+
+    /* Alternar lados */
+    .timeline-item:nth-child(odd) {
+      flex-direction: row;
+    }
+    .timeline-item:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    /* Tarjeta de laboratorio (contenido) */
+    .timeline-card {
+      width: calc(50% - 50px);
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-radius: 36px;
+      padding: 25px 20px 20px;
+      text-align: center;
+      box-shadow: 0 25px 40px rgba(0,0,0,0.15), 0 0 0 2px rgba(255,255,255,0.8);
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+      border: 1px solid rgba(255,255,255,0.9);
+      transform-style: preserve-3d;
+      perspective: 800px;
+      position: relative;
+    }
+
+    .timeline-card:hover {
+      transform: translateY(-15px) scale(1.05);
+      box-shadow: 0 40px 70px rgba(255,79,154,0.4), 0 0 0 5px rgba(255,255,255,0.9);
+      background: white;
+      z-index: 20;
+    }
+
+    /* Número del laboratorio (medallón) */
+    .timeline-number {
+      width: 70px;
+      height: 70px;
+      font-size: 2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: -45px auto 15px;
+      box-shadow: 0 15px 25px rgba(0,0,0,0.2), 0 0 0 6px rgba(255,255,255,0.7);
+      transition: all 0.3s ease;
+      color: white;
+    }
+
+    .timeline-card:hover .timeline-number {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 20px 35px rgba(0,0,0,0.3), 0 0 0 10px rgba(255,255,255,0.9);
+    }
+
+    /* Colores por dificultad (usando atributo data) */
+    .timeline-card[data-difficulty="basico"] .timeline-number { background: linear-gradient(145deg, #4CAF50, #8BC34A); }
+    .timeline-card[data-difficulty="intermedio"] .timeline-number { background: linear-gradient(145deg, #FFC107, #FF9800); }
+    .timeline-card[data-difficulty="avanzado"] .timeline-number { background: linear-gradient(145deg, #f44336, #ff5722); }
+    .timeline-card[data-difficulty="experto"] .timeline-number { background: linear-gradient(145deg, #9C27B0, #673AB7); }
+
+    /* Título */
+    .timeline-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #3a1c2b;
+      margin: 10px 0 15px;
+      line-height: 1.4;
+      min-height: 50px;
+    }
+
+    /* Meta (dificultad y estado) */
+    .timeline-meta {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .timeline-difficulty {
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .timeline-difficulty.basico { background: #4CAF50; color: white; }
+    .timeline-difficulty.intermedio { background: #FF9800; color: white; }
+    .timeline-difficulty.avanzado { background: #f44336; color: white; }
+    .timeline-difficulty.experto { background: #9C27B0; color: white; }
+
+    .timeline-status {
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.7);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .timeline-card[data-difficulty="basico"] .timeline-status i { color: #4CAF50; }
+    .timeline-card[data-difficulty="intermedio"] .timeline-status i { color: #FF9800; }
+    .timeline-card[data-difficulty="avanzado"] .timeline-status i { color: #f44336; }
+    .timeline-card[data-difficulty="experto"] .timeline-status i { color: #9C27B0; }
+
+    /* Conector desde la tarjeta a la línea central */
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #ff4f9a, #ffb347);
+      transform: translateY(-50%);
+      z-index: 1;
+      border-radius: 3px;
+      box-shadow: 0 0 10px #ff4f9a;
+    }
+
+    .timeline-item:nth-child(odd)::before {
+      left: calc(50% - 50px);
+    }
+    .timeline-item:nth-child(even)::before {
+      right: calc(50% - 50px);
+    }
+
+    /* Círculo en la línea central con número */
+    .timeline-item::after {
+      content: attr(data-number);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: #ff4f9a;
+      border: 4px solid;
+      border-image: linear-gradient(45deg, #ff4f9a, #ffb347) 1;
+      box-shadow: 0 0 20px #ff4f9a, 0 0 40px #ffb347;
+      z-index: 3;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(2px);
+    }
+
+    /* Efecto hover en el círculo */
+    .timeline-item:hover::after {
+      transform: translate(-50%, -50%) scale(1.2);
+      box-shadow: 0 0 30px #ff4f9a, 0 0 60px #ffb347;
+      transition: all 0.3s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .timeline-line {
+        left: 30px;
+      }
+      .timeline-item {
+        flex-direction: column !important;
+        align-items: flex-start;
+        margin-left: 60px;
+        margin-bottom: 60px;
+      }
+      .timeline-card {
+        width: calc(100% - 40px);
+      }
+      .timeline-item::before {
+        display: none;
+      }
+      .timeline-item::after {
+        left: -30px;
+        top: 30px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .timeline-card {
+        width: 100%;
+      }
+    }
+
+    /* Footer */
+    .footer {
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      background: rgba(0,0,0,0.35);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 40px;
+      color: #f3f3f3;
+      font-size: 14px;
+      backdrop-filter: blur(5px);
+    }
+    .footer a { color: #f3f3f3; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    /* Animación de aparición para los items */
+    .timeline-item {
+      animation: slideIn 0.6s ease-out backwards;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .timeline-item:nth-child(1) { animation-delay: 0.05s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.1s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.15s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.2s; }
+    .timeline-item:nth-child(5) { animation-delay: 0.25s; }
+    .timeline-item:nth-child(6) { animation-delay: 0.3s; }
+    .timeline-item:nth-child(7) { animation-delay: 0.35s; }
+    .timeline-item:nth-child(8) { animation-delay: 0.4s; }
+    .timeline-item:nth-child(9) { animation-delay: 0.45s; }
+    .timeline-item:nth-child(10) { animation-delay: 0.5s; }
+    .timeline-item:nth-child(11) { animation-delay: 0.55s; }
+    .timeline-item:nth-child(12) { animation-delay: 0.6s; }
+    .timeline-item:nth-child(13) { animation-delay: 0.65s; }
+    .timeline-item:nth-child(14) { animation-delay: 0.7s; }
+    .timeline-item:nth-child(15) { animation-delay: 0.75s; }
+    .timeline-item:nth-child(16) { animation-delay: 0.8s; }
+    .timeline-item:nth-child(17) { animation-delay: 0.85s; }
+    .timeline-item:nth-child(18) { animation-delay: 0.9s; }
+
+    
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+  </style>
+</head>
+<body>
+  <div class="blur one"></div>
+  <div class="blur two"></div>
+  <div class="blur three"></div>
+
+  <div class="wrapper">
+    <div class="card">
+      <!-- HEADER con tu nombre -->
+      <div class="header">
+        <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+        <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+        <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+        <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+      </div>
+
+      <!-- MENÚ DE NAVEGACIÓN (con el nuevo apartado y submenú) -->
+      <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+           
+
+      <!-- CONTENIDO PRINCIPAL: ROADMAP SQL INJECTION -->
+      <div class="roadmap-title" id="sql-injection">
+        <h3>
+          <i class="fas fa-map-signals"></i> 
+          ROAD TO HALL OF FAME
+          <i class="fas fa-skull-crosswalk"></i>
+        </h3>
+        <p>18 laboratorios de SQL Injection </p>
+      </div>
+
+      <!-- BOTÓN DE DESCARGA PDF -->
+
+      <div class="pdf-export">
+          <button class="btn-pdf" onclick="window.open('act08-Equipo3.pdf', '_blank')">
+            <i class="fas fa-file-pdf"></i> Descargar Actividad 08 (PDF)
+          </button>
+        </div>
+
+      <!-- NUEVO ROADMAP ESTILO TIMELINE -->
+      <div class="roadmap-timeline">
+        <div class="timeline-line"></div>
+
+        <!-- Laboratorio 01 -->
+        <div class="timeline-item" data-number="01" data-difficulty="basico">
+          <div class="timeline-card" data-difficulty="basico">
+            <a href="labo1.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+
+              <div class="timeline-number">01</div>
+              <div class="timeline-title">SQL Injection vulnerability in WHERE clause allowing retrieval of hidden data </div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty basico">Apprentice</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 02 -->
+        <div class="timeline-item" data-number="02" data-difficulty="basico">
+          <div class="timeline-card" data-difficulty="basico">
+            <a href="labo2.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              
+            <div class="timeline-number">02</div>
+              <div class="timeline-title">SQL Injection vulnerability alloqing login by pass </div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty basico">Apprentice</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 03 -->
+        <div class="timeline-item" data-number="03" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo3.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">03</div>
+              <div class="timeline-title">SQL injection attack, querying the database type and version on Oracle</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 04 -->
+        <div class="timeline-item" data-number="04" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo4.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">04</div>
+              <div class="timeline-title">SQL injection attack, querying the database type and evrsion on MySQL and Microsoft</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 05 -->
+        <div class="timeline-item" data-number="05" data-difficulty="basico">
+          <div class="timeline-card" data-difficulty="basico">
+            <a href="labo5.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">05</div>
+              <div class="timeline-title">SQL injection attack listing the database contents on non-Oracle database</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty basico">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 06 -->
+        <div class="timeline-item" data-number="06" data-difficulty="avanzado">
+          <div class="timeline-card" data-difficulty="avanzado">
+            <a href="labo6.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">06</div>
+              <div class="timeline-title">SQL injection attack, listing the database contents on Oracle</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty avanzado">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 07 -->
+        <div class="timeline-item" data-number="07" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo7.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">07</div>
+              <div class="timeline-title">SQL injection UNION attack, determining the number of columns returned by the query</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 08 -->
+        <div class="timeline-item" data-number="08" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo8.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">08</div>
+              <div class="timeline-title">SQL injection UNION attack, finding a column containing text</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 09 -->
+        <div class="timeline-item" data-number="09" data-difficulty="avanzado">
+          <div class="timeline-card" data-difficulty="avanzado">
+            <a href="labo9.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">09</div>
+              <div class="timeline-title">SQL injection UNION attack, retrieving data from other tables</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty avanzado">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+
+        <!-- Laboratorio 10 -->
+        <div class="timeline-item" data-number="10" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo10.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">10</div>
+              <div class="timeline-title">SQL injection UNION attack, retrieving multiple values in a single column</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 11 -->
+        <div class="timeline-item" data-number="11" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo11.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">11</div>
+              <div class="timeline-title">Blind SQL injection with conditional responses</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 12 -->
+        <div class="timeline-item" data-number="12" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo12.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">12</div>
+              <div class="timeline-title">Blind SQL injection with conditional errors</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 13 -->
+        <div class="timeline-item" data-number="13" data-difficulty="avanzado">
+          <div class="timeline-card" data-difficulty="avanzado">
+            <a href="labo13.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">13</div>
+              <div class="timeline-title">Visible error-based SQL injection</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty avanzado">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 14 -->
+        <div class="timeline-item" data-number="14" data-difficulty="basico">
+          <div class="timeline-card" data-difficulty="basico">
+            <a href="labo14.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">14</div>
+              <div class="timeline-title">Blind SQL injection with time delays</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty basico">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 15 -->
+        <div class="timeline-item" data-number="15" data-difficulty="basico">
+          <div class="timeline-card" data-difficulty="basico">
+            <a href="labo15.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">15</div>
+              <div class="timeline-title">Blind SQL injection with time delays and information retrieval</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty basico">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 16 -->
+        <div class="timeline-item" data-number="16" data-difficulty="intermedio">
+          <div class="timeline-card" data-difficulty="intermedio">
+            <a href="labo16.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">16</div>
+              <div class="timeline-title">Blind SQL injection with out-of-band interaction</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty intermedio">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 17 -->
+        <div class="timeline-item" data-number="17" data-difficulty="avanzado">
+          <div class="timeline-card" data-difficulty="avanzado">
+            <a href="labo17.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">17</div>
+              <div class="timeline-title">Blind SQL injection with out-of-band data exfiltration</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty avanzado">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Laboratorio 18 -->
+        <div class="timeline-item" data-number="18" data-difficulty="experto">
+          <div class="timeline-card" data-difficulty="experto">
+            <a href="labo18.html" class="timeline-link" style="text-decoration: none; color: inherit; display: block;">
+              <div class="timeline-number">18</div>
+              <div class="timeline-title">SQL injection with filter bypass via XML encoding</div>
+              <div class="timeline-meta">
+                <span class="timeline-difficulty experto">Practitioner</span>
+                <span class="timeline-status"><i class="fas fa-unlock-alt"></i></span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+    </div> <!-- fin card -->
+  </div> <!-- fin wrapper -->
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+      <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a></p>
+      <p>Sitio seguro con certificado SSL</p>
+    </div>
+  </footer>
+</body>
+</html>

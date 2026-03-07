@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Laboratorio 15 · Blind SQL injection with time delays and information retrieval</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 55px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transform: translateY(0);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav {
+  margin-top: 40px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+/* Secciones estilo portafolio */
+.brief-text, .tech-section, .student-profile, .contact-section {
+  background: rgba(255,255,255,0.7);
+  border-radius: 24px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 5px solid #ff4f9a;
+  transition: transform 0.3s ease;
+}
+
+.brief-text:hover, .tech-section:hover, .student-profile:hover, .contact-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.brief-text h3, .tech-section h3, .student-profile h3, .contact-section h3 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.brief-text h4, .student-profile h4 {
+  font-size: 1.5rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brief-text h5, .student-profile h5 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder img {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.2);
+  display: block;
+  margin: 0 auto;
+}
+
+.code-container {
+  background: #2d1b21;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 6px solid #ff4f9a;
+  overflow-x: auto;
+}
+
+.code-container pre {
+  margin: 0;
+  color: #ffe0ec;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV ========= -->
+    <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+
+    <!-- ========== TÍTULO LABORATORIO 15 ========= -->
+    <div class="brief-text" style="margin-top: 20px;">
+      <h3><i class="fas fa-database"></i> Laboratorio 15: Blind SQL injection with time delays and information retrieval</h3>
+    </div>
+
+    <!-- ========== DETALLES ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-flag"></i> Detalles</h4>
+      <p><b>Nivel:</b> PRACTITIONER</p>
+      <p><b>Tipo de SQLi:</b> Blind SQL Injection basada en tiempo (Time‑based) y recuperación de información.</p>
+    </section>
+
+    <!-- ========== OBJETIVO ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bullseye"></i> Objetivo</h4>
+      <p>Explotar una vulnerabilidad de inyección SQL basada en tiempo para inferir, carácter por carácter, la contraseña del usuario <code>administrator</code> y lograr el acceso a la plataforma.</p>
+    </section>
+
+    <!-- ========== VULNERABILIDAD ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bug"></i> Vulnerabilidad</h4>
+      <p>La aplicación utiliza una cookie de seguimiento (TrackingId) que se inserta de forma insegura en una consulta SQL síncrona. Como la base de datos es PostgreSQL, podemos inyectar la función <code>pg_sleep()</code> para forzar retrasos de tiempo condicionales. Al medir cuánto tarda en responder el servidor, podemos deducir si una condición inyectada es verdadera o falsa, permitiéndonos extraer datos a ciegas.</p>
+    </section>
+
+    <!-- ========== PROCEDIMIENTO ========= -->
+    <section class="student-profile">
+      <h4><i class="fas fa-list-ol"></i> Procedimiento</h4>
+
+      <p>Paso 1: Iniciar el laboratorio y revisar las especificaciones de la vulnerabilidad objetivo.</p>
+      <div class="img-placeholder">
+        <img src="labo15.1.png" alt="Paso 1 - Inicio del laboratorio">
+      </div>
+
+      <p>Paso 2: Abrir Burp Suite para preparar el entorno de pruebas.</p>
+      <div class="img-placeholder">
+        <img src="labo15.2.png" alt="Paso 2 - Burp Suite">
+      </div>
+
+      <p>Paso 3: Pegar el enlace del laboratorio en el navegador de Burp Suite para capturar la navegación.</p>
+      <br>
+
+      <p>Paso 4: Identificar la petición HTTP que contiene la cookie TrackingId, ya que este será nuestro lugar de inyección.</p>
+      <div class="img-placeholder">
+        <img src="labo15.3.png" alt="Paso 4 - Identificar TrackingId">
+      </div>
+
+      <p>Paso 5: Enviar la petición al "Repeater". Al probar enviarla sin modificaciones, observamos una respuesta HTML estándar.</p>
+      <div class="img-placeholder">
+        <img src="labo15.4.png" alt="Paso 5 - Repeater">
+      </div>
+
+      <p>Paso 6: Aplicar el primer payload de inyección: <code>%3BSELECT+CASE+WHEN+(1=1)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END--</code>. Al enviarlo, comprobamos que el servidor tarda 10 segundos en responder. (Nota: Esta consulta usa <code>%3B</code> (punto y coma codificado) para iniciar una nueva instrucción. Evalúa la condición <code>CASE WHEN (1=1)</code>. Como 1 siempre es igual a 1, ejecuta <code>pg_sleep(10)</code> pausando la base de datos por 10 segundos. El doble guion <code>--</code> comenta el resto de la consulta original para evitar errores).</p>
+      <div class="img-placeholder">
+        <img src="labo15.5.png" alt="Paso 6 - Payload con retraso">
+      </div>
+
+      <p>Paso 7: Para validar la inyección condicional, enviamos un segundo payload: <code>%3BSELECT+CASE+WHEN+(1=2)+THEN+pg_sleep(5)+ELSE+pg_sleep(0)+END--</code>. Como 1 no es igual a 2, la aplicación responde inmediatamente sin demora.</p>
+      <div class="img-placeholder">
+        <img src="labo15.6.png" alt="Paso 7 - Payload falso sin retraso">
+      </div>
+
+      <p>Paso 8: Enviamos la petición al "Intruder" para realizar un ataque de prueba enfocado en determinar la longitud de la contraseña del administrador.</p>
+      <br>
+
+      <p>Paso 9: Configuramos el payload como un contador numérico (del 1 al 26, con incrementos de 1) usando la función <code>LENGTH(password)>§1§</code> para analizar las variaciones en las respuestas.</p>
+      <div class="img-placeholder">
+        <img src="labo15.7.png" alt="Paso 9 - Configuración de payload en Intruder">
+      </div>
+
+      <p>Paso 10: Tras ejecutar el ataque, notamos que a partir de la longitud 20 el tiempo de respuesta cambia, lo que nos confirma que la contraseña tiene exactamente 20 caracteres.</p>
+      <div class="img-placeholder">
+        <img src="labo15.8.png" alt="Paso 10 - Resultados longitud">
+      </div>
+
+      <p>Paso 11: Volvemos al Repeater para preparar la inyección de extracción de datos. El payload será: <code>%3BSELECT+CASE+WHEN+(username='administrator'+AND+SUBSTRING(password,1,1)='a')+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--</code>. Esto extraerá un solo carácter de la contraseña a la vez para compararlo con un valor específico.</p>
+      <div class="img-placeholder">
+        <img src="labo15.9.png" alt="Paso 11 - Payload de extracción">
+      </div>
+
+      <p>Paso 12: Enviamos esta nueva petición al Intruder para ejecutar un ataque tipo "Cluster Bomb", el cual nos permitirá iterar sobre cada posición y carácter.</p>
+      <div class="img-placeholder">
+        <img src="labo15.10.png" alt="Paso 12 - Configurar Cluster Bomb">
+      </div>
+
+      <p>Paso 13: Configuramos dos payloads: el primero actuará como un contador para la posición (del 1 al 20) y el segundo realizará fuerza bruta probando cada posible carácter en esa posición.</p>
+      <div class="img-placeholder">
+        <img src="labo15.11.png" alt="Paso 13 - Payloads de posición y caracteres">
+      </div>
+
+      <p>Paso 14: En la pestaña "Resource pool", configuramos un máximo de 1 solicitud concurrente (Maximum concurrent requests: 1). Esto es vital para evitar falsos positivos en ataques basados en tiempo.</p>
+      <div class="img-placeholder">
+        <img src="labo15.12.png" alt="Paso 14 - Resource pool">
+      </div>
+
+      <p>Paso 15: Asignamos los marcadores de posición (§) en la consulta: el primero en el número de posición del SUBSTRING y el segundo en la letra a comparar, y comenzamos el ataque.</p>
+      <div class="img-placeholder">
+        <img src="labo15.13.png" alt="Paso 15 - Iniciar ataque">
+      </div>
+
+      <p>Paso 16: Al concluir el ataque, ordenamos los resultados por la columna "Response received" (tiempo de respuesta), enfocándonos en las peticiones que tardaron más de 5000 milisegundos.</p>
+      <div class="img-placeholder">
+        <img src="labo15.14.png" alt="Paso 16 - Filtrar por tiempo">
+      </div>
+
+      <p>Paso 17: Recopilamos los caracteres correspondientes a las posiciones que dieron positivo (retraso largo), obteniendo la contraseña completa: <code>tmmowcfokak4zmj52ky0</code>.</p>
+      <br>
+
+      <p>Paso 18: Regresamos al navegador, ingresamos a la sección "My account", utilizamos el usuario <code>administrator</code> y la contraseña extraída. Accedemos exitosamente, concluyendo el laboratorio.</p>
+      <div class="img-placeholder">
+        <img src="labo15.15.png" alt="Paso 18 - Login exitoso">
+      </div>
+    </section>
+
+    <!-- ========== INFORME FINAL ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-file-alt"></i> Informe final</h4>
+      <h5>Vulnerabilidad Identificada</h5>
+      <p>Se identificó una vulnerabilidad de inyección SQL ciega basada en tiempo en la cookie <code>TrackingId</code>. La aplicación no valida la entrada y ejecuta de manera síncrona la consulta inyectada, permitiendo introducir retrasos condicionales mediante la función <code>pg_sleep()</code>. Esto permitió inferir primero la longitud de la contraseña del usuario <code>administrator</code> (20 caracteres) y luego extraerla carácter por carácter mediante un ataque de fuerza bruta con Intruder (Cluster Bomb). La contraseña obtenida fue <code>tmmowcfokak4zmj52ky0</code>, con la cual se logró acceso exitoso a la cuenta de administrador.</p>
+
+      <h5>Payloads Utilizados</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-code" style="color:#ff4f9a;"></i> Prueba de retraso: <code>%3BSELECT+CASE+WHEN+(1=1)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END--</code></li>
+        <li><i class="fas fa-code" style="color:#ff4f9a;"></i> Determinación de longitud: <code>%3BSELECT+CASE+WHEN+(LENGTH(password)>§1§)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--</code></li>
+        <li><i class="fas fa-code" style="color:#ff4f9a;"></i> Extracción de caracteres: <code>%3BSELECT+CASE+WHEN+(username='administrator'+AND+SUBSTRING(password,§1§,1)='§a§')+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--</code></li>
+      </ul>
+
+      <h5>Mitigación Recomendada</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Utilizar consultas parametrizadas (prepared statements) para evitar la inyección SQL.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Validar y sanitizar estrictamente las cookies, aplicando whitelist de caracteres permitidos.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Implementar límites de tiempo de ejecución y detectar posibles retrasos inyectados.</li>
+        <li><i class="fas fa-check" style="color:#ff4f9a;"></i> Limitar los privilegios de la cuenta de base de datos utilizada por la aplicación.</li>
+      </ul>
+    </section>
+
+    <!-- ========== EVIDENCIA DE FINALIZACIÓN ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-certificate"></i> Evidencia</h4>
+      <p>Captura de pantalla que acredita la realización exitosa del laboratorio.</p>
+      <div class="img-placeholder">
+        <img src="Lab15Evidencia.png" alt="Evidencia laboratorio resuelto">
+      </div>
+    </section>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Laboratorio 15 · Blind SQL injection time‑based retrieval</p>
+  </div>
+</footer>
+
+</body>
+</html>

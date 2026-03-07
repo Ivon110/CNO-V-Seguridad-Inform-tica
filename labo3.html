@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACTIVIDAD 4 · Mecanismos de defensa en red</title>
+<title>Laboratorio 3 · SQL Injection Oracle · Version de base de datos</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -236,6 +236,15 @@ nav a:hover, nav a.activo {
   gap: 10px;
 }
 
+.seccion h6 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 25px 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .tabla-container {
   overflow-x: auto;
   margin: 25px 0;
@@ -247,7 +256,7 @@ nav a:hover, nav a.activo {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.98rem;
+  font-size: 0.9rem;
 }
 
 th {
@@ -262,10 +271,40 @@ td {
   padding: 14px 12px;
   border-bottom: 1px solid #ffe0ec;
   background: rgba(255,255,255,0.7);
+  vertical-align: top;
 }
 
 tr:hover td {
   background: rgba(255,225,235,0.9);
+}
+
+.code-container {
+  background: #2d1b21;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 6px solid #ff4f9a;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  overflow-x: auto;
+}
+
+.code-container pre {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.code-container code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #ffe0ec;
+  background: transparent;
+  padding: 0;
+  display: block;
+  line-height: 1.6;
 }
 
 .grid-multimedia {
@@ -293,47 +332,6 @@ tr:hover td {
   font-size: 1.2rem;
   color: #3a1c2b;
   margin-bottom: 12px;
-}
-
-.code-container {
-  background: #2d1b21;
-  border-radius: 16px;
-  padding: 20px;
-  margin: 20px 0;
-  border-left: 6px solid #ff4f9a;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.code-container pre {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  border: none;
-}
-
-.code-container code {
-  font-family: 'Courier New', monospace;
-  font-size: 1.1rem;
-  color: #ffe0ec;
-  background: transparent;
-  padding: 0;
-  display: block;
-  line-height: 1.6;
-}
-
-.nota-iptables {
-  background: #ffe9f0;
-  border-radius: 14px;
-  padding: 15px 20px;
-  margin-top: 15px;
-  border-left: 4px solid #ff8fc4;
-  font-size: 0.95rem;
-  color: #6b3a52;
-}
-
-.nota-iptables i {
-  color: #ff4f9a;
-  margin-right: 10px;
 }
 
 .mapa-ducto {
@@ -398,6 +396,20 @@ tr:hover td {
   text-align: center;
 }
 
+.nota-iptables {
+  background: #ffe9f0;
+  border-radius: 14px;
+  padding: 15px 20px;
+  margin-top: 15px;
+  border-left: 4px solid #ff8fc4;
+  font-size: 0.95rem;
+  color: #6b3a52;
+}
+
+.nota-iptables i {
+  color: #ff4f9a;
+  margin-right: 10px;
+}
 
 .footer {
   width: 100%;
@@ -429,13 +441,97 @@ tr:hover td {
   font-style: italic;
 }
 
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.indice-contenido:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(255,79,154,0.25);
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder i {
+  font-size: 4rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.img-placeholder p {
+  color: #6b3a52;
+  font-weight: 500;
+}
+
 @media (max-width: 900px) {
   .card { padding: 30px 20px; }
   .header h1 { font-size: 2rem; flex-direction: column; }
   .titulo-actividad h3 { font-size: 1.8rem; }
   .seccion { padding: 25px; }
   .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
 }
+
 
     /* NAV (con submenú mejorado) */
     nav {
@@ -565,129 +661,156 @@ tr:hover td {
       </nav>
  
 
-    <!-- ========== TÍTULO ACTIVIDAD 03 ========= -->
+    <!-- ========== TÍTULO LABORATORIO 3 ========= -->
     <div class="titulo-actividad">
-      <h3><i class="fas fa-network-wired"></i> ACTIVIDAD 04 · iMecanismos de defensa en red.</h3>
-    </div>
-    <!-- ========== BOTÓN EXPORTAR PDF ========= -->
-    <div class="pdf-export">
-      <button class="btn-pdf" onclick="window.open('177291-act04.pdf', '_blank')">
-        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
-      </button>
+      <h3><i class="fas fa-database"></i> Laboratorio 3: SQL Injection attack, querying the database type version on Oracle</h3>
     </div>
 
-
+    <!-- ========== DETALLES ========= -->
     <div class="seccion" style="margin-top: 20px;">
-      <h4><i class="fas fa-flag"></i>Introducción Contextual</h4>
-      <p>Los mecanismos de defensa en red son como las reglas de convivencia en una comunidad: definen qué está permitido, qué no, y cómo actuar en cada situación. En el mundo de la seguridad informática, los firewalls con iptables son una de las herramientas más comunes para implementar estas reglas. A través de tablas, cadenas y políticas, podemos controlar el tráfico que entra y sale de nuestra red, protegiendo los servicios críticos y evitando accesos no deseados.</p><br>
-      <p>En esta actividad, partimos de una topología de red específica y debemos diseñar reglas que cumplan con acciones concretas, considerando protocolos, direcciones IP, puertos y estados de conexión. Esto nos ayuda a entender que no basta con bloquear todo, sino que hay que encontrar un equilibrio entre seguridad y funcionalidad.</p>
+      <h4><i class="fas fa-flag"></i> Detalles</h4>
+      <p><b>* Nivel:</b> PRACTITIONER</p>
+      <p><b>* Tipo de SQLi:</b> UNION-based SQL Injection</p>
     </div>
 
-    <!-- ========== PÁGINA 2 - INTRODUCCIÓN Y DESARROLLO ========= -->
+    <!-- ========== OBJETIVO ========= -->
     <div class="seccion">
-      <h4><i class="fas fa-book-open"></i> Introducción</h4>
-      <p>Sabemos que encontrar el mejor mecanismo de defensa en red es complicado, pero hablaremos de dos aspectos importantes que cumplen con este objetivo.</p><br>
-      
-      <p>Para comenzar tenemos el <strong><i class="fas fa-globe"></i> CCITT</strong> (Comité Consultivo Internacional Telegráfico y Telefónico) es un órgano permanente de la Unión Internacional de Telecomunicaciones (UIT). Este órgano estudia los aspectos técnicos, de explotación y recomendaciones sobre los mismos, con miras a la normalización de las telecomunicaciones en el plano mundial.</p><br>
-      
-      <p>La Asamblea Plenaria del CCITT, que se celebra cada cuatro años, establece los temas que han de estudiarse y a prueba las recomendaciones preparadas por las Comisiones de Estudio. La aprobación de estas recomendaciones por los miembros del CCITT entre las Asambleas Plenarias de éste es el objeto del procedimiento establecido en la Resolución N.o 2 del CCITT (Melbourne, 1988).</p><br>
-      
-      <p>La Recomendación X.800 ha sido preparada por la Comisión de Estudio VII y fue aprobada por el procedimiento de la Resolución N.o 2 el 22 de marzo de 1991. Por lo tanto, la recomendación x.800 es aquella que nos permite describir las características básicas para poder tener una conexión segura de computadoras a internet o redes locales.</p><br>
-      
-      <p>Otra manera de sobre llevar a cabo mecanismos de defensa es usando el RFC 4949, que es un 
-      documento de la Administración de la Seguridad de la Información (ISACA) que define los riesgos 
-      en términos de seguridad. Define los riesgos como una expectativa de pérdida expresada como la 
-      probabilidad de que una amenaza aproveche una vulnerabilidad con un resultado perjudicial 
-      particular. La fórmula utilizada para priorizar los riesgos es Riesgo = Probabilidad x Impacto. Este 
-      documento ayuda a priorizar los riesgos en función de la probabilidad de que ocurran y el impacto 
-      potencial de cada riesgo. </p><br>
-      
-      <h5><i class="fas fa-cogs"></i> Desarrollo</h5>
-      <ol class="lista-personalizada" style="margin-left: 20px;">
-        <li><i class="fas fa-check-circle"></i> Establecer una política restrictiva.</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -P INPUT DROP</code></pre>
-        <pre><code>iptables -P FORWARD DROP</code></pre>
-        <pre><code>iptables -P OUTPUT DROP</code></pre>
-      </div>
+      <h4><i class="fas fa-bullseye"></i> Objetivo</h4>
+      <p>Explotar una vulnerabilidad de SQL Injection basada en UNION para obtener y mostrar la versión de la base de datos Oracle.</p>
+    </div>
 
-      <ol class="lista-personalizada" style="margin-left: 20px;">
-        <li><i class="fas fa-check-circle"></i> Permitir el tráfico de conexiones ya establecidas.</li>
-      </ol>
-
+    <!-- ========== VULNERABILIDAD ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-bug"></i> Vulnerabilidad</h4>
+      <p>La aplicación construye una consulta SQL concatenando directamente el parámetro category sin validación adecuada, permitiendo insertar código SQL adicional.</p>
+      <p>Ejemplo conceptual vulnerable:</p>
       <div class="code-container">
-        <pre><code>iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</code></pre>
-        <pre><code>iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</code></pre>
-        <pre><code>iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</code></pre>
+        <pre><code>SELECT name, description FROM products WHERE category = 'Accessories'</code></pre>
       </div>
-      
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="4">
-        <li><i class="fas fa-check-circle"></i> Aceptar correo entrante proveniente de Internet en el servidor de correo.</li>
-      </ol>
-      
+      <p>El atacante lo convierte en:</p>
       <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -d 192.1.2.10 --dport 25 -m state --state NEW -j ACCEPT</code></pre>
-      </div>
-
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="4">
-        <li><i class="fas fa-check-circle"></i>Aceptar tráfico DNS (TCP) saliente de la red local.</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -s 192.1.2.0/24 --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT</code></pre>
-      </div>
-      
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="5">
-        <li><i class="fas fa-check-circle"></i> Permitir correo saliente a Internet desde el servidor de correo.</li>
-      </ol>
-      
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -s 192.1.2.10 --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT</code></pre>
-      </div>
-
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="5">
-        <li><i class="fas fa-check-circle"></i> Aceptar conexiones HTTP desde Internet al servidor web</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -d 192.1.2.11 --dport 80 -m state --state NEW -j ACCEPT</code></pre>
-      </div>
-
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="5">
-        <li><i class="fas fa-check-circle"></i>Permitir tráfico HTTP desde la red local a Internet</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -s 192.1.2.0/24 --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT</code></pre>
+        <pre><code>SELECT name, description FROM products 
+WHERE category = '' 
+UNION SELECT banner, NULL FROM v$version--</code></pre>
       </div>
     </div>
-      <div class="seccion" style="margin-top: 20px;">
-      <h4><i class="fas fa-flag"></i>Reflexión Técnica</h4>
-      <p>Lo que más me costó trabajo de esta actividad fue pensar en todos los detalles que debe tener una regla de iptables: protocolo, IP origen, IP destino, puertos, estado de la conexión... al principio sentía que eran demasiados datos, pero después entendí que mientras más específica sea una regla, más segura es. Por ejemplo, permitir tráfico HTTP entrante no es lo mismo que permitirlo solo si viene de una IP confiable y con una conexión establecida. </p><br>
-      <p>También me pareció interesante ver cómo las reglas se organizan en cadenas y que el orden importa: si pones una regla muy general al principio, las siguientes pueden no ejecutarse nunca. Esto me hizo reflexionar que en seguridad no hay espacio para la improvisación, hay que planear bien cada regla. Al final, esta actividad me ayudó a pensar como administrador de red, anticipando problemas y diseñando soluciones desde el firewall.</p>
+
+    <!-- ========== PROCEDIMIENTO ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-list-ol"></i> Procedimiento</h4>
+      
+      <h5>Paso 1: Interceptar la petición con Burp Suite</h5>
+      <p>Una vez abierto el laboratorio y dentro de Burp Suite, usaremos el navegador de este el cual es Chromium. Dentro de Chromium entraremos con la url del laboratorio. Volviendo a Burp Suite activamos intercept off, para así interceptar la petición. Así se verá Burp Suite cuando haya interceptado peticiones:</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.1.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.2.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <p>Dentro del navegador de Chromium en la pagina del laboratorio, vamos a cambiar la categoria de productos, en este caso a Gifts, para hacer el tipo de petición que necesitamos, ya que ese parametro de category es vulnerable.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.3.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.4.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Paso 2: Confirmar que es vulnerable a SQLi</h5>
+      <p>Para confirmar que ese parametro es vulnerable a SQLi, enviamos la petición al repetidor, dentro de Burp Suite y la modificamos cambiando la categoría “Gift”, por el símbolo: ‘</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.5.png" alt="Paso 1 - Burp intercept" style="max-width: 600px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.6.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <p>Como resultado de repetir la petición modificada, el servidor respondió con un un error, lo cual indica que es vulnerable ya que se rompió la consulta (muy buena señal de SQLi).</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.7.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Paso 3: Encontrar el número de columnas</h5>
+      <p>Una vez que confirmamos que es vulnerable a SQLi, vamos a hacer una consulta haciendo una inyeccion de codigo SQL de tipo: '+UNION+SELECT+NULL,NULL+FROM+dual, para obtener el número de columnas. Y obtenemos:</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.8.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.9.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <p>Lo cual nos devuelve 2 columnas.</p>
+
+      <h5>Paso 4: Ver cuáles columnas aceptan texto</h5>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.10.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <p> Esto indica que efectivamente las columnas aceptan datos de tipo texto ya que la respuesta fue = “200 ok” y la inyección funciono correctamente.</p>
+
+
+      <h5>Paso 5: Extraer la versión de Oracle</h5>
+      <p>Payload final, se envia la petición de: '+UNION+SELECT+BANNER,+NULL+FROM+v$version--. Esto con el objetivo de mostrar la versión de la base de datos Oracle en la página. Se extrajo información sensible directamente desde la base de datos como: Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production Y también: • CORE 11.2.0.2.0 Production • PL/SQL Release 11.2.0.2.0 • TNS for Linux Version 11.2.0.2.0 • NLSRTL Version 11.2.0.2.0. Todo eso viene de: v$version.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo3.11.png" alt="Paso 1 - Burp intercept" style="max-width: 800px;width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
     </div>
+
+    <!-- ========== EXPLICACIÓN DEL PAYLOAD ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-code"></i> Explicación del Payload</h4>
+      <p>Payload usado: <code>'+UNION+SELECT+BANNER,+NULL+FROM+v$version--</code></p>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-quote-right"></i> <code>'</code> → Cierra la cadena original del WHERE.</li>
+        <li><i class="fas fa-code-branch"></i> <code>UNION SELECT</code> → Añade una consulta controlada por el atacante.</li>
+        <li><i class="fas fa-database"></i> <code>BANNER</code> → Extrae la versión de Oracle.</li>
+        <li><i class="fas fa-table"></i> <code>FROM v$version</code> → Consulta una vista interna del sistema.</li>
+        <li><i class="fas fa-minus"></i> <code>--</code> → Comenta el resto de la consulta original.</li>
+      </ul>
+      <p>Resultado: La aplicación muestra la versión de la base de datos en pantalla.</p>
+    </div>
+
+    <!-- ========== MITIGACIÓN RECOMENDADA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-shield-virus"></i> Mitigación recomendada</h4>
+      <p><strong>Usar consultas preparadas (Prepared Statements)</strong></p>
+      <p>Ejemplo:</p>
+      <div class="code-container">
+        <pre><code>SELECT name, description FROM products WHERE category = ?</code></pre>
+      </div>
+      <p>Esto evita que la entrada del usuario se ejecute como código SQL. Además:</p>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check"></i> Validación estricta de entrada (whitelist)</li>
+        <li><i class="fas fa-check"></i> Principio de mínimo privilegio en la base de datos</li>
+        <li><i class="fas fa-check"></i> No mostrar errores SQL al usuario</li>
+        <li><i class="fas fa-check"></i> WAF (como capa adicional, no como solución principal)</li>
+      </ul>
+      <p><strong>Vulnerabilidad:</strong> SQL Injection basada en UNION<br>
+      <strong>Impacto:</strong> Exposición de información sensible (versión del DBMS)<br>
+      <strong>Solución:</strong> Consultas parametrizadas</p>
+    </div>
+
+    <!-- ========== EVIDENCIA DE FINALIZACIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-certificate"></i> Evidencia</h4>
+      <p>A continuación se muestra la captura de pantalla que acredita la realización exitosa del laboratorio.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="Lab3Evidencia.png" alt="Evidencia de laboratorio resuelto" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
   </div> <!-- fin card -->
 </div> <!-- fin wrapper -->
 
 <footer class="footer">
   <div class="footer-content">
-    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
     <p>
-      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> 
-      <!-- <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>-->
-    </p>
-    <p>
-      Sitio seguro con certificado SSL
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Laboratorio 3 · SQL Injection Oracle
     </p>
   </div>
 </footer>
+
 <script>
   document.querySelectorAll('.btn-pdf').forEach(btn => {
     btn.addEventListener('click', function() {
-      console.log('✅ Generando PDF con los mecanismos de defensa en red...');
+      console.log('✅ Abriendo PDF del laboratorio 3...');
     });
   });
 </script>

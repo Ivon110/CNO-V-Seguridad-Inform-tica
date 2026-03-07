@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACTIVIDAD 4 · Mecanismos de defensa en red</title>
+<title>Laboratorio 7 · SQL Injection UNION · Determinar número de columnas</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -236,6 +236,15 @@ nav a:hover, nav a.activo {
   gap: 10px;
 }
 
+.seccion h6 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 25px 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .tabla-container {
   overflow-x: auto;
   margin: 25px 0;
@@ -247,7 +256,7 @@ nav a:hover, nav a.activo {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.98rem;
+  font-size: 0.9rem;
 }
 
 th {
@@ -262,10 +271,40 @@ td {
   padding: 14px 12px;
   border-bottom: 1px solid #ffe0ec;
   background: rgba(255,255,255,0.7);
+  vertical-align: top;
 }
 
 tr:hover td {
   background: rgba(255,225,235,0.9);
+}
+
+.code-container {
+  background: #2d1b21;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 6px solid #ff4f9a;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  overflow-x: auto;
+}
+
+.code-container pre {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.code-container code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #ffe0ec;
+  background: transparent;
+  padding: 0;
+  display: block;
+  line-height: 1.6;
 }
 
 .grid-multimedia {
@@ -293,47 +332,6 @@ tr:hover td {
   font-size: 1.2rem;
   color: #3a1c2b;
   margin-bottom: 12px;
-}
-
-.code-container {
-  background: #2d1b21;
-  border-radius: 16px;
-  padding: 20px;
-  margin: 20px 0;
-  border-left: 6px solid #ff4f9a;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.code-container pre {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  border: none;
-}
-
-.code-container code {
-  font-family: 'Courier New', monospace;
-  font-size: 1.1rem;
-  color: #ffe0ec;
-  background: transparent;
-  padding: 0;
-  display: block;
-  line-height: 1.6;
-}
-
-.nota-iptables {
-  background: #ffe9f0;
-  border-radius: 14px;
-  padding: 15px 20px;
-  margin-top: 15px;
-  border-left: 4px solid #ff8fc4;
-  font-size: 0.95rem;
-  color: #6b3a52;
-}
-
-.nota-iptables i {
-  color: #ff4f9a;
-  margin-right: 10px;
 }
 
 .mapa-ducto {
@@ -398,6 +396,20 @@ tr:hover td {
   text-align: center;
 }
 
+.nota-iptables {
+  background: #ffe9f0;
+  border-radius: 14px;
+  padding: 15px 20px;
+  margin-top: 15px;
+  border-left: 4px solid #ff8fc4;
+  font-size: 0.95rem;
+  color: #6b3a52;
+}
+
+.nota-iptables i {
+  color: #ff4f9a;
+  margin-right: 10px;
+}
 
 .footer {
   width: 100%;
@@ -429,13 +441,97 @@ tr:hover td {
   font-style: italic;
 }
 
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.indice-contenido:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(255,79,154,0.25);
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder i {
+  font-size: 4rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.img-placeholder p {
+  color: #6b3a52;
+  font-weight: 500;
+}
+
 @media (max-width: 900px) {
   .card { padding: 30px 20px; }
   .header h1 { font-size: 2rem; flex-direction: column; }
   .titulo-actividad h3 { font-size: 1.8rem; }
   .seccion { padding: 25px; }
   .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
 }
+
 
     /* NAV (con submenú mejorado) */
     nav {
@@ -565,129 +661,116 @@ tr:hover td {
       </nav>
  
 
-    <!-- ========== TÍTULO ACTIVIDAD 03 ========= -->
+    <!-- ========== TÍTULO LABORATORIO 7 ========= -->
     <div class="titulo-actividad">
-      <h3><i class="fas fa-network-wired"></i> ACTIVIDAD 04 · iMecanismos de defensa en red.</h3>
-    </div>
-    <!-- ========== BOTÓN EXPORTAR PDF ========= -->
-    <div class="pdf-export">
-      <button class="btn-pdf" onclick="window.open('177291-act04.pdf', '_blank')">
-        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
-      </button>
+      <h3><i class="fas fa-database"></i> Laboratorio 7: SQL injection UNION attack, determining the number of columns returned by the query</h3>
     </div>
 
-
+    <!-- ========== DETALLES ========= -->
     <div class="seccion" style="margin-top: 20px;">
-      <h4><i class="fas fa-flag"></i>Introducción Contextual</h4>
-      <p>Los mecanismos de defensa en red son como las reglas de convivencia en una comunidad: definen qué está permitido, qué no, y cómo actuar en cada situación. En el mundo de la seguridad informática, los firewalls con iptables son una de las herramientas más comunes para implementar estas reglas. A través de tablas, cadenas y políticas, podemos controlar el tráfico que entra y sale de nuestra red, protegiendo los servicios críticos y evitando accesos no deseados.</p><br>
-      <p>En esta actividad, partimos de una topología de red específica y debemos diseñar reglas que cumplan con acciones concretas, considerando protocolos, direcciones IP, puertos y estados de conexión. Esto nos ayuda a entender que no basta con bloquear todo, sino que hay que encontrar un equilibrio entre seguridad y funcionalidad.</p>
+      <h4><i class="fas fa-flag"></i> Detalles</h4>
+      <p><b>* Nivel:</b> Apprentice (Principiante)</p>
+      <p><b>* Tipo de SQLi:</b> SQL Injection basada en UNION (UNION-based SQL Injection).</p>
+      <p>Este laboratorio tiene una dificultad básica y está diseñado para aprender a identificar cuántas columnas devuelve una consulta SQL, requisito necesario para realizar ataques UNION.</p>
+      <p>Este tipo de inyección permite combinar el resultado de una consulta original con otra consulta controlada por el atacante usando la palabra clave UNION. Para que el ataque funcione, ambas consultas deben tener: el mismo número de columnas y tipos de datos compatibles. Por esta razón, primero se debe determinar cuántas columnas devuelve la consulta original.</p>
     </div>
 
-    <!-- ========== PÁGINA 2 - INTRODUCCIÓN Y DESARROLLO ========= -->
+    <!-- ========== OBJETIVO ========= -->
     <div class="seccion">
-      <h4><i class="fas fa-book-open"></i> Introducción</h4>
-      <p>Sabemos que encontrar el mejor mecanismo de defensa en red es complicado, pero hablaremos de dos aspectos importantes que cumplen con este objetivo.</p><br>
+      <h4><i class="fas fa-bullseye"></i> Objetivo</h4>
+      <p>El objetivo del laboratorio es determinar cuántas columnas devuelve la consulta SQL del servidor utilizando una inyección UNION.</p>
+    </div>
+
+    <!-- ========== VULNERABILIDAD ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-bug"></i> Vulnerabilidad</h4>
+      <p>La vulnerabilidad ocurre porque la aplicación inserta directamente el valor del parámetro en una consulta SQL sin validarlo ni sanitizarlo.</p>
+    </div>
+
+    <!-- ========== PROCEDIMIENTO ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-list-ol"></i> Procedimiento</h4>
       
-      <p>Para comenzar tenemos el <strong><i class="fas fa-globe"></i> CCITT</strong> (Comité Consultivo Internacional Telegráfico y Telefónico) es un órgano permanente de la Unión Internacional de Telecomunicaciones (UIT). Este órgano estudia los aspectos técnicos, de explotación y recomendaciones sobre los mismos, con miras a la normalización de las telecomunicaciones en el plano mundial.</p><br>
-      
-      <p>La Asamblea Plenaria del CCITT, que se celebra cada cuatro años, establece los temas que han de estudiarse y a prueba las recomendaciones preparadas por las Comisiones de Estudio. La aprobación de estas recomendaciones por los miembros del CCITT entre las Asambleas Plenarias de éste es el objeto del procedimiento establecido en la Resolución N.o 2 del CCITT (Melbourne, 1988).</p><br>
-      
-      <p>La Recomendación X.800 ha sido preparada por la Comisión de Estudio VII y fue aprobada por el procedimiento de la Resolución N.o 2 el 22 de marzo de 1991. Por lo tanto, la recomendación x.800 es aquella que nos permite describir las características básicas para poder tener una conexión segura de computadoras a internet o redes locales.</p><br>
-      
-      <p>Otra manera de sobre llevar a cabo mecanismos de defensa es usando el RFC 4949, que es un 
-      documento de la Administración de la Seguridad de la Información (ISACA) que define los riesgos 
-      en términos de seguridad. Define los riesgos como una expectativa de pérdida expresada como la 
-      probabilidad de que una amenaza aproveche una vulnerabilidad con un resultado perjudicial 
-      particular. La fórmula utilizada para priorizar los riesgos es Riesgo = Probabilidad x Impacto. Este 
-      documento ayuda a priorizar los riesgos en función de la probabilidad de que ocurran y el impacto 
-      potencial de cada riesgo. </p><br>
-      
-      <h5><i class="fas fa-cogs"></i> Desarrollo</h5>
-      <ol class="lista-personalizada" style="margin-left: 20px;">
-        <li><i class="fas fa-check-circle"></i> Establecer una política restrictiva.</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -P INPUT DROP</code></pre>
-        <pre><code>iptables -P FORWARD DROP</code></pre>
-        <pre><code>iptables -P OUTPUT DROP</code></pre>
+      <h5>1. Acceder al laboratorio</h5>
+      <p>Primero ingresamos al laboratorio de Web Security Academy y copiamos el enlace generado para el ejercicio. Al abrir la página se muestra una tienda en línea con diferentes categorías de productos como Accessories, Clothing, Corporate gifts, Lifestyle y Tech gifts. Estas categorías funcionan como filtros y envían una solicitud al servidor utilizando el parámetro category, el cual posteriormente será utilizado para probar la vulnerabilidad.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo7.1.png" alt="Paso 1 - Página del laboratorio" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
       </div>
 
-      <ol class="lista-personalizada" style="margin-left: 20px;">
-        <li><i class="fas fa-check-circle"></i> Permitir el tráfico de conexiones ya establecidas.</li>
-      </ol>
-
-      <div class="code-container">
-        <pre><code>iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</code></pre>
-        <pre><code>iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</code></pre>
-        <pre><code>iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT</code></pre>
-      </div>
-      
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="4">
-        <li><i class="fas fa-check-circle"></i> Aceptar correo entrante proveniente de Internet en el servidor de correo.</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -d 192.1.2.10 --dport 25 -m state --state NEW -j ACCEPT</code></pre>
+      <h5>2. Abrir Burp Suite y activar el proxy</h5>
+      <p>Después abrimos Burp Suite Community Edition y nos dirigimos al apartado: Proxy → Intercept. Activamos la opción Intercept is on para que Burp pueda interceptar las peticiones HTTP entre el navegador y el servidor. Posteriormente seleccionamos Open browser, lo que abre el navegador integrado de Burp, el cual ya está configurado para pasar todo el tráfico a través del proxy.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo7.2.png" alt="Paso 2 - Burp Proxy intercept" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
       </div>
 
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="4">
-        <li><i class="fas fa-check-circle"></i>Aceptar tráfico DNS (TCP) saliente de la red local.</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -s 192.1.2.0/24 --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT</code></pre>
-      </div>
-      
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="5">
-        <li><i class="fas fa-check-circle"></i> Permitir correo saliente a Internet desde el servidor de correo.</li>
-      </ol>
-      
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -s 192.1.2.10 --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT</code></pre>
+      <h5>3. Interceptar la petición del filtro</h5>
+      <p>Dentro del navegador de Burp pegamos el link del laboratorio y cargamos la página. Luego seleccionamos la categoría Accessories. Al hacer clic, Burp intercepta la solicitud enviada al servidor, donde se observa una petición como la siguiente: GET /filter?category=Accessories. Esto indica que el parámetro category controla qué productos se muestran en la página.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo7.3.png" alt="Paso 3 - Petición interceptada" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
       </div>
 
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="5">
-        <li><i class="fas fa-check-circle"></i> Aceptar conexiones HTTP desde Internet al servidor web</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -d 192.1.2.11 --dport 80 -m state --state NEW -j ACCEPT</code></pre>
+      <h5>4. Enviar la petición al Repeater</h5>
+      <p>Una vez identificada la petición que contiene el parámetro vulnerable, hacemos clic derecho sobre la solicitud interceptada y seleccionamos la opción: Send to Repeater. El módulo Repeater permite reenviar la misma petición varias veces modificando sus parámetros, lo cual es útil para probar diferentes ataques de inyección SQL.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo7.4.png" alt="Paso 4 - Enviar a Repeater" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
       </div>
 
-      <ol class="lista-personalizada" style="margin-left: 20px;" start="5">
-        <li><i class="fas fa-check-circle"></i>Permitir tráfico HTTP desde la red local a Internet</li>
-      </ol>
-      
-      <div class="code-container">
-        <pre><code>iptables -A FORWARD -p tcp -s 192.1.2.0/24 --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT</code></pre>
+      <h5>5. Probar la inyección UNION</h5>
+      <p>En el Repeater se modifica el parámetro category agregando el siguiente payload: <code>' UNION SELECT NULL--</code> y se envía la petición al servidor. La respuesta devuelve un error 500, lo que indica que el número de columnas en el UNION SELECT no coincide con el número de columnas de la consulta original.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo7.5.png" alt="Paso 5 - Error 500 con 1 NULL" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>6. Encontrar el número correcto de columnas</h5>
+      <p>Para encontrar el número correcto de columnas se vuelve a modificar la consulta agregando más valores NULL: <code>' UNION SELECT NULL,NULL,NULL--</code>. Después de enviar nuevamente la petición, el servidor responde con HTTP 200 OK, lo que indica que la consulta fue aceptada. Esto confirma que la consulta original devuelve 3 columnas.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo7.6.png" alt="Paso 6 - Respuesta OK con 3 NULLs" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>7. Laboratorio resuelto</h5>
+      <p>Al determinar correctamente el número de columnas, el laboratorio se marca automáticamente como resuelto y aparece el mensaje: “Congratulations, you solved the lab!”. Esto confirma que se logró completar exitosamente el objetivo del ejercicio.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="labo7.7.png" alt="Paso 7 - Laboratorio resuelto" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
       </div>
     </div>
-      <div class="seccion" style="margin-top: 20px;">
-      <h4><i class="fas fa-flag"></i>Reflexión Técnica</h4>
-      <p>Lo que más me costó trabajo de esta actividad fue pensar en todos los detalles que debe tener una regla de iptables: protocolo, IP origen, IP destino, puertos, estado de la conexión... al principio sentía que eran demasiados datos, pero después entendí que mientras más específica sea una regla, más segura es. Por ejemplo, permitir tráfico HTTP entrante no es lo mismo que permitirlo solo si viene de una IP confiable y con una conexión establecida. </p><br>
-      <p>También me pareció interesante ver cómo las reglas se organizan en cadenas y que el orden importa: si pones una regla muy general al principio, las siguientes pueden no ejecutarse nunca. Esto me hizo reflexionar que en seguridad no hay espacio para la improvisación, hay que planear bien cada regla. Al final, esta actividad me ayudó a pensar como administrador de red, anticipando problemas y diseñando soluciones desde el firewall.</p>
+
+    <!-- ========== MITIGACIÓN RECOMENDADA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-shield-virus"></i> Mitigación recomendada</h4>
+      <p>Para evitar ataques de tipo UNION-based SQL Injection, se deben aplicar medidas similares que impidan la manipulación directa de las consultas SQL.</p>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check"></i> La principal mitigación consiste en el uso de consultas parametrizadas o prepared statements, las cuales evitan que los valores introducidos por el usuario alteren la estructura de la consulta SQL.</li>
+        <li><i class="fas fa-check"></i> Además, es recomendable implementar listas blancas (whitelisting) para parámetros como category, permitiendo únicamente valores válidos definidos previamente por la aplicación. Esto evita que un atacante pueda insertar comandos como UNION SELECT.</li>
+        <li><i class="fas fa-check"></i> Otra medida importante es ocultar mensajes detallados de error del servidor o de la base de datos, ya que estos pueden revelar información sobre la estructura de las consultas SQL, lo que facilita la explotación de vulnerabilidades.</li>
+        <li><i class="fas fa-check"></i> Finalmente, se recomienda realizar pruebas de seguridad periódicas, como pruebas de penetración o análisis automatizados, para identificar y corregir vulnerabilidades antes de que puedan ser explotadas.</li>
+      </ul>
     </div>
+
+    <!-- ========== EVIDENCIA DE FINALIZACIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-certificate"></i> Evidencia</h4>
+      <p>A continuación se muestra la captura de pantalla que acredita la realización exitosa del laboratorio.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="Lab7Evidencia.png" alt="Evidencia de laboratorio resuelto" style="max-width: 600px; width: 100%; height: auto; border-radius: 20px; margin: 0 auto 20px; display: block; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
   </div> <!-- fin card -->
 </div> <!-- fin wrapper -->
 
 <footer class="footer">
   <div class="footer-content">
-    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
     <p>
-      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> 
-      <!-- <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>-->
-    </p>
-    <p>
-      Sitio seguro con certificado SSL
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Laboratorio 7 · SQL Injection UNION
     </p>
   </div>
 </footer>
+
 <script>
   document.querySelectorAll('.btn-pdf').forEach(btn => {
     btn.addEventListener('click', function() {
-      console.log('✅ Generando PDF con los mecanismos de defensa en red...');
+      console.log('✅ Abriendo PDF del laboratorio 7...');
     });
   });
 </script>

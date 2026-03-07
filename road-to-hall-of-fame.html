@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Road to Hall of Fame | SQL Injection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+      overflow-x: hidden;
+      color: #3a1c2b;
+    }
+
+    /* FONDOS DIFUMINADOS (mejorados) */
+    .blur {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      z-index: 0;
+      animation: float 8s ease-in-out infinite;
+    }
+    .blur.one { width: 400px; height: 400px; background: #ff6eb4; top: -150px; left: -150px; animation-delay: 0s; }
+    .blur.two { width: 350px; height: 350px; background: #ffb347; bottom: -120px; right: -120px; animation-delay: 2s; }
+    .blur.three { width: 280px; height: 280px; background: #7b68ee; top: 30%; right: 10%; animation-delay: 4s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.1); }
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 70px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(16px);
+      border-radius: 48px;
+      padding: 55px;
+      box-shadow: 0 40px 80px rgba(255,79,154,0.3), inset 0 2px 0 rgba(255,255,255,0.8);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 60px 120px rgba(255,79,154,0.5);
+    }
+
+    /* HEADER */
+    .header {
+      text-align: center;
+      position: relative;
+    }
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #ff4f9a, #ffb347, #7b68ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .alias {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #ff4f9a;
+      -webkit-text-fill-color: #ff4f9a;
+    }
+    .header h2 {
+      margin-top: 12px;
+      font-size: 1.4rem;
+      color: #ff4f9a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .meta {
+      margin-top: 6px;
+      font-size: 0.95rem;
+      color: #6b3a52;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* NAV (con submenú mejorado) */
+    nav {
+      margin-top: 40px;
+    }
+    nav ul {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      list-style: none;
+    }
+    nav a {
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+    nav ul li {
+      position: relative;
+    }
+    .submenu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 10px 0;
+      min-width: 200px;
+      box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 100;
+      list-style: none;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav ul li:hover .submenu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .submenu a {
+      padding: 12px 20px;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      justify-content: flex-start;
+    }
+    .submenu a:hover {
+      background: linear-gradient(135deg, #ff4f9a20, #ff8fc420);
+      color: #ff4f9a;
+      transform: translateX(5px);
+    }
+
+    /* TÍTULO DE LA SECCIÓN con brillo */
+    .roadmap-title {
+      text-align: center;
+      margin: 60px 0 40px;
+    }
+    .roadmap-title h3 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      background: linear-gradient(135deg, #ff4f9a, #ffb347, #7b68ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 10px 20px rgba(255,79,154,0.3));
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 10px rgba(255,79,154,0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(255,79,154,0.8)); }
+    }
+    .roadmap-title p {
+      font-size: 1.3rem;
+      color: #6b3a52;
+      max-width: 700px;
+      margin: 15px auto 0;
+      background: rgba(255,255,255,0.5);
+      padding: 10px 20px;
+      border-radius: 50px;
+      backdrop-filter: blur(5px);
+    }
+
+    /* BOTÓN DE DESCARGA PDF con neón */
+    .pdf-btn-container {
+      text-align: center;
+      margin: 30px 0 50px;
+    }
+    .pdf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 15px;
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 22px 50px;
+      border-radius: 60px;
+      text-decoration: none;
+      box-shadow: 0 0 20px #ff4f9a, 0 20px 40px rgba(255,79,154,0.4);
+      transition: all 0.4s ease;
+      border: 2px solid rgba(255,255,255,0.5);
+      letter-spacing: 1px;
+    }
+    .pdf-btn:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 0 30px #ff4f9a, 0 30px 60px rgba(255,79,154,0.6);
+      background: linear-gradient(135deg, #ff3b8a, #ff7ab9);
+    }
+    .pdf-btn i {
+      font-size: 2.2rem;
+    }
+
+    /* ===== ROADMAP ÉPICO ===== */
+    .roadmap-container {
+      margin: 80px 0;
+      position: relative;
+      padding: 40px 0;
+    }
+
+    /* Fondo del camino con partículas - AHORA MÁS GRUESO Y CON ANIMACIÓN DE FLUJO */
+    .roadmap-container::before {
+      content: '';
+      position: absolute;
+      top: 45px; /* Ajustado para que quede centrado respecto a las tarjetas */
+      left: 5%;
+      width: 90%;
+      height: 12px; /* Más grueso */
+      background: linear-gradient(90deg, #ff9ac1, #ff4f9a, #ffb347, #7b68ee, #ff4f9a, #ffb347, #7b68ee);
+      background-size: 300% 100%; /* Para animación de flujo */
+      border-radius: 12px;
+      z-index: -1;
+      opacity: 0.8;
+      box-shadow: 0 0 30px #ff4f9a, 0 0 60px #ffb347;
+      animation: pathGlow 3s infinite alternate, moveGradient 10s linear infinite;
+    }
+    @keyframes pathGlow {
+      from { opacity: 0.7; box-shadow: 0 0 20px #ff4f9a, 0 0 40px #ffb347; }
+      to { opacity: 1; box-shadow: 0 0 40px #ff4f9a, 0 0 80px #ffb347; }
+    }
+    @keyframes moveGradient {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    /* Marcadores en cada punto del camino (círculos debajo de las tarjetas) */
+    .lab-card {
+      position: relative;
+    }
+    .lab-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; /* Debajo de la tarjeta */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.5), 0 0 20px currentColor;
+      z-index: 5;
+      transition: all 0.3s ease;
+    }
+    /* Color del marcador según dificultad */
+    .lab-card[data-difficulty="basico"]::after { background: #4CAF50; box-shadow: 0 0 0 4px rgba(76,175,80,0.3), 0 0 30px #4CAF50; }
+    .lab-card[data-difficulty="intermedio"]::after { background: #FF9800; box-shadow: 0 0 0 4px rgba(255,152,0,0.3), 0 0 30px #FF9800; }
+    .lab-card[data-difficulty="avanzado"]::after { background: #f44336; box-shadow: 0 0 0 4px rgba(244,67,54,0.3), 0 0 30px #f44336; }
+    .lab-card[data-difficulty="experto"]::after { background: #9C27B0; box-shadow: 0 0 0 4px rgba(156,39,176,0.3), 0 0 30px #9C27B0; }
+
+    .lab-card:hover::after {
+      transform: translateX(-50%) scale(1.5);
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.8), 0 0 40px currentColor;
+    }
+
+    /* Partículas flotantes alrededor del camino (más notorias) */
+    .roadmap-container::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(255,79,154,0.2) 0%, transparent 20%),
+                  radial-gradient(circle at 80% 70%, rgba(255,180,70,0.2) 0%, transparent 20%),
+                  radial-gradient(circle at 40% 80%, rgba(123,104,238,0.2) 0%, transparent 20%),
+                  radial-gradient(circle at 70% 20%, rgba(255,79,154,0.15) 0%, transparent 25%),
+                  radial-gradient(circle at 10% 60%, rgba(255,180,70,0.15) 0%, transparent 25%);
+      pointer-events: none;
+      z-index: -1;
+      animation: particlesMove 20s linear infinite;
+    }
+    @keyframes particlesMove {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+    .roadmap-path {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 35px 20px;
+    }
+
+    /* Tarjeta de cada laboratorio - diseño mejorado */
+    .lab-card {
+      flex: 1 1 170px;
+      min-width: 170px;
+      max-width: 210px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-radius: 36px;
+      padding: 30px 15px 20px;
+      text-align: center;
+      box-shadow: 0 25px 40px rgba(0,0,0,0.1), 0 0 0 2px rgba(255,255,255,0.8);
+      transition: all 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.9);
+      transform-style: preserve-3d;
+      perspective: 800px;
+      margin-bottom: 40px; /* Espacio para el marcador inferior */
+    }
+
+    .lab-card:hover {
+      transform: translateY(-30px) rotateX(5deg) scale(1.1);
+      box-shadow: 0 40px 70px rgba(255,79,154,0.4), 0 0 0 5px rgba(255,255,255,0.9);
+      background: white;
+      z-index: 20;
+    }
+
+    /* Número del laboratorio con estilo de medalla según dificultad */
+    .lab-number {
+      width: 70px;
+      height: 70px;
+      font-size: 2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: -50px auto 15px;
+      box-shadow: 0 15px 25px rgba(0,0,0,0.2), 0 0 0 6px rgba(255,255,255,0.7);
+      transition: all 0.3s ease;
+      color: white;
+    }
+
+    /* Colores según dificultad (asignados dinámicamente con data atributos o clases, aquí usaremos clases inline) */
+    .lab-card[data-difficulty="basico"] .lab-number { background: linear-gradient(145deg, #4CAF50, #8BC34A); }
+    .lab-card[data-difficulty="intermedio"] .lab-number { background: linear-gradient(145deg, #FFC107, #FF9800); }
+    .lab-card[data-difficulty="avanzado"] .lab-number { background: linear-gradient(145deg, #f44336, #ff5722); }
+    .lab-card[data-difficulty="experto"] .lab-number { background: linear-gradient(145deg, #9C27B0, #673AB7); }
+
+    .lab-card:hover .lab-number {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 20px 35px rgba(0,0,0,0.3), 0 0 0 10px rgba(255,255,255,0.9);
+    }
+
+    /* Título del laboratorio */
+    .lab-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #3a1c2b;
+      margin: 15px 0 10px;
+      line-height: 1.4;
+      min-height: 55px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Dificultad con badge colorido */
+    .lab-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .difficulty {
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .difficulty.basico { background: #4CAF50; color: white; }
+    .difficulty.intermedio { background: #FF9800; color: white; }
+    .difficulty.avanzado { background: #f44336; color: white; }
+    .difficulty.experto { background: #9C27B0; color: white; }
+
+    .status {
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.7);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    /* Iconos de estado según dificultad (los definimos con data) */
+    .status i { font-size: 1.2rem; }
+    .lab-card[data-difficulty="basico"] .status i { color: #4CAF50; }
+    .lab-card[data-difficulty="intermedio"] .status i { color: #FF9800; }
+    .lab-card[data-difficulty="avanzado"] .status i { color: #f44336; }
+    .lab-card[data-difficulty="experto"] .status i { color: #9C27B0; }
+
+    /* Ajustes responsivos */
+    @media (max-width: 1100px) {
+      .roadmap-path {
+        justify-content: center;
+      }
+      .roadmap-container::before {
+        display: none;
+      }
+      .lab-card::after {
+        display: none; /* Ocultamos marcadores en móvil porque no hay línea */
+      }
+    }
+
+    @media (max-width: 900px) {
+      .card { padding: 35px; }
+      .header h1 { font-size: 2.2rem; flex-direction: column; }
+      nav ul { flex-direction: column; align-items: center; }
+      .submenu { position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none; background: transparent; }
+    }
+
+    @media (max-width: 600px) {
+      .wrapper { padding: 15px; }
+      .card { padding: 25px; }
+      .roadmap-title h3 { font-size: 2.2rem; flex-direction: column; }
+      .pdf-btn { font-size: 1.2rem; padding: 18px 30px; }
+    }
+
+    /* Footer */
+    .footer {
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      background: rgba(0,0,0,0.35);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin-top: 40px;
+      color: #f3f3f3;
+      font-size: 14px;
+      backdrop-filter: blur(5px);
+    }
+    .footer a { color: #f3f3f3; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    /* Animación de aparición para las tarjetas */
+    .lab-card {
+      animation: cardAppear 0.6s ease-out backwards;
+    }
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Retrasos individuales */
+    .lab-card:nth-child(1) { animation-delay: 0.05s; }
+    .lab-card:nth-child(2) { animation-delay: 0.1s; }
+    .lab-card:nth-child(3) { animation-delay: 0.15s; }
+    .lab-card:nth-child(4) { animation-delay: 0.2s; }
+    .lab-card:nth-child(5) { animation-delay: 0.25s; }
+    .lab-card:nth-child(6) { animation-delay: 0.3s; }
+    .lab-card:nth-child(7) { animation-delay: 0.35s; }
+    .lab-card:nth-child(8) { animation-delay: 0.4s; }
+    .lab-card:nth-child(9) { animation-delay: 0.45s; }
+    .lab-card:nth-child(10) { animation-delay: 0.5s; }
+    .lab-card:nth-child(11) { animation-delay: 0.55s; }
+    .lab-card:nth-child(12) { animation-delay: 0.6s; }
+    .lab-card:nth-child(13) { animation-delay: 0.65s; }
+    .lab-card:nth-child(14) { animation-delay: 0.7s; }
+    .lab-card:nth-child(15) { animation-delay: 0.75s; }
+    .lab-card:nth-child(16) { animation-delay: 0.8s; }
+    .lab-card:nth-child(17) { animation-delay: 0.85s; }
+    .lab-card:nth-child(18) { animation-delay: 0.9s; }
+  </style>
+</head>
+<body>
+  <div class="blur one"></div>
+  <div class="blur two"></div>
+  <div class="blur three"></div>
+
+  <div class="wrapper">
+    <div class="card">
+      <!-- HEADER con tu nombre -->
+      <div class="header">
+        <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+        <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+        <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+        <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+      </div>
+
+      <!-- MENÚ DE NAVEGACIÓN (con el nuevo apartado y submenú) -->
+      <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+
+      <!-- CONTENIDO PRINCIPAL: ROADMAP SQL INJECTION -->
+      <div class="roadmap-title" id="sql-injection">
+        <h3>
+          <i class="fas fa-map-signals"></i> 
+          ROAD TO HALL OF FAME
+          <i class="fas fa-skull-crosswalk"></i>
+        </h3>
+        <p>18 laboratorios de SQL Injection · Conviértete en un maestro de inyecciones SQL</p>
+      </div>
+
+      <!-- BOTÓN DE DESCARGA PDF -->
+      <div class="pdf-btn-container">
+        <a href="actividad08.pdf" download class="pdf-btn" target="_blank">
+          <i class="fas fa-file-pdf"></i> Descargar Actividad 08 (PDF)
+        </a>
+      </div>
+
+      <!-- ROADMAP (los 18 laboratorios con colores y dificultad) -->
+      <div class="roadmap-container">
+        <div class="roadmap-path">
+          <!-- Usamos data-difficulty para controlar los colores -->
+          <div class="lab-card" data-difficulty="basico">
+            <div class="lab-number">01</div>
+            <div class="lab-title">SQLi en WHERE</div>
+            <div class="lab-meta">
+              <span class="difficulty basico">Básico</span>
+              <span class="status"><i class="fas fa-unlock-alt"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="basico">
+            <div class="lab-number">02</div>
+            <div class="lab-title">SQLi en UNION</div>
+            <div class="lab-meta">
+              <span class="difficulty basico">Básico</span>
+              <span class="status"><i class="fas fa-unlock-alt"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">03</div>
+            <div class="lab-title">SQLi ciego (boolean)</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">04</div>
+            <div class="lab-title">SQLi ciego (time)</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="basico">
+            <div class="lab-number">05</div>
+            <div class="lab-title">Error-based SQLi</div>
+            <div class="lab-meta">
+              <span class="difficulty basico">Básico</span>
+              <span class="status"><i class="fas fa-unlock-alt"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="avanzado">
+            <div class="lab-number">06</div>
+            <div class="lab-title">Out-of-band SQLi</div>
+            <div class="lab-meta">
+              <span class="difficulty avanzado">Avanzado</span>
+              <span class="status"><i class="fas fa-lock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">07</div>
+            <div class="lab-title">Second order SQLi</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">08</div>
+            <div class="lab-title">SQLi con filtros</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="avanzado">
+            <div class="lab-number">09</div>
+            <div class="lab-title">Bypass WAF</div>
+            <div class="lab-meta">
+              <span class="difficulty avanzado">Avanzado</span>
+              <span class="status"><i class="fas fa-lock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">10</div>
+            <div class="lab-title">SQLi en INSERT</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">11</div>
+            <div class="lab-title">SQLi en UPDATE</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">12</div>
+            <div class="lab-title">SQLi en DELETE</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="avanzado">
+            <div class="lab-number">13</div>
+            <div class="lab-title">SQLi con JSON</div>
+            <div class="lab-meta">
+              <span class="difficulty avanzado">Avanzado</span>
+              <span class="status"><i class="fas fa-lock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="basico">
+            <div class="lab-number">14</div>
+            <div class="lab-title">SQLi en ORDER BY</div>
+            <div class="lab-meta">
+              <span class="difficulty basico">Básico</span>
+              <span class="status"><i class="fas fa-unlock-alt"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="basico">
+            <div class="lab-number">15</div>
+            <div class="lab-title">SQLi en LIMIT</div>
+            <div class="lab-meta">
+              <span class="difficulty basico">Básico</span>
+              <span class="status"><i class="fas fa-unlock-alt"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="intermedio">
+            <div class="lab-number">16</div>
+            <div class="lab-title">SQLi en GROUP BY</div>
+            <div class="lab-meta">
+              <span class="difficulty intermedio">Intermedio</span>
+              <span class="status"><i class="fas fa-clock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="avanzado">
+            <div class="lab-number">17</div>
+            <div class="lab-title">SQLi con XML</div>
+            <div class="lab-meta">
+              <span class="difficulty avanzado">Avanzado</span>
+              <span class="status"><i class="fas fa-lock"></i></span>
+            </div>
+          </div>
+          <div class="lab-card" data-difficulty="experto">
+            <div class="lab-number">18</div>
+            <div class="lab-title">SQLi master challenge</div>
+            <div class="lab-meta">
+              <span class="difficulty experto">Experto</span>
+              <span class="status"><i class="fas fa-crown"></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PEQUEÑA DESCRIPCIÓN con estilo -->
+      <div style="text-align: center; margin: 60px 0 20px;">
+        <i class="fas fa-flag-checkered" style="font-size:3rem; background: linear-gradient(135deg, #ff4f9a, #ffb347, #7b68ee); -webkit-background-clip:text; -webkit-text-fill-color:transparent;"></i>
+        <p style="margin-top:15px; font-size:1.2rem; color:#3a1c2b; background: rgba(255,255,255,0.5); padding:15px 30px; border-radius:60px; display:inline-block; backdrop-filter:blur(5px);">
+          Cada laboratorio representa un paso hacia la maestría en SQL Injection.<br>¡Completa los 18 y entra al Hall of Fame!
+        </p>
+      </div>
+    </div> <!-- fin card -->
+  </div> <!-- fin wrapper -->
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+      <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a></p>
+      <p>Sitio seguro con certificado SSL</p>
+    </div>
+  </footer>
+
+  <!-- Pequeño script para mejorar interactividad (opcional) -->
+  <script>
+    // Puedes agregar efectos adicionales si lo deseas
+    document.querySelectorAll('.lab-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        // Pequeño efecto de brillo adicional
+        card.style.transition = 'all 0.3s ease';
+      });
+    });
+  </script>
+</body>
+</html>

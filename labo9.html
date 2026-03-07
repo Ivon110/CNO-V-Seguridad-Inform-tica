@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Laboratorio 9 · SQL Injection UNION · Datos de otras tablas</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 55px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transform: translateY(0);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav {
+  margin-top: 40px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+/* Secciones estilo portafolio */
+.brief-text, .tech-section, .student-profile, .contact-section {
+  background: rgba(255,255,255,0.7);
+  border-radius: 24px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 5px solid #ff4f9a;
+  transition: transform 0.3s ease;
+}
+
+.brief-text:hover, .tech-section:hover, .student-profile:hover, .contact-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.brief-text h3, .tech-section h3, .student-profile h3, .contact-section h3 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.brief-text h4, .student-profile h4 {
+  font-size: 1.5rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brief-text h5, .student-profile h5 {
+  font-size: 1.2rem;
+  color: #4a2a36;
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder img {
+  max-width: 600px;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.2);
+  display: block;
+  margin: 0 auto;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV ========= -->
+    <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+
+    <!-- ========== TÍTULO LABORATORIO 9 ========= -->
+    <div class="brief-text" style="margin-top: 20px;">
+      <h3><i class="fas fa-database"></i> Laboratorio 9: SQL injection UNION attack, retrieving data from other tables</h3>
+    </div>
+
+    <!-- ========== DETALLES ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-flag"></i> Detalles</h4>
+      <p><b>Nivel:</b> PRACTITIONER</p>
+      <p><b>Tipo de SQLi:</b> SQL Injection, específicamente mediante SQL UNION Attack, que permite combinar resultados de consultas para obtener información de otras tablas de la base de datos.</p>
+    </section>
+
+    <!-- ========== OBJETIVO ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bullseye"></i> Objetivo</h4>
+      <p>Explotar la vulnerabilidad de SQL Injection en el parámetro <code>category</code> del filtro de productos para realizar un ataque UNION, extraer los username y password de la tabla <code>users</code>, y utilizar las credenciales obtenidas para iniciar sesión como <code>administrator</code>.</p>
+    </section>
+
+    <!-- ========== VULNERABILIDAD ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-bug"></i> Vulnerabilidad</h4>
+      <p>La aplicación web no valida ni sanitiza correctamente la entrada del usuario en el parámetro <code>category</code>, permitiendo que un atacante inyecte consultas SQL arbitrarias. Esto posibilita ejecutar un ataque UNION que combina la consulta original con otra que recupera datos sensibles de la tabla <code>users</code>, exponiendo credenciales almacenadas en la base de datos.</p>
+    </section>
+
+    <!-- ========== PROCEDIMIENTO ========= -->
+    <section class="student-profile">
+      <h4><i class="fas fa-list-ol"></i> Procedimiento</h4>
+
+      <h5>Paso 1: Interceptar la petición con Burp Suite</h5>
+      <p>Una vez abierto el laboratorio y dentro de Burp Suite, usaremos el navegador de este el cual es Chromium. Dentro de Chromium entraremos con la url del laboratorio. Volviendo a Burp Suite activamos intercept off, para así interceptar la petición.</p>
+      <div class="img-placeholder">
+        <img src="labo9.1.png" alt="Paso 1 - Burp intercept">
+      </div>
+      <p>Así se verá Burp Suite cuando haya interceptado peticiones:</p>
+      <div class="img-placeholder">
+        <img src="labo9.2.png" alt="Paso 1 - Burp intercept">
+      </div>
+      <p>Dentro del navegador de Chromium en la pagina del laboratorio, vamos a cambiar la categoria de productos, en este caso a Gifts, para hacer el tipo de petición que necesitamos, ya que ese parametro de category es vulnerable.</p>
+      <div class="img-placeholder">
+        <img src="labo9.3.png" alt="Paso 1 - Seleccionar categoría">
+      </div>
+
+      <h5>Paso 2: Confirmar que es vulnerable a SQLi</h5>
+      <p>Para confirmar que ese parametro es vulnerable a SQLi, enviamos la petición al repetidor, dentro de Burp Suite y la modificamos cambiando la categoría “Gift”, por : '</p>
+      <div class="img-placeholder">
+        <img src="labo9.4.png" alt="Paso 2 - Inyección de comilla">
+      </div>
+      <p>Como resultado de repetir la petición modificada, el servidor respondió con un error, lo cual indica que es vulnerable ya que se rompió la consulta (muy buena señal de SQLi).</p>
+      <div class="img-placeholder">
+        <img src="labo9.5.png" alt="Paso 2 - Error">
+      </div>
+
+      <h5>Paso 3: Determinar número de columnas</h5>
+      <p>Sabemos que debemos usar UNION, pero necesitamos saber cuántas columnas devuelve la consulta original. Payload: <code>'+UNION+SELECT+NULL,NULL--</code>. El lab indica que son 2 columnas.</p>
+      <div class="img-placeholder">
+        <img src="labo9.5.png" alt="Paso 3 - Determinando columnas">
+      </div>
+      <p>El servidor responde “ok”, lo cual indica que la inyección se hizo correctamente y que existen al menos 2 columnas.</p>
+      <div class="img-placeholder">
+        <img src="labo9.6.png" alt="Paso 3 - Determinando columnas">
+      </div>
+
+      <h5>Paso 4: Probar UNION con 2 columnas</h5>
+      <p>Se identifica si ambas columnas aceptan texto. Usa el payload: <code>'+UNION+SELECT+'abc','def'--</code>. Se inyecta usando de nuevo el repetidor y la consulta:</p>
+      <div class="img-placeholder">
+        <img src="labo9.7.png" alt="Paso 4 - Prueba de texto">
+      </div>
+      <p>Resultado esperado: En la página podemos ver “abc” y “def”, lo cual indica que se agregó correctamente las cadenas.</p>
+      <div class="img-placeholder">
+        <img src="labo9.8.png" alt="Paso 4 - Prueba de texto">
+      </div>
+      <h5>Paso 6: Extraer datos de la tabla users</h5>
+      <p>El laboratorio dice que existe la tabla: <code>users</code> con columnas <code>username</code> y <code>password</code>. Entonces se usa el payload: <code>'+UNION+SELECT+username,+password+FROM+users--</code>.</p>
+      <div class="img-placeholder">
+        <img src="labo9.9.png" alt="Paso 6 - Credenciales extraídas">
+      </div>
+      <p> Obtuvimos como resultado:</p>
+      <div class="img-placeholder">
+        <img src="labo9.10.png" alt="Paso 6 - Credenciales extraídas">
+      </div>
+      <p>Así es como obtuvimos las credenciales de administrador, la contraseña es la que aparece junto a administrator. En este caso es: <b>User:</b> <code>administrator</code> <b>Password:</b> <code>goc321j92ofkd0naozyx</code></p>
+
+      <h5>Paso 7: Iniciar sesión como administrador</h5>
+      <p>Una vez con las credenciales obtenidas, dentro del laboratorio vamos a “My account” </p>
+      <div class="img-placeholder">
+        <img src="labo9.11.png" alt="Paso 7 - Login exitoso">
+      </div>
+      <p>y entramos en la página de login. Ingresamos con las credenciales obtenidas.</p>
+      <div class="img-placeholder">
+        <img src="labo9.12.png" alt="Paso 7 - Login exitoso">
+      </div>
+      <p>Así es como accedemos y el laboratorio queda solucionado.</p>
+    </section>
+
+    <!-- ========== INFORME FINAL ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-file-alt"></i> Informe final</h4>
+      <h5>Vulnerabilidad Identificada</h5>
+      <p>Se identificó una vulnerabilidad de SQL Injection en el parámetro <code>category</code> del filtro de productos de la aplicación web. La aplicación no valida ni sanitiza adecuadamente la entrada del usuario antes de incorporarla a la consulta SQL, lo que permite a un atacante modificar la consulta original e incluir una instrucción SQL UNION Attack. Mediante esta técnica fue posible combinar la consulta original con otra consulta dirigida a la tabla <code>users</code>, logrando extraer información sensible almacenada en la base de datos, específicamente los nombres de usuario y contraseñas. Con las credenciales obtenidas se pudo iniciar sesión como el usuario <code>administrator</code>, comprometiendo la seguridad de la aplicación.</p>
+
+      <h5>Payload Utilizado</h5>
+      <p>El ataque se realizó mediante un payload de tipo UNION insertado en el parámetro vulnerable <code>category</code>, el cual permitió recuperar datos de otra tabla dentro de la base de datos.</p>
+      <div class="code-container" style="background:#2d1b21; border-radius:16px; padding:20px; margin:20px 0; border-left:6px solid #ff4f9a;">
+        <pre><code>'+UNION+SELECT+username,+password+FROM+users--</code></pre>
+      </div>
+      <p>Este payload cierra la consulta original, añade una instrucción UNION SELECT que recupera los campos <code>username</code> y <code>password</code> de la tabla <code>users</code>, y utiliza el comentario <code>--</code> para ignorar el resto de la consulta original.</p>
+
+      <h5>Mitigación Recomendada</h5>
+      <ul class="lista-personalizada" style="list-style:none; padding-left:0;">
+        <li style="margin-bottom:10px;"><i class="fas fa-check" style="color:#ff4f9a; margin-right:10px;"></i> Utilizar consultas parametrizadas (Prepared Statements) o ORM seguros, evitando concatenar directamente la entrada del usuario en las consultas SQL.</li>
+        <li style="margin-bottom:10px;"><i class="fas fa-check" style="color:#ff4f9a; margin-right:10px;"></i> Implementar validación y sanitización de entradas para asegurar que los parámetros solo contengan valores esperados.</li>
+        <li style="margin-bottom:10px;"><i class="fas fa-check" style="color:#ff4f9a; margin-right:10px;"></i> Aplicar el principio de mínimo privilegio en las cuentas de base de datos utilizadas por la aplicación.</li>
+        <li style="margin-bottom:10px;"><i class="fas fa-check" style="color:#ff4f9a; margin-right:10px;"></i> Implementar mecanismos de monitoreo y registro de consultas sospechosas, así como el uso de Web Application Firewalls (WAF) para detectar y bloquear intentos de inyección SQL.</li>
+      </ul>
+    </section>
+
+    <!-- ========== EVIDENCIA DE FINALIZACIÓN ========= -->
+    <section class="brief-text">
+      <h4><i class="fas fa-certificate"></i> Evidencia</h4>
+      <p>Captura de pantalla que acredita la realización exitosa del laboratorio.</p>
+      <div class="img-placeholder">
+        <img src="Lab9Evidencia.png" alt="Evidencia laboratorio resuelto">
+      </div>
+    </section>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Laboratorio 9 · SQL Injection UNION</p>
+  </div>
+</footer>
+
+</body>
+</html>
