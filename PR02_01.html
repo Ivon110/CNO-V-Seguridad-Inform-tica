@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PR02 · El eslabón más débil · Diseño ético de campaña de ingeniería social</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+/* ===== ESTILOS GENERALES (sin cambios) ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 500;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.4rem;
+  color: #4a2a36;
+  margin: 30px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-container {
+  overflow-x: auto;
+  margin: 25px 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.5);
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+th {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 600;
+  padding: 15px 12px;
+  text-align: left;
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #ffe0ec;
+  background: rgba(255,255,255,0.7);
+}
+
+tr:hover td {
+  background: rgba(255,225,235,0.9);
+}
+
+.grid-multimedia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
+}
+
+.tarjeta-media {
+  background: white;
+  border-radius: 24px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.15);
+  border: 1px solid rgba(255,79,154,0.2);
+}
+
+.tarjeta-media i {
+  font-size: 2.5rem;
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.tarjeta-media h6 {
+  font-size: 1.2rem;
+  color: #3a1c2b;
+  margin-bottom: 12px;
+}
+
+.mapa-ducto {
+  background: #ffeef2;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  font-style: italic;
+  color: #6b3a52;
+}
+
+.caja-reflexion {
+  background: linear-gradient(145deg, #fff5f9, #ffe9f0);
+  padding: 35px;
+  border-radius: 28px;
+  border: 2px dashed #ff4f9a;
+  margin: 30px 0;
+  font-style: italic;
+}
+
+.caja-reflexion i {
+  color: #ff4f9a;
+  font-size: 2.5rem;
+  float: left;
+  margin-right: 20px;
+}
+
+.ref-item {
+  background: rgba(255,255,255,0.8);
+  padding: 16px 25px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  border-left: 5px solid #ff8fc4;
+}
+
+.ref-item i {
+  color: #ff4f9a;
+  min-width: 28px;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #ffe0ec;
+}
+
+.lista-personalizada li i {
+  color: #ff4f9a;
+  width: 24px;
+  text-align: center;
+}
+
+/* Estilo para el índice de contenido */
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.indice-contenido:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(255,79,154,0.25);
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+  font-family: 'Inter', sans-serif;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.indice-subitem {
+  margin-left: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px dotted #ffd9e6;
+  font-size: 0.9rem;
+}
+
+.indice-subitem .titulo {
+  color: #6b3a52;
+}
+
+.indice-subitem .pagina {
+  color: #b3778c;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
+  .indice-grid { grid-template-columns: 1fr; }
+}
+
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  margin-top: 40px;
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer-content a {
+  color: #f3f3f3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+}
+
+
+.page-marker {
+  text-align: right;
+  color: #b3778c;
+  font-size: 0.85rem;
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px dashed #ffb3d9;
+  font-style: italic;
+}
+
+
+    /* NAV (con submenú mejorado) */
+    nav {
+      margin-top: 40px;
+    }
+    nav ul {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      list-style: none;
+    }
+    nav a {
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+    nav ul li {
+      position: relative;
+    }
+    .submenu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 10px 0;
+      min-width: 200px;
+      box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 100;
+      list-style: none;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav ul li:hover .submenu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .submenu a {
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .submenu a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+
+/* ===== ESTILOS DEL QUIZ MEJORADO (SUPER PROFESIONAL) ===== */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffe0ec;
+  border-radius: 60px;
+  padding: 15px 25px;
+  margin-bottom: 30px;
+  border: 1px solid #ffb3d9;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.usuario-tag {
+  background: #ff4f9a;
+  color: white;
+  padding: 8px 25px;
+  border-radius: 40px;
+  font-weight: 600;
+  box-shadow: 0 0 15px #ff4f9a;
+  animation: brillo 2s infinite;
+}
+
+@keyframes brillo {
+  0%, 100% { box-shadow: 0 0 15px #ff4f9a; }
+  50% { box-shadow: 0 0 25px #ffb6c1; }
+}
+
+.barra-progreso {
+  flex: 1;
+  height: 12px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 15px;
+  min-width: 150px;
+}
+
+.progreso-llenado {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff4f9a, #ffb6c1);
+  border-radius: 20px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px #ff4f9a;
+}
+
+.contador-pregunta {
+  font-size: 1.1rem;
+  color: #6b3a52;
+  font-weight: 600;
+  background: white;
+  padding: 5px 20px;
+  border-radius: 40px;
+}
+
+/* Estilos para cada tipo de mensaje */
+.mensaje-correo { background: #f0f7ff; border-left: 6px solid #1e88e5; padding: 20px; border-radius: 20px; font-family: 'Courier New', monospace; margin-bottom: 20px; }
+.mensaje-sms { background: #e0f7fa; border-left: 6px solid #00acc1; padding: 20px; border-radius: 20px; font-family: 'Courier New', monospace; }
+.mensaje-whatsapp { background: #dcf8c6; border-left: 6px solid #25d366; padding: 20px; border-radius: 20px; font-family: 'Courier New', monospace; }
+.mensaje-linkedin { background: #e8f0fe; border-left: 6px solid #0077b5; padding: 20px; border-radius: 20px; }
+.mensaje-popup { background: #fff3cd; border-left: 6px solid #ffc107; padding: 20px; border-radius: 20px; }
+.mensaje-instagram { background: #f8e1e8; border-left: 6px solid #c13584; padding: 20px; border-radius: 20px; }
+.mensaje-llamada { background: #f1f3f4; border-left: 6px solid #34a853; padding: 20px; border-radius: 20px; }
+.mensaje-mfa { background: #e8eaf6; border-left: 6px solid #3f51b5; padding: 20px; border-radius: 20px; }
+
+.pregunta-card {
+  background: white;
+  border-radius: 40px;
+  padding: 40px;
+  margin: 20px 0 30px;
+  box-shadow: 0 20px 40px rgba(255,122,168,0.2);
+  transition: transform 0.4s, opacity 0.4s;
+  transform: scale(1);
+  opacity: 1;
+}
+
+.pregunta-card.salida {
+  transform: scale(0.8) translateX(-100%);
+  opacity: 0;
+}
+
+.pregunta-card.entrada {
+  animation: entrarAnim 0.5s ease forwards;
+}
+
+@keyframes entrarAnim {
+  0% { transform: scale(0.8) translateX(100%); opacity: 0; }
+  100% { transform: scale(1) translateX(0); opacity: 1; }
+}
+
+.opciones-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.opcion-btn {
+  background: #fff0f5;
+  border: 2px solid #ffb3d9;
+  border-radius: 40px;
+  padding: 20px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #3a1c2b;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.opcion-btn:hover:not(:disabled) {
+  background: #ffe0ec;
+  border-color: #ff4f9a;
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+}
+
+.opcion-btn.seleccionada-correcta {
+  background: #e8f5e9;
+  border-color: #2e7d32;
+  box-shadow: 0 0 20px #2e7d32;
+  animation: pulsoCorrecto 0.5s;
+}
+
+@keyframes pulsoCorrecto {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.opcion-btn.seleccionada-incorrecta {
+  background: #ffebee;
+  border-color: #c62828;
+  box-shadow: 0 0 20px #c62828;
+  animation: pulsoIncorrecto 0.5s;
+}
+
+@keyframes pulsoIncorrecto {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.feedback-panel {
+  background: #fff5f9;
+  border-radius: 30px;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.3s, background 0.3s;
+  margin-top: 20px;
+  border-left: 6px solid #ff8fc4;
+}
+
+.feedback-panel.mostrar {
+  padding: 25px;
+  max-height: 400px;
+}
+
+.feedback-panel.correcto {
+  background: #e8f5e9;
+  border-left-color: #2e7d32;
+}
+
+.feedback-panel.incorrecto {
+  background: #ffebee;
+  border-left-color: #c62828;
+}
+
+.btn-siguiente {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 15px 40px;
+  border-radius: 60px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(255,79,154,0.3);
+  transition: all 0.3s;
+  margin-top: 30px;
+  float: right;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn-siguiente.activo {
+  opacity: 1;
+  pointer-events: all;
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.resultados-quiz {
+  background: white;
+  border-radius: 30px;
+  padding: 30px;
+  margin-top: 30px;
+}
+
+.resultados-quiz h3 {
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.puntuacion-final {
+  font-size: 4rem;
+  font-weight: 800;
+  color: #ff4f9a;
+  text-align: center;
+  margin: 20px 0;
+  text-shadow: 0 0 20px #ffb6c1;
+  animation: latido 1s infinite;
+}
+
+@keyframes latido {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Contenedor de gráficos */
+.graficos-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.grafico-card {
+  background: #fff0f5;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(255,79,154,0.2);
+}
+
+.grafico-card h4 {
+  color: #ff4f9a;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+canvas {
+  max-height: 250px;
+  max-width: 100%;
+}
+
+/* Tabla de ranking */
+.ranking-tabla {
+  margin: 30px 0;
+  background: #fff5f9;
+  border-radius: 20px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.ranking-tabla table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ranking-tabla th {
+  background: #ff4f9a;
+  color: white;
+  padding: 12px;
+  border-radius: 10px 10px 0 0;
+}
+
+.ranking-tabla td {
+  padding: 10px;
+  border-bottom: 1px solid #ffb3d9;
+}
+
+.medalla {
+  font-size: 1.5rem;
+  margin-right: 5px;
+}
+
+.btn-reiniciar {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 15px 40px;
+  border-radius: 60px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+}
+
+.btn-reiniciar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(255,79,154,0.5);
+}
+
+.alias-input-quiz {
+  background: white;
+  border: 2px solid #ffb3d9;
+  padding: 15px 30px;
+  border-radius: 60px;
+  font-size: 1.1rem;
+  width: 350px;
+  max-width: 100%;
+  margin-right: 15px;
+  outline: none;
+}
+
+.alias-input-quiz:focus {
+  border-color: #ff4f9a;
+  box-shadow: 0 0 15px #ff4f9a;
+}
+
+.btn-comenzar {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 15px 40px;
+  border-radius: 60px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+}
+
+.btn-comenzar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(255,79,154,0.5);
+}
+
+/* Consentimiento mejorado */
+.consentimiento-detallado {
+  background: white;
+  border-radius: 30px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.2);
+  border: 2px solid #ffb3d9;
+}
+
+.consentimiento-detallado h4 {
+  color: #ff4f9a;
+  margin-bottom: 15px;
+}
+
+.consentimiento-detallado ul {
+  list-style: none;
+  padding: 0;
+}
+
+.consentimiento-detallado li {
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.consentimiento-detallado input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #ff4f9a;
+}
+
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias"> | 177291</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV ========= -->
+    <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+     
+
+    <!-- ========== TÍTULO ACTIVIDAD PR02 ========= -->
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-fish"></i> PR02: El eslabón más débil – Diseño ético de una campaña de ingeniería social</h3>
+    </div>
+
+    <!-- ========== BOTÓN EXPORTAR PDF (simulado) ========= -->
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('el eslabon mas debil.pdf', '_blank')">
+        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
+      </button>
+    </div>
+
+    <!-- ========== ÍNDICE DE CONTENIDO ========= -->
+    <div class="indice-contenido">
+      <h4><i class="fas fa-list-ul"></i> Contenido</h4>
+      <div class="indice-doble-columna">
+        <div>
+          <div class="indice-item"><span class="titulo">Introducción</span> <span class="pagina">3</span></div>
+          <div class="indice-item"><span class="titulo">Fichas Descriptivas Individuales</span> <span class="pagina">4</span></div>
+          <div class="indice-subitem"><span class="titulo">Hoxhunt</span> <span class="pagina">4</span></div>
+          <div class="indice-subitem"><span class="titulo">Proofpoint</span> <span class="pagina">4</span></div>
+          <div class="indice-subitem"><span class="titulo">KnowBe4</span> <span class="pagina">5</span></div>
+          <div class="indice-subitem"><span class="titulo">Cofense</span> <span class="pagina">6</span></div>
+          <div class="indice-subitem"><span class="titulo">Phished</span> <span class="pagina">6</span></div>
+          <div class="indice-subitem"><span class="titulo">NINJIO</span> <span class="pagina">7</span></div>
+          <div class="indice-subitem"><span class="titulo">Mimecast</span> <span class="pagina">7</span></div>
+          <div class="indice-subitem"><span class="titulo">Infosec IQ</span> <span class="pagina">8</span></div>
+          <div class="indice-item"><span class="titulo">Tabla Comparativa</span> <span class="pagina">9</span></div>
+          <div class="indice-item"><span class="titulo">Conclusión</span> <span class="pagina">12</span></div>
+          <div class="indice-item"><span class="titulo">Referencias</span> <span class="pagina">13</span></div>
+          <div class="indice-item"><span class="titulo">Phishing Quiz</span> <span class="pagina">14</span></div>
+        </div>
+        <div>
+          <!-- vacío para mantener columnas simétricas -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== INTRODUCCIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-book-open"></i> Introducción</h4>
+      <p>Tradicionalmente, la seguridad informática ha puesto el foco en fortalecer perímetros, actualizar software y desplegar soluciones técnicas cada vez más sofisticadas. Sin embargo, la experiencia acumulada en ciberincidentes recientes señala una verdad incómoda: los atacantes rara vez necesitan vulnerar un firewall cuando pueden vulnerar a una persona. La ingeniería social, lejos de ser una técnica marginal, se ha consolidado como el método preferido para sortear las defensas mejor financiadas.</p>
+      <p>Esta realidad sitúa al factor humano en el centro del debate sobre ciberseguridad. Durante años se ha etiquetado al usuario como el eslabón más frágil de la cadena, pero quizá la pregunta deba formularse en otros términos: ¿estamos ofreciendo a las personas las herramientas adecuadas para defenderse? Las campañas de concienciación tradicionales, basadas en cursos anuales y diapositivas, han demostrado una eficacia limitada. Frente a ellas, las plataformas de simulación de phishing proponen un enfoque radicalmente distinto: aprender haciendo, equivocarse en entornos controlados y recibir retroalimentación inmediata.</p>
+      <p>El presente trabajo se articula en torno a esta filosofía. Su objetivo principal consiste en diseñar una intervención formativa ética, inspirada en las mejores prácticas del sector, que permita evaluar la capacidad de detección de amenazas en usuarios reales. Para fundamentar esta propuesta, se ha realizado primero un análisis comparativo de ocho plataformas profesionales, examinando no solo sus prestaciones técnicas, sino también sus modelos pedagógicos y salvaguardas éticas. Esta investigación previa resulta clave para entender qué funciona y qué no en la gestión del riesgo humano.</p>
+    </div>
+
+    <!-- ========== FICHAS DESCRIPTIVAS ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-clipboard-list"></i> Fichas Descriptivas Individuales</h4>
+      
+      <h5>Hoxhunt</h5>
+      <p><strong>Descripción:</strong> Plataforma que se centra en la microformación y la automatización adaptativa. Su enfoque principal es la gestión del riesgo humano a través de simulaciones de phishing altamente personalizadas.</p>
+      <p><strong>Capacidades Técnicas:</strong> Utiliza IA y behavioral analytics para enviar simulaciones adaptadas al perfil de riesgo y comportamiento de cada usuario. La dificultad y frecuencia de los simulacros se ajustan automáticamente en función del rendimiento individual.</p>
+      <p><strong>Métricas Clave:</strong> Se enfoca en la mejora del "Phish-prone Percentage" (PPP) a lo largo del tiempo, la tasa de reporte y el tiempo de respuesta. Utiliza un sistema de puntuación para gamificar la experiencia y fomentar la participación.</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> Microlearning y refuerzo positivo. Cuando un usuario falla, recibe inmediatamente un módulo formativo de menos de 90 segundos explicando el error. No hay castigos, solo guía y práctica personalizada para convertir a los usuarios en una "línea de defensa" activa.</p>
+      <p><strong>Controles Éticos:</strong> El sistema está diseñado para evitar la fatiga y la penalización. La adaptabilidad asegura que los usuarios no sean saturados con simulaciones que ya dominan, y la retroalimentación es siempre constructiva.</p>
+
+      <h5>Proofpoint</h5>
+      <p><strong>Descripción:</strong> Una suite integral de seguridad que incluye un potente módulo de formación y simulación (Proofpoint Security Awareness Training). Se beneficia enormemente de la inteligencia de amenazas global de Proofpoint.</p>
+      <p><strong>Capacidades Técnicas:</strong> Ofrece una biblioteca masiva de plantillas de phishing basadas en amenazas reales. Sus simulaciones pueden ser altamente dirigidas y personalizadas. Se integra profundamente con otras soluciones de Proofpoint para cerrar el ciclo de amenazas.</p>
+      <p><strong>Métricas Clave:</strong> Define el éxito a través de la tasa de clics (Click Rate) como indicador primario, pero enfatiza la tasa de reporte (Reporting Rate) como un indicador mucho más robusto de cambio de comportamiento. También proporciona puntos de referencia comparativos (AFR - Average Failure Rates).</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> Basado en la "pedagogía de la concienciación". Utiliza evaluaciones previas (baseline) para identificar vulnerabilidades y asigna contenido formativo específico. Su lema es "enseñar el momento" (teachable moments) justo después de un clic en una simulación.</p>
+      <p><strong>Controles Éticos:</strong> Su enfoque en la tasa de reporte promueve una cultura de vigilancia proactiva en lugar de una cultura de castigo por fallar. Las métricas se utilizan para entender y mejorar el comportamiento, no para reprender.</p>
+
+      <h5>KnowBe4</h5>
+      <p><strong>Descripción:</strong> Es uno de los líderes más reconocidos en el mercado de la formación en concienciación en seguridad. Ofrece una biblioteca de contenido extremadamente amplia, incluyendo formación sobre cumplimiento normativo.</p>
+      <p><strong>Capacidades Técnicas:</strong> Su fortaleza reside en su vasto repositorio de módulos de entrenamiento y plantillas de phishing. Ofrece una interfaz unificada para gestionar campañas y asignar formación.</p>
+      <p><strong>Métricas Clave:</strong> Realiza un seguimiento del "Riesgo Phishing" (Phishing Risk) de los usuarios a lo largo del tiempo y proporciona el "Puntaje de Concienciación de Seguridad" (Security Awareness Score) para medir el conocimiento general.</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> Tradicional y extensivo. Se basa en la asignación de cursos y vídeos a los empleados, seguidos de pruebas de phishing periódicas. Algunos críticos señalan que su contenido puede volverse repetitivo o no estar a la altura de las amenazas impulsadas por IA más modernas.</p>
+      <p><strong>Controles Éticos:</strong> Al ser un estándar de la industria, su plataforma incluye opciones para garantizar el anonimato y gestionar el consentimiento, aunque su modelo puede fomentar una cultura de "cumplir el requisito" más que de cambio de comportamiento intrínseco.</p>
+
+      <h5>Cofense (anteriormente PhishMe)</h5>
+      <p><strong>Descripción:</strong> Se especializa en la defensa contra el phishing, con un enfoque muy fuerte en la respuesta de los usuarios. Su producto estrella, Cofense PhishMe, está diseñado para que los usuarios informen sobre amenazas potenciales de manera fluida.</p>
+      <p><strong>Capacidades Técnicas:</strong> Su principal característica es el botón de reporte de Cofense, que se integra en los clientes de correo electrónico (como Outlook). Esto permite a los usuarios reportar correos sospechosos con un solo clic. Las simulaciones se centran en enseñar a identificar y reportar.</p>
+      <p><strong>Métricas Clave:</strong> Se centra casi exclusivamente en la tasa de reporte y la velocidad de respuesta de los usuarios ante una amenaza simulada.</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> "Aprender haciendo" en el contexto del flujo de trabajo diario. La premisa es que si un usuario puede identificar un simulacro y reportarlo, también reportará una amenaza real, creando así un "ejército de sensores" humanos.</p>
+      <p><strong>Controles Éticos:</strong> Al empoderar a los usuarios para que sean parte activa de la solución, se evita una cultura de culpabilización. Su enfoque es positivo y proactivo.</p>
+
+      <h5>Phished</h5>
+      <p><strong>Descripción:</strong> Una plataforma belga que se distingue por su automatización completa basada en IA. Gestiona de forma autónoma todo el ciclo de vida de la formación.</p>
+      <p><strong>Capacidades Técnicas:</strong> La IA de Phished analiza el contexto de la organización (sector, idiomas, etc.) y el comportamiento individual de cada usuario para planificar, ejecutar y analizar campañas de phishing de forma automática y continua, sin intervención manual.</p>
+      <p><strong>Métricas Clave:</strong> Proporciona un "puntaje de riesgo" individual y organizacional que se actualiza dinámicamente con cada interacción del usuario.</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> Formación continua y personalizada 24/7. La IA se encarga de enviar la simulación correcta, en el momento adecuado, a la persona adecuada.</p>
+      <p><strong>Controles Éticos:</strong> La automatización elimina el sesgo humano en la selección de "víctimas". La frecuencia está calibrada por la IA para maximizar el aprendizaje sin saturar al usuario.</p>
+
+      <h5>NINJIO</h5>
+      <p><strong>Descripción:</strong> Conocida por su enfoque único en la narración de historias. Produce episodios formativos de estilo Hollywoodense (micro-learning) basados en historias de ciberataques reales.</p>
+      <p><strong>Capacidades Técnicas:</strong> Su principal capacidad es la alta producción de sus vídeos, que utilizan narrativa y personajes para crear una conexión emocional y mejorar la retención del mensaje.</p>
+      <p><strong>Métricas Clave:</strong> Se enfoca en las tasas de visualización y finalización de sus episodios, así como en evaluaciones posteriores para medir la comprensión.</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> Aprendizaje emocional y basado en historias. Su filosofía es que la gente recuerda las historias mucho mejor que los datos o las listas de reglas.</p>
+      <p><strong>Controles Éticos:</strong> Su contenido está diseñado para ser inclusivo y atractivo, evitando un tono alarmista o técnicamente abrumador. Sin embargo, algunos críticos señalan que su enfoque en el entretenimiento puede ir en detrimento de la profundidad técnica.</p>
+
+      <h5>Mimecast</h5>
+      <p><strong>Descripción:</strong> Mimecast es una plataforma integral de seguridad de correo electrónico y datos que incluye un módulo específico de Mimecast Awareness Training. Su enfoque combina la protección técnica con la formación de usuarios, integrando ambas capas en una misma solución.</p>
+      <p><strong>Capacidades Técnicas:</strong> Ofrece contenido formativo en formato de videos breves y atractivos, combinados con simulaciones de phishing. Su principal ventaja es la integración nativa con el resto de soluciones de seguridad de Mimecast (protección de correo, continuidad, archivo), permitiendo una visión unificada de las amenazas.</p>
+      <p><strong>Métricas Clave:</strong> Proporciona dashboards intuitivos que permiten visualizar el progreso de los usuarios, identificar empleados de alto riesgo mediante "risk watchlists" y realizar un seguimiento del rendimiento en las simulaciones. También incluye analíticas de comportamiento.</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> Apuesta por el microaprendizaje con píldoras formativas cortas y entretenidas que mantienen la atención del usuario. El contenido se actualiza periódicamente para reflejar las amenazas emergentes. Permite personalizar las rutas de aprendizaje según las necesidades de cada organización.</p>
+      <p><strong>Controles Éticos:</strong> Su enfoque integrado dentro de la infraestructura de seguridad existente permite gestionar el riesgo humano sin señalar al usuario, sino formándole dentro del mismo ecosistema que ya utiliza a diario. La formación busca ser atractiva para evitar la resistencia del usuario.</p>
+
+      <h5>Infosec IQ</h5>
+      <p><strong>Descripción:</strong> Una plataforma integral de formación en seguridad que combina una vasta biblioteca de recursos con herramientas de automatización y gamificación para mantener el compromiso del usuario.</p>
+      <p><strong>Capacidades Técnicas:</strong> Ofrece más de 2000 recursos de aprendizaje, incluyendo módulos SCORM que se integran con sistemas de gestión de aprendizaje (LMS) existentes. Sus campañas automatizadas y recordatorios facilitan la gestión de programas a gran escala. La gamificación (como los "Infosec IQ Leaderboards") incentiva la participación.</p>
+      <p><strong>Métricas Clave:</strong> Realiza un seguimiento del rendimiento en las evaluaciones de conocimiento, las tasas de finalización de cursos y el rendimiento en las simulaciones de phishing.</p>
+      <p><strong>Enfoque de Entrenamiento:</strong> Mixto y muy completo. Ofrece desde vídeos y artículos hasta juegos y retos. Su enfoque es proporcionar una experiencia de aprendizaje variada para adaptarse a diferentes estilos de aprendizaje.</p>
+      <p><strong>Controles Éticos:</strong> Su enfoque en la gamificación y la recompensa (puntos, insignias) promueve una cultura de aprendizaje positiva y competitiva en lugar de una basada en el miedo al castigo.</p>
+    </div>
+
+    <!-- ========== TABLA COMPARATIVA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-table"></i> Tabla Comparativa de Plataformas</h4>
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Plataforma</th>
+              <th>Capacidades Analíticas</th>
+              <th>Capacidades de Integración</th>
+              <th>Enfoque Ético y Cultural</th>
+              <th>Limitaciones Clave</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Hoxhunt</td>
+              <td>Análisis conductual en tiempo real, puntuación de riesgo dinámica, informe de impacto empresarial.</td>
+              <td>APIs para SIEM y SOAR. Integración con clientes de correo (Outlook, Gmail).</td>
+              <td>Refuerzo positivo, microlearning justo a tiempo, gamificación no punitiva.</td>
+              <td>El alto nivel de automatización puede ofrecer menos control manual a los administradores.</td>
+            </tr>
+            <tr>
+              <td>Proofpoint</td>
+              <td>Benchmarking avanzado (AFR), análisis de tendencias de clics y reportes, inteligencia de amenazas integrada.</td>
+              <td>Integración profunda con el ecosistema Proofpoint (TAP, CASB). APIs para exportación de datos.</td>
+              <td>Promueve la "cultura de reporte" como indicador positivo, cambio de la métrica de "fallo" a "acierto".</td>
+              <td>Puede resultar más caro que otras opciones. Su interfaz puede ser compleja para nuevos administradores.</td>
+            </tr>
+            <tr>
+              <td>KnowBe4</td>
+              <td>Panel de control unificado con "Riesgo de Phishing" y "Puntaje de Concienciación". Informes de cumplimiento.</td>
+              <td>Amplia integración con directorios activos (Azure AD, G Suite), SSO y HRIS.</td>
+              <td>Ofrece una amplia biblioteca de contenido para diferentes roles y cumplimiento, evitando un enfoque único para todos.</td>
+              <td>El contenido puede percibirse como desactualizado para amenazas avanzadas. La interfaz puede resultar anticuada.</td>
+            </tr>
+            <tr>
+              <td>Cofense</td>
+              <td>Seguimiento detallado de las tasas de reporte, análisis del comportamiento de los "sensores humanos".</td>
+              <td>Integración con flujos de trabajo de seguridad (incident response). Potente plugin de reporte para email clients.</td>
+              <td>Empodera al usuario como parte activa de la defensa, fomentando una cultura de responsabilidad compartida.</td>
+              <td>Enfoque muy centrado en el correo electrónico, dejando de lado otros vectores de ingeniería social.</td>
+            </tr>
+            <tr>
+              <td>Phished</td>
+              <td>Análisis de riesgo automatizado por IA, informes de progreso continuos y en tiempo real.</td>
+              <td>APIs abiertas para integración con plataformas de identidad y SSO.</td>
+              <td>La IA elimina el sesgo en la asignación de simulacros, asegurando una distribución justa y basada en datos.</td>
+              <td>La dependencia casi total de la IA puede generar cierta opacidad sobre los criterios exactos de las campañas.</td>
+            </tr>
+            <tr>
+              <td>NINJIO</td>
+              <td>Informes de visualización, participación y retención de conocimiento post-episodio.</td>
+              <td>Integración con plataformas de formación y LMS comunes (SSO).</td>
+              <td>Uso de storytelling para conectar emocionalmente con el usuario, haciendo el aprendizaje más humano y memorable.</td>
+              <td>Su contenido, aunque atractivo, puede carecer de la profundidad técnica necesaria para algunos perfiles (ej. TI).</td>
+            </tr>
+            <tr>
+              <td>Mimecast</td>
+              <td>Dashboards intuitivos con listas de seguimiento de riesgo, analíticas de comportamiento y rendimiento en simulaciones.</td>
+              <td>Integración nativa con el ecosistema de seguridad de Mimecast (email security, continuidad, archivo).</td>
+              <td>Formación integrada en el mismo ecosistema de seguridad que el usuario ya utiliza. Microaprendizaje atractivo para evitar la resistencia.</td>
+              <td>Biblioteca de formación más pequeña que plataformas especializadas. Puede resultar repetitiva a largo plazo.</td>
+            </tr>
+            <tr>
+              <td>Infosec IQ</td>
+              <td>Analíticas detalladas sobre el rendimiento en formación y simulaciones. Paneles personalizables.</td>
+              <td>SCORM compliant, APIs para integración con LMS corporativos, SSO.</td>
+              <td>Uso de gamificación y recompensas para incentivar el aprendizaje, creando una experiencia positiva y motivadora.</td>
+              <td>Su interfaz de usuario puede resultar "anticuada" o poco intuitiva para algunos usuarios, según reseñas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== CONCLUSIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-check-double"></i> Conclusión</h4>
+      <p>Varios aprendizajes relevantes se desprenden del trabajo realizado. El primero tiene que ver con la madurez del mercado de plataformas de simulación de phishing. Lejos de ser un sector homogéneo, nos encontramos con propuestas muy diversas que responden a filosofías pedagógicas incluso opuestas. Mientras algunas herramientas apuestan por el entrenamiento continuo y personalizado mediante inteligencia artificial, otras confían en el poder del storytelling o en la gamificación más pura. Esta variedad obliga a quien diseña una campaña a preguntarse no solo qué quiere medir, sino qué tipo de cultura de seguridad desea construir.</p>
+      <p>Desde una perspectiva ética, el proyecto ha servido para constatar que es posible evaluar sin invadir. El compromiso de no almacenar credenciales reales, de anonimizar los resultados y de explicar claramente los objetivos de la actividad, no ha restado valor a la simulación, sino que probablemente ha aumentado la confianza y la disposición a participar. La transparencia, lejos de ser un obstáculo, se revela como un facilitador.</p>
+      <p>En suma, este trabajo invita a reconsiderar el lugar del factor humano en la ciberseguridad. Si durante años se le ha señalado como el problema, quizá haya llegado el momento de verle como parte de la solución. Para eso hacen falta herramientas bien diseñadas, métricas inteligentes y, sobre todo, una mirada que no confunda evaluar con castigar. El reto no es pequeño, pero iniciativas como las analizadas aquí demuestran que el camino es posible.</p>
+    </div>
+
+    <!-- ========== REFERENCIAS ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-book"></i> Referencias</h4>
+      <div style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Adaptive Security. (2025, June 23). Top 15 Security Awareness Training Software Solutions for 2025.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> CyberHoot. (2025, July 21). Slik gjør du: Forstå brukerens poengsystem (HootScore).</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Enigma Security. (2025, December 15). La inteligencia artificial podría ser la solución para una mayor resiliencia ante el phishing.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Gartner, Inc. (2026). Top Hoxhunt Competitors & Alternatives 2026. Gartner Peer Insights.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Gartner, Inc. (2026). Top NINJIO AWARE Competitors & Alternatives 2026. Gartner Peer Insights.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Hoxhunt. (2025, July 30). Repeat Offenders in Phishing: Here’s How We Train Them Out.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Proofpoint. (2020, June 17). Measuring Up: Metrics, Benchmarks, and Communicating Security Awareness Training Success.</div>
+        <div class="ref-item"><i class="fas fa-file-alt"></i> Sociedade Brasileira de Computação. (2025). Phishing Quiz: Um Jogo Educacional para Conscientização e Prevenção de Ataques Cibernéticos. Anais Estendidos do XXIV Simpósio Brasileiro de Jogos e Entretenimento Digital (SBGames 2025).</div>
+      </div>
+    </div>
+
+    <!-- ========== PHISHING QUIZ (PROFESIONAL Y COMPLETO) ========= -->
+    <div class="seccion" id="quiz-section">
+      <h4><i class="fas fa-question-circle"></i> Phishing Quiz: ¿Eres capaz de detectar el engaño?</h4>
+
+      <!-- Pantalla de bienvenida con consentimiento detallado -->
+      <div id="quizBienvenida" style="display: flex; flex-direction: column; align-items: center;">
+        <div class="consentimiento-detallado" id="consentimientoPanel">
+          <h4><i class="fas fa-hand-peace"></i> Consentimiento informado</h4>
+          <ul>
+            <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Este quiz es <strong>totalmente anónimo y voluntario</strong>.</li>
+            <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> No se solicitan ni almacenan datos personales ni credenciales reales.</li>
+            <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Solo se guarda un alias que tú eliges y tus respuestas con fines educativos y estadísticos.</li>
+            <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Los resultados se almacenan localmente en tu navegador y se usan únicamente para el ranking y análisis.</li>
+            <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Puedes retirarte en cualquier momento cerrando la página.</li>
+          </ul>
+          <div style="display: flex; align-items: center; gap: 15px; margin-top: 20px;">
+            <input type="checkbox" id="consentCheckbox">
+            <label for="consentCheckbox" style="font-weight: 600;">He leído y acepto los términos del consentimiento informado</label>
+          </div>
+        </div>
+
+        <!-- Panel de alias (oculto inicialmente) -->
+        <div id="aliasPanel" style="display: none; margin-top: 30px; width: 100%; max-width: 600px; text-align: center;">
+          <label for="quizAlias" style="font-size: 1.2rem; font-weight: 600; color: #ff4f9a; display: block; margin-bottom: 15px;">
+            <i class="fas fa-user-secret"></i> Elige tu alias para el ranking:
+          </label>
+          <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+            <input type="text" id="quizAlias" class="alias-input-quiz" placeholder="Ej. CiberNinja, PhisherHunter, etc." value="Explorador" maxlength="20">
+            <button class="btn-comenzar" id="btnComenzarQuiz"><i class="fas fa-play"></i> Comenzar aventura</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenedor del juego (oculto inicialmente) -->
+      <div id="quizJuego" style="display: none;">
+        <div class="quiz-header">
+          <div class="usuario-tag" id="usuarioTag">Invitado</div>
+          <div class="barra-progreso">
+            <div class="progreso-llenado" id="barraProgreso" style="width: 0%;"></div>
+          </div>
+          <div class="contador-pregunta">Pregunta <span id="preguntaActual">1</span>/<span id="totalPreguntas">10</span></div>
+        </div>
+
+        <div id="preguntaContainer" class="pregunta-card">
+          <!-- Se carga dinámicamente -->
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+          <button class="btn-siguiente" id="btnSiguiente" disabled><i class="fas fa-arrow-right"></i> Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Contenedor de resultados (oculto inicialmente) -->
+      <div id="quizResultados" style="display: none;" class="resultados-quiz">
+        <h3><i class="fas fa-trophy"></i> ¡Quiz completado!</h3>
+        <div id="resultadoIndividual" class="puntuacion-final"></div>
+        
+        <!-- Gráficos de análisis -->
+        <div class="graficos-container">
+          <div class="grafico-card">
+            <h4>% Aciertos por escenario</h4>
+            <canvas id="graficoAciertos"></canvas>
+          </div>
+          <div class="grafico-card">
+            <h4>Tiempo promedio por escenario (s)</h4>
+            <canvas id="graficoTiempos"></canvas>
+          </div>
+        </div>
+
+        <!-- Análisis de tendencias -->
+        <div style="background: #fff0f5; border-radius: 20px; padding: 20px; margin: 20px 0;">
+          <h4 style="color:#ff4f9a;">📈 Tendencias globales</h4>
+          <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;" id="tendencias">
+            <!-- Se llena con JS -->
+          </div>
+        </div>
+
+        <div id="rankingGlobal" class="ranking-tabla"></div>
+        
+        <button class="btn-reiniciar" id="btnReiniciarQuiz"><i class="fas fa-redo-alt"></i> Volver a jugar</button>
+      </div>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<!-- ========== PIE DE PÁGINA ========= -->
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a></p>
+    <p>Sitio seguro con certificado SSL</p>
+  </div>
+</footer>
+
+<!-- Canvas para confetti (se detiene al reiniciar) -->
+<canvas id="confetti-canvas"></canvas>
+
+<script>
+  // ============================================
+  // DEFINICIÓN DE PREGUNTAS (10 escenarios realistas y variados)
+  // ============================================
+  const preguntas = [
+    {
+      tipo: "correo",
+      icono: "📧",
+      titulo: "Correo electrónico",
+      contenido: "De: 'Banco Santander' &lt;seguridad@bancosantander-verify.net&gt;<br>Asunto: Urgente: Su tarjeta ha sido bloqueada<br><br>Mensaje: Detectamos un acceso sospechoso. Para reactivar su tarjeta, haga clic en: https://bancosantander-verificacion.com",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Es phishing!</strong> El remitente usa un dominio falso (@bancosantander-verify.net) y la URL no pertenece al banco real. Los bancos nunca envían enlaces por correo para reactivar tarjetas. Si tienes dudas, contacta directamente."
+    },
+    {
+      tipo: "sms",
+      icono: "📱",
+      titulo: "SMS",
+      contenido: "Correos: Su paquete no ha podido entregarse. Programe nueva entrega: https://correos.es/urgente-paquete",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Es smishing!</strong> La URL parece legítima pero redirige a una web falsa. Correos nunca pide acciones urgentes por SMS sin número de seguimiento."
+    },
+    {
+      tipo: "whatsapp",
+      icono: "💬",
+      titulo: "WhatsApp",
+      contenido: "Número desconocido: 'Hola, soy Marta, tu prima. He perdido el móvil. ¿Puedes ingresarme 200€ a esta cuenta? ES12 3456 7890 1234'",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Es suplantación!</strong> Estafa del 'amigo en apuros'. Llama a tu prima por su número habitual para verificar."
+    },
+    {
+      tipo: "linkedin",
+      icono: "🔗",
+      titulo: "Mensaje en LinkedIn",
+      contenido: "Hola, me ha encantado tu perfil. Tenemos una oferta de 5000€/mes. Mándame CV a: reclutador.tech@gmail.com",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Phishing laboral!</strong> Un reclutador legítimo usa correo corporativo, no Gmail. Sueldos altos sin entrevista son sospechosos."
+    },
+    {
+      tipo: "correo",
+      icono: "📎",
+      titulo: "Correo interno",
+      contenido: "De: 'Recursos Humanos' &lt;rrhh@tuempresa.com&gt;<br>Asunto: Nómina marzo<br>Archivo adjunto: nomina_marzo.xlsm",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Cuidado!</strong> .xlsm (Excel con macros) puede contener malware. Las nóminas suelen ser .pdf. Consulta con RRHH antes de abrir."
+    },
+    {
+      tipo: "popup",
+      icono: "🖥️",
+      titulo: "Ventana emergente",
+      contenido: "ALERTA DE SEGURIDAD: Su equipo está infectado. Llame al soporte técnico inmediatamente: 900 123 456",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Estafa de soporte técnico!</strong> Las empresas legítimas nunca muestran números por emergente. No llames, cierra la ventana."
+    },
+    {
+      tipo: "instagram",
+      icono: "📸",
+      titulo: "Publicación en Instagram",
+      contenido: "¡Sorteamos 10 iPhones! Rellena tus datos: www.sorteo-iphones-2026.com",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Fraude!</strong> Sorteos demasiado buenos son falsos. Recolectan datos para venderlos o estafas."
+    },
+    {
+      tipo: "llamada",
+      icono: "📞",
+      titulo: "Llamada telefónica",
+      contenido: "Banco: hemos detectado un cargo de 500€. Necesitamos tu clave de seguridad para cancelarlo.",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Vishing!</strong> Los bancos nunca piden claves por teléfono. Cuelga y llama al número oficial."
+    },
+    {
+      tipo: "mfa",
+      icono: "🔐",
+      titulo: "Correo de soporte",
+      contenido: "De: 'IT Support' &lt;support@empresa.com&gt;<br>Asunto: Acción requerida: actualice su MFA<br>Mensaje: Por razones de seguridad, debe registrar su dispositivo en este enlace: https://empresa.com/mfa-verify",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 0,
+      feedback: "🔍 <strong>¡Phishing!</strong> Aunque el dominio parece legítimo, 'empresa.com/mfa-verify' no es la página oficial de MFA. Siempre verifica la URL y contacta a IT directamente si tienes dudas."
+    },
+    {
+      tipo: "correo",
+      icono: "📧",
+      titulo: "Correo de Hacienda",
+      contenido: "De: 'Agencia Tributaria' &lt;notificaciones@aeat.es&gt;<br>Asunto: Devolución 350€<br>Acceda: www.aeat.es/devoluciones",
+      opciones: ["Phishing", "Legítimo"],
+      correcta: 1,
+      feedback: "🔍 <strong>¡Este es legítimo!</strong> Remitente @aeat.es y URL oficial. Hacienda envía notificaciones así, pero nunca pide datos por correo."
+    }
+  ];
+
+  // ============================================
+  // VARIABLES GLOBALES
+  // ============================================
+  let aliasQuiz = '';
+  let respuestasQuiz = [];
+  let tiemposInicioQuiz = [];
+  let tiemposRespuestaQuiz = [];
+  let preguntaActualQuiz = 0;
+  const totalPreguntasQuiz = preguntas.length;
+  let animacionConfetti = null;
+
+  // Elementos del DOM
+  const bienvenidaDiv = document.getElementById('quizBienvenida');
+  const juegoDiv = document.getElementById('quizJuego');
+  const resultadosDiv = document.getElementById('quizResultados');
+  const usuarioTag = document.getElementById('usuarioTag');
+  const spanActual = document.getElementById('preguntaActual');
+  const spanTotal = document.getElementById('totalPreguntas');
+  const preguntaContainer = document.getElementById('preguntaContainer');
+  const btnSiguiente = document.getElementById('btnSiguiente');
+  const aliasInput = document.getElementById('quizAlias');
+  const btnComenzar = document.getElementById('btnComenzarQuiz');
+  const btnReiniciar = document.getElementById('btnReiniciarQuiz');
+  const barraProgreso = document.getElementById('barraProgreso');
+  const consentCheckbox = document.getElementById('consentCheckbox');
+  const aliasPanel = document.getElementById('aliasPanel');
+
+  spanTotal.textContent = totalPreguntasQuiz;
+
+  // ============================================
+  // FUNCIONES DE CONSENTIMIENTO
+  // ============================================
+  consentCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+      aliasPanel.style.display = 'block';
+      aliasPanel.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      aliasPanel.style.display = 'none';
+    }
+  });
+
+  // ============================================
+  // FUNCIONES DEL QUIZ
+  // ============================================
+  function comenzarQuiz() {
+    aliasQuiz = aliasInput.value.trim();
+    if (aliasQuiz === '') aliasQuiz = 'Explorador';
+    usuarioTag.textContent = aliasQuiz;
+
+    respuestasQuiz = new Array(totalPreguntasQuiz).fill(null);
+    tiemposInicioQuiz = new Array(totalPreguntasQuiz).fill(null);
+    tiemposRespuestaQuiz = new Array(totalPreguntasQuiz).fill(null);
+    preguntaActualQuiz = 0;
+
+    bienvenidaDiv.style.display = 'none';
+    juegoDiv.style.display = 'block';
+    resultadosDiv.style.display = 'none';
+
+    actualizarBarraProgreso();
+    cargarPreguntaQuiz(0);
+  }
+
+  function actualizarBarraProgreso() {
+    const respondidas = respuestasQuiz.filter(r => r !== null).length;
+    const porcentaje = (respondidas / totalPreguntasQuiz) * 100;
+    barraProgreso.style.width = porcentaje + '%';
+  }
+
+  function cargarPreguntaQuiz(indice) {
+    if (indice >= totalPreguntasQuiz) {
+      finalizarQuiz();
+      return;
+    }
+
+    spanActual.textContent = indice + 1;
+    tiemposInicioQuiz[indice] = Date.now();
+
+    const p = preguntas[indice];
+    preguntaContainer.classList.remove('salida');
+    preguntaContainer.classList.add('entrada');
+
+    // Elegir clase CSS según tipo
+    let claseTipo = '';
+    switch(p.tipo) {
+      case 'correo': claseTipo = 'mensaje-correo'; break;
+      case 'sms': claseTipo = 'mensaje-sms'; break;
+      case 'whatsapp': claseTipo = 'mensaje-whatsapp'; break;
+      case 'linkedin': claseTipo = 'mensaje-linkedin'; break;
+      case 'popup': claseTipo = 'mensaje-popup'; break;
+      case 'instagram': claseTipo = 'mensaje-instagram'; break;
+      case 'llamada': claseTipo = 'mensaje-llamada'; break;
+      case 'mfa': claseTipo = 'mensaje-mfa'; break;
+      default: claseTipo = '';
+    }
+
+    let html = `
+      <div class="${claseTipo}" style="margin-bottom: 20px;">
+        <div style="font-size: 1.5rem; margin-bottom: 10px;">${p.icono} ${p.titulo}</div>
+        <div style="font-size: 1.2rem;">${p.contenido}</div>
+      </div>
+      <div class="opciones-grid">
+        ${p.opciones.map((opc, idx) => `
+          <button class="opcion-btn" data-opcion="${idx}" onclick="seleccionarOpcionQuiz(${indice}, ${idx})">
+            ${idx === 0 ? '🔴' : '🟢'} ${opc}
+          </button>
+        `).join('')}
+      </div>
+      <div id="feedbackQuiz-${indice}" class="feedback-panel"></div>
+    `;
+    preguntaContainer.innerHTML = html;
+
+    btnSiguiente.classList.remove('activo');
+    btnSiguiente.disabled = true;
+  }
+
+  window.seleccionarOpcionQuiz = function(indice, opcionElegida) {
+    if (respuestasQuiz[indice] !== null) return;
+
+    const tiempoFin = Date.now();
+    const tiempoSeg = (tiempoFin - tiemposInicioQuiz[indice]) / 1000;
+    tiemposRespuestaQuiz[indice] = tiempoSeg;
+    respuestasQuiz[indice] = opcionElegida;
+
+    const esCorrecta = (opcionElegida === preguntas[indice].correcta);
+
+    const botones = document.querySelectorAll('.opcion-btn');
+    botones.forEach((btn, idx) => {
+      btn.disabled = true;
+      if (idx === opcionElegida) {
+        btn.classList.add(esCorrecta ? 'seleccionada-correcta' : 'seleccionada-incorrecta');
+      }
+    });
+
+    const feedbackDiv = document.getElementById(`feedbackQuiz-${indice}`);
+    feedbackDiv.innerHTML = preguntas[indice].feedback;
+    feedbackDiv.classList.add('mostrar', esCorrecta ? 'correcto' : 'incorrecto');
+
+    actualizarBarraProgreso();
+    btnSiguiente.classList.add('activo');
+    btnSiguiente.disabled = false;
+  };
+
+  window.siguientePreguntaQuiz = function() {
+    if (preguntaActualQuiz < totalPreguntasQuiz - 1) {
+      preguntaContainer.classList.remove('entrada');
+      preguntaContainer.classList.add('salida');
+      setTimeout(() => {
+        preguntaActualQuiz++;
+        cargarPreguntaQuiz(preguntaActualQuiz);
+      }, 300);
+    } else {
+      finalizarQuiz();
+    }
+  };
+
+  function finalizarQuiz() {
+    // Calcular puntuación
+    let puntuacion = 0;
+    for (let i = 0; i < totalPreguntasQuiz; i++) {
+      if (respuestasQuiz[i] === preguntas[i].correcta) puntuacion += 10;
+    }
+    const tiempoTotal = tiemposRespuestaQuiz.reduce((acc, t) => acc + t, 0);
+
+    // Guardar en localStorage
+    let resultados = JSON.parse(localStorage.getItem('phishingQuizResultados')) || [];
+    resultados.push({
+      alias: aliasQuiz,
+      puntuacion: puntuacion,
+      tiempoTotal: tiempoTotal,
+      respuestas: [...respuestasQuiz],
+      tiempos: [...tiemposRespuestaQuiz],
+      fecha: new Date().toLocaleString()
+    });
+    localStorage.setItem('phishingQuizResultados', JSON.stringify(resultados));
+
+    // Mostrar resultados
+    juegoDiv.style.display = 'none';
+    resultadosDiv.style.display = 'block';
+
+    document.getElementById('resultadoIndividual').innerHTML = `${puntuacion}/100`;
+    document.getElementById('resultadoIndividual').innerHTML += `<div style="font-size:1.2rem; margin-top:10px;">⏱️ Tiempo total: ${tiempoTotal.toFixed(1)} s</div>`;
+
+    mostrarGraficos();
+    mostrarTendencias();
+    mostrarRanking();
+    lanzarConfetti();
+  }
+
+  function mostrarGraficos() {
+    let resultados = JSON.parse(localStorage.getItem('phishingQuizResultados')) || [];
+    if (resultados.length === 0) return;
+
+    // Calcular aciertos y tiempos promedio por escenario
+    let aciertos = new Array(totalPreguntasQuiz).fill(0);
+    let totalResp = new Array(totalPreguntasQuiz).fill(0);
+    let sumaTiempos = new Array(totalPreguntasQuiz).fill(0);
+    let contTiempos = new Array(totalPreguntasQuiz).fill(0);
+
+    resultados.forEach(r => {
+      if (r.respuestas) {
+        r.respuestas.forEach((res, idx) => {
+          totalResp[idx]++;
+          if (res === preguntas[idx].correcta) aciertos[idx]++;
+        });
+      }
+      if (r.tiempos) {
+        r.tiempos.forEach((t, idx) => {
+          if (t) {
+            sumaTiempos[idx] += t;
+            contTiempos[idx]++;
+          }
+        });
+      }
+    });
+
+    let porcentajes = aciertos.map((a, i) => totalResp[i] ? (a / totalResp[i] * 100).toFixed(1) : 0);
+    let tiemposProm = sumaTiempos.map((sum, i) => contTiempos[i] ? (sum / contTiempos[i]).toFixed(1) : 0);
+
+    // Gráfico de aciertos
+    const ctxAciertos = document.getElementById('graficoAciertos').getContext('2d');
+    new Chart(ctxAciertos, {
+      type: 'bar',
+      data: {
+        labels: Array.from({ length: totalPreguntasQuiz }, (_, i) => `#${i+1}`),
+        datasets: [{
+          label: '% Aciertos',
+          data: porcentajes,
+          backgroundColor: 'rgba(255, 79, 154, 0.6)',
+          borderColor: '#ff4f9a',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { max: 100, beginAtZero: true } }
+      }
+    });
+
+    // Gráfico de tiempos
+    const ctxTiempos = document.getElementById('graficoTiempos').getContext('2d');
+    new Chart(ctxTiempos, {
+      type: 'line',
+      data: {
+        labels: Array.from({ length: totalPreguntasQuiz }, (_, i) => `#${i+1}`),
+        datasets: [{
+          label: 'Tiempo promedio (s)',
+          data: tiemposProm,
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: '#36a2eb',
+          borderWidth: 3,
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  }
+
+  function mostrarTendencias() {
+    let resultados = JSON.parse(localStorage.getItem('phishingQuizResultados')) || [];
+    if (resultados.length === 0) return;
+
+    // Calcular promedios globales
+    let totalAciertos = 0, totalRespuestas = 0;
+    let sumaTiemposGlobal = 0, totalIntentos = 0;
+    let aciertosPorEscenario = new Array(totalPreguntasQuiz).fill(0);
+    let respPorEscenario = new Array(totalPreguntasQuiz).fill(0);
+    let tiemposPorEscenario = new Array(totalPreguntasQuiz).fill(0);
+    let contTiempos = new Array(totalPreguntasQuiz).fill(0);
+
+    resultados.forEach(r => {
+      if (r.respuestas) {
+        r.respuestas.forEach((res, idx) => {
+          respPorEscenario[idx]++;
+          if (res === preguntas[idx].correcta) aciertosPorEscenario[idx]++;
+          totalRespuestas++;
+          if (res === preguntas[idx].correcta) totalAciertos++;
+        });
+      }
+      if (r.tiempos) {
+        r.tiempos.forEach((t, idx) => {
+          if (t) {
+            tiemposPorEscenario[idx] += t;
+            contTiempos[idx]++;
+            sumaTiemposGlobal += t;
+            totalIntentos++;
+          }
+        });
+      }
+    });
+
+    let porcentajeGlobal = totalRespuestas ? (totalAciertos / totalRespuestas * 100).toFixed(1) : 0;
+    let tiempoPromGlobal = totalIntentos ? (sumaTiemposGlobal / totalIntentos).toFixed(1) : 0;
+
+    // Escenario más fallado
+    let maxErrorIdx = 0;
+    for (let i = 1; i < totalPreguntasQuiz; i++) {
+      let errorActual = respPorEscenario[i] ? (1 - aciertosPorEscenario[i] / respPorEscenario[i]) * 100 : 0;
+      let errorMax = respPorEscenario[maxErrorIdx] ? (1 - aciertosPorEscenario[maxErrorIdx] / respPorEscenario[maxErrorIdx]) * 100 : 0;
+      if (errorActual > errorMax) maxErrorIdx = i;
+    }
+    let porcentajeErrorMax = respPorEscenario[maxErrorIdx] ? (1 - aciertosPorEscenario[maxErrorIdx] / respPorEscenario[maxErrorIdx]) * 100 : 0;
+
+    // Escenario más lento
+    let maxTiempoIdx = 0;
+    for (let i = 1; i < totalPreguntasQuiz; i++) {
+      let tiempoActual = contTiempos[i] ? tiemposPorEscenario[i] / contTiempos[i] : 0;
+      let tiempoMax = contTiempos[maxTiempoIdx] ? tiemposPorEscenario[maxTiempoIdx] / contTiempos[maxTiempoIdx] : 0;
+      if (tiempoActual > tiempoMax) maxTiempoIdx = i;
+    }
+    let tiempoMaxProm = contTiempos[maxTiempoIdx] ? (tiemposPorEscenario[maxTiempoIdx] / contTiempos[maxTiempoIdx]).toFixed(1) : 0;
+
+    let tendenciasHtml = `
+      <div style="text-align: center;">
+        <span style="font-size: 2rem; color:#ff4f9a;">${porcentajeGlobal}%</span><br>
+        <span>Aciertos globales</span>
+      </div>
+      <div style="text-align: center;">
+        <span style="font-size: 2rem; color:#ff4f9a;">${tiempoPromGlobal}s</span><br>
+        <span>Tiempo promedio</span>
+      </div>
+      <div style="text-align: center;">
+        <span style="font-size: 2rem; color:#ff4f9a;">#${maxErrorIdx+1}</span><br>
+        <span>Más fallado (${porcentajeErrorMax.toFixed(1)}% error)</span>
+      </div>
+      <div style="text-align: center;">
+        <span style="font-size: 2rem; color:#ff4f9a;">#${maxTiempoIdx+1}</span><br>
+        <span>Más lento (${tiempoMaxProm}s)</span>
+      </div>
+    `;
+    document.getElementById('tendencias').innerHTML = tendenciasHtml;
+  }
+
+  function mostrarRanking() {
+    let resultados = JSON.parse(localStorage.getItem('phishingQuizResultados')) || [];
+    if (resultados.length === 0) return;
+
+    resultados.sort((a, b) => {
+      if (a.puntuacion !== b.puntuacion) return b.puntuacion - a.puntuacion;
+      return a.tiempoTotal - b.tiempoTotal;
+    });
+
+    let rankingHtml = '<h4>🏆 Ranking global</h4><table><tr><th>Pos</th><th>Alias</th><th>Puntos</th><th>Tiempo</th></tr>';
+    for (let i = 0; i < Math.min(resultados.length, 10); i++) {
+      let medalla = '';
+      if (i === 0) medalla = '🥇';
+      else if (i === 1) medalla = '🥈';
+      else if (i === 2) medalla = '🥉';
+      else medalla = '📌';
+      rankingHtml += `<tr><td>${medalla} ${i+1}</td><td>${resultados[i].alias}</td><td>${resultados[i].puntuacion}</td><td>${resultados[i].tiempoTotal.toFixed(1)}s</td></tr>`;
+    }
+    rankingHtml += '</table>';
+    document.getElementById('rankingGlobal').innerHTML = rankingHtml;
+  }
+
+  function lanzarConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confetti = [];
+    for (let i = 0; i < 150; i++) {
+      confetti.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 8 + 2,
+        speed: Math.random() * 5 + 2,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        p.y += p.speed;
+        if (p.y > canvas.height) {
+          p.y = -p.size;
+          p.x = Math.random() * canvas.width;
+        }
+      });
+      animacionConfetti = requestAnimationFrame(draw);
+    }
+    draw();
+
+    // Detener después de 5 segundos
+    setTimeout(() => {
+      cancelAnimationFrame(animacionConfetti);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, 5000);
+  }
+
+  function reiniciarQuiz() {
+    bienvenidaDiv.style.display = 'flex';
+    juegoDiv.style.display = 'none';
+    resultadosDiv.style.display = 'none';
+    aliasInput.value = 'Explorador';
+    // Restaurar consentimiento
+    document.querySelector('.consentimiento-detallado').style.display = 'block';
+    aliasPanel.style.display = 'none';
+    consentCheckbox.checked = false;
+    // Detener confetti
+    if (animacionConfetti) {
+      cancelAnimationFrame(animacionConfetti);
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  // Eventos
+  btnComenzar.addEventListener('click', comenzarQuiz);
+  btnSiguiente.addEventListener('click', siguientePreguntaQuiz);
+  btnReiniciar.addEventListener('click', reiniciarQuiz);
+
+  aliasInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') comenzarQuiz();
+  });
+</script>
+</body>
+</html>
