@@ -9,7 +9,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr { display: block; }
+  thead { display: none; }
+  tr { margin-bottom: 1rem; border: 1px solid #ffb3d9; border-radius: 12px; padding: 10px; }
+  td { display: flex; justify-content: space-between; align-items: center; border-bottom: none; padding: 8px; }
+  td::before { content: attr(data-label); font-weight: bold; width: 40%; }
+}
 /* ===== ESTILOS GENERALES (sin cambios) ===== */
 * {
   margin: 0;
