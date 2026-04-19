@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Actividades · Seguridad Informática</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+/* FONDO DIFUMINADO */
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+  animation-delay: 0s;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+/* CONTENEDOR */
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+/* TARJETA 3D */
+.card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 55px;
+  box-shadow:
+    0 40px 80px rgba(255, 122, 168, 0.25),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  transform: translateY(0);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255, 122, 168, 0.35);
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  position: relative;
+}
+
+.header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* NAV */
+nav {
+  margin-top: 40px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  list-style: none;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 500;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+nav a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+
+nav a i {
+  font-size: 1.1rem;
+}
+
+/* ACTIVIDADES – LISTADO TIPO BLOG */
+.actividades-header {
+  margin: 50px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.actividades-header h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 3px solid #ff8fc4;
+  padding-bottom: 10px;
+}
+
+.blog-index {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 40px 0 20px;
+}
+
+/* TARJETA DE ACTIVIDAD (estilo blog) */
+.activity-card {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(4px);
+  border-radius: 28px;
+  padding: 28px 35px;
+  box-shadow: 0 10px 30px rgba(255,122,168,0.15);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-left: 8px solid #ff8fc4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.activity-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 25px 50px rgba(255,79,154,0.25);
+  background: white;
+  border-left: 8px solid #ff4f9a;
+}
+
+.activity-number {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 700;
+  font-size: 1.3rem;
+  padding: 8px 18px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 14px rgba(255,79,154,0.4);
+}
+
+.activity-content {
+  flex: 1;
+  margin: 0 25px;
+}
+
+.activity-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c1c24;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-title i {
+  color: #ff4f9a;
+  font-size: 1.6rem;
+  width: 36px;
+}
+
+.activity-desc {
+  color: #6b3a52;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.activity-desc i {
+  color: #ff8fc4;
+  font-size: 0.9rem;
+}
+
+.activity-link {
+  background: rgba(255,79,154,0.1);
+  border-radius: 40px;
+  padding: 12px 28px;
+  text-decoration: none;
+  color: #ff4f9a;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s;
+  border: 1.5px solid rgba(255,79,154,0.3);
+}
+
+.activity-link:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: white;
+  border-color: transparent;
+  transform: scale(1.05);
+}
+
+.activity-link i {
+  font-size: 1rem;
+}
+
+/* mensaje informativo */
+.helper-note {
+  margin-top: 25px;
+  padding: 18px 25px;
+  background: rgba(255, 205, 210, 0.25);
+  border-radius: 18px;
+  border: 1px dashed #ff4f9a;
+  color: #5e3344;
+  font-size: 0.98rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(5px);
+}
+
+.helper-note i {
+  color: #ff4f9a;
+  font-size: 1.6rem;
+}
+
+/* BLOQUE VISUAL 3D pequeño para mantener estilo */
+.mini-visual {
+  margin-top: 55px;
+  padding: 25px 35px;
+  border-radius: 28px;
+  background: linear-gradient(105deg, #ffeaf1, #ffdce8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border: 1px solid rgba(255,79,154,0.2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+}
+
+.mini-visual i {
+  font-size: 2.5rem;
+  color: #ff4f9a;
+  filter: drop-shadow(0 6px 8px rgba(255,79,154,0.2));
+}
+
+.mini-visual span {
+  font-weight: 600;
+  color: #4a2a36;
+}
+
+/* FOOTER (idéntico) */
+.footer {
+  width: 100%;
+  padding: 25px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  margin-top: 60px;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer-content a {
+  color: #f3f3f3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-content a:hover {
+  text-decoration: underline;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .wrapper {
+    padding: 15px;
+  }
+  .card {
+    padding: 35px 25px;
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    flex-direction: column;
+  }
+  .activity-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .activity-content {
+    margin: 10px 0;
+  }
+  .activity-link {
+    align-self: flex-end;
+  }
+  .actividades-header h3 {
+    font-size: 1.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 25px 18px;
+  }
+  .activity-title {
+    font-size: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .activity-card {
+    padding: 22px;
+  }
+  .activity-number {
+    font-size: 1.1rem;
+  }
+  .actividades-header h3 {
+    font-size: 1.7rem;
+  }
+  .mini-visual {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+}
+
+
+    /* NAV (con submenú mejorado) */
+    nav {
+      margin-top: 40px;
+    }
+    nav ul {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      list-style: none;
+    }
+    nav a {
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+    nav ul li {
+      position: relative;
+    }
+    .submenu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 10px 0;
+      min-width: 200px;
+      box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 100;
+      list-style: none;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    nav ul li:hover .submenu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .submenu a {
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      color: #3a1c2b;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .submenu a:hover {
+      background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+    }
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO COMPLETO (idéntico al index) ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAV IGUAL (actividades resaltado) ========= -->
+    <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="notas.html"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+              <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+              <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+            </ul>
+          </li>
+          <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>  
+
+    <!-- ========== LISTADO DE ACTIVIDADES ========= -->
+    <div class="actividades-header">
+      <h3><i class="fas fa-list-ul"></i>Lista de Notas</h3>
+    </div>
+
+    <div class="blog-index">
+
+      <!-- ACTIVIDAD 01 -->
+      <div class="activity-card">
+        <div class="activity-content">
+          <div class="activity-title">
+            <i class="fas fa-bug"></i> ANATOMÍA DE UN RANSOMWARE
+          </div>
+        </div>
+        <a href="notas.html" class="activity-link">
+          <span>Visualizar</span> <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+    </div> <!-- fin blog-index -->
+
+
+
+  </div> <!-- fin card -->
+
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+    <p>
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> 
+      <!-- <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>-->
+    </p>
+    <p>
+      Sitio seguro con certificado SSL
+    </p>
+  </div>
+</footer>
+
+<!-- ========== SCRIPT MÍNIMO PARA INTERACCIÓN SUAVE ========= -->
+<script>
+  (function() {
+    // Efectos visuales sutiles (misma filosofía del index)
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.activity-card');
+      cards.forEach((card, idx) => {
+        card.style.animation = `fadeIn 0.5s ease-out ${idx * 0.1}s both`;
+      });
+
+      // Insertar keyframes si no existen
+      if (!document.querySelector('#fadeInKeyframes')) {
+        const style = document.createElement('style');
+        style.id = 'fadeInKeyframes';
+        style.textContent = `
+          @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      // Pequeña interacción: cambiar ícono al pasar sobre tarjeta
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', function(e) {
+          const icon = this.querySelector('.activity-title i');
+          if (icon) {
+            icon.style.transition = 'transform 0.2s';
+            icon.style.transform = 'scale(1.2)';
+          }
+        });
+        card.addEventListener('mouseleave', function(e) {
+          const icon = this.querySelector('.activity-title i');
+          if (icon) {
+            icon.style.transform = 'scale(1)';
+          }
+        });
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>

