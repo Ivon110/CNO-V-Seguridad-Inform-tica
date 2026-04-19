@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PR01 · Walkthrough SnakeOil · Laura Montelongo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-proyecto {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-proyecto h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.4rem;
+  color: #4a2a36;
+  margin: 30px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #ffe0ec;
+}
+
+.lista-personalizada li i {
+  color: #ff4f9a;
+  width: 24px;
+  text-align: center;
+}
+
+.btn-video {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  color: white;
+  padding: 16px 32px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(255,79,154,0.3);
+}
+
+.btn-video:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 35px rgba(255,79,154,0.4);
+}
+
+.video-container {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.video-container iframe {
+  width: 100%;
+  max-width: 800px;
+  height: 450px;
+  border-radius: 28px;
+  box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+  border: 3px solid white;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  margin-top: 40px;
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-proyecto h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAVEGACIÓN ========= -->
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li>
+          <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down"></i></a>
+          <ul class="submenu">
+            <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+            <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+            <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down"></i></a>
+          <ul class="submenu">
+            <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+          </ul>
+        </li>
+        <li><a href="notasMenu.html"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li>
+          <a href="#" class="activo"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down"></i></a>
+          <ul class="submenu">
+            <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+            <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02</a></li>
+          </ul>
+        </li>
+        <li><a href="#"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+
+    <!-- ========== TÍTULO PR01 ========= -->
+    <div class="titulo-proyecto">
+      <h3><i class="fas fa-bug"></i> PR01 · De la teoría a la práctica: Walkthrough en acción</h3>
+    </div>
+
+    <!-- ========== SECCIÓN DESCRIPTIVA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-info-circle"></i> Descripción del proyecto</h4>
+      <p>Este proyecto consiste en la realización de un <strong>walkthrough completo</strong> (guía paso a paso + video) sobre una máquina virtual vulnerable, aplicando conceptos de seguridad ofensiva en un entorno aislado. Se utilizaron técnicas de reconocimiento, enumeración, explotación de vulnerabilidades y escalada de privilegios, documentando cada fase con capturas y explicaciones teóricas.</p>
+      <p>La máquina objetivo es <strong>digitalworld.local: SNAKEOIL</strong>, disponible en VulnHub. El ataque se desarrolló en un entorno virtualizado (VMware) con Kali Linux como máquina atacante.</p>
+      <br>
+      <p><strong>URL de la máquina virtual:</strong><br>
+      <a href="https://www.vulnhub.com/entry/digitalworldlocal-snakeoil,738" target="_blank" style="color:#ff4f9a; word-break:break-all;">https://www.vulnhub.com/entry/digitalworldlocal-snakeoil,738</a></p>
+    </div>
+
+    <!-- ========== OBJETIVOS ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-bullseye"></i> Objetivos</h4>
+      <h5><i class="fas fa-globe"></i> Objetivo general</h5>
+      <p>Demostrar la capacidad de aplicar conocimientos teóricos de seguridad informática en un entorno práctico, mediante la realización de un walkthrough detallado y la explicación de las técnicas y metodologías utilizadas para vulnerar una máquina virtual.</p>
+      
+      <h5><i class="fas fa-list-ol"></i> Objetivos específicos</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-check"></i> Configurar un entorno de virtualización aislado para realizar las pruebas de penetración de forma segura.</li>
+        <li><i class="fas fa-check"></i> Utilizar herramientas de escaneo de puertos y servicios para identificar posibles vectores de ataque.</li>
+        <li><i class="fas fa-check"></i> Enumerar los servicios y aplicaciones en ejecución para obtener información detallada sobre el sistema objetivo.</li>
+        <li><i class="fas fa-check"></i> Investigar las vulnerabilidades conocidas asociadas con los servicios y aplicaciones identificados.</li>
+        <li><i class="fas fa-check"></i> Evaluar el riesgo y la viabilidad de explotar cada vulnerabilidad.</li>
+        <li><i class="fas fa-check"></i> Seleccionar y adaptar los exploits adecuados para las vulnerabilidades encontradas.</li>
+        <li><i class="fas fa-check"></i> Escalar privilegios para obtener acceso administrativo.</li>
+        <li><i class="fas fa-check"></i> Registrar cada paso del proceso, incluyendo comandos utilizados, resultados obtenidos y capturas de pantalla.</li>
+        <li><i class="fas fa-check"></i> Explicar las técnicas y metodologías utilizadas en cada etapa del ataque.</li>
+        <li><i class="fas fa-check"></i> Grabar un video de la pantalla durante el proceso de ataque.</li>
+        <li><i class="fas fa-check"></i> Explicar cada paso del proceso en detalle, utilizando un lenguaje claro y conciso.</li>
+        <li><i class="fas fa-check"></i> Definir y explicar los términos técnicos utilizados durante el walkthrough.</li>
+      </ul>
+    </div>
+
+    <!-- ========== VIDEO DEL WALKTHROUGH ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-video"></i> Walkthrough en video</h4>
+      <p>A continuación se presenta el video explicativo del proceso completo de ataque a la máquina SnakeOil, desde el reconocimiento inicial hasta la escalada de privilegios, con comentarios detallados de cada técnica utilizada.</p>
+      <div style="text-align: center;">
+        <a href="https://youtu.be/8XEjb8Rfm-k?si=hLCXbwrrVKGg68ZU" target="_blank" class="btn-video"><i class="fab fa-youtube"></i> Ver en YouTube (enlace directo)</a>
+      </div>
+    </div>
+
+    <!-- ========== INFORMACIÓN ADICIONAL (OPCIONAL) ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-tasks"></i> Metodología aplicada</h4>
+      <p>El proyecto sigue una metodología estructurada de pruebas de penetración:</p>
+      <ol style="margin-left: 2rem; margin-top: 1rem;">
+        <li><strong>Reconocimiento:</strong> Escaneo de red con netdiscover, nmap.</li>
+        <li><strong>Enumeración de servicios:</strong> HTTP, FTP, SMB, SSH, etc.</li>
+        <li><strong>Investigación de vulnerabilidades:</strong> Búsqueda en Exploit-DB, CVE, análisis manual.</li>
+        <li><strong>Explotación:</strong> Uso de scripts personalizados o públicos (Metasploit, manual).</li>
+        <li><strong>Post-explotación:</strong> Escalada de privilegios (sudo, SUID, kernels, etc.).</li>
+        <li><strong>Documentación:</strong> Capturas de pantalla y registro de comandos.</li>
+      </ol>
+      <p style="margin-top: 1rem;">Todo el proceso se realizó en un entorno aislado (VMware) para garantizar la seguridad y evitar afectaciones a redes externas.</p>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio de Ciberseguridad</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a></p>
+    <p>Sitio seguro con certificado SSL</p>
+  </div>
+</footer>
+
+</body>
+</html>
