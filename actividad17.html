@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 17 · Evaluación de vulnerabilidades con CVSS 3.1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav {
+  margin-top: 40px;
+}
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+}
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+nav ul li {
+  position: relative;
+}
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.3rem;
+  color: #4a2a36;
+  margin: 25px 0 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seccion p, .seccion li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.seccion ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.tabla-metricas {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: rgba(255,255,255,0.5);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.tabla-metricas th, .tabla-metricas td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ffe0ec;
+}
+.tabla-metricas th {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 600;
+}
+.tabla-metricas tr:last-child td {
+  border-bottom: none;
+}
+
+.vector-box {
+  background: #2d2a2e;
+  color: #f8f8f2;
+  padding: 20px;
+  border-radius: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  text-align: center;
+  margin: 20px 0;
+  letter-spacing: 0.5px;
+}
+
+.score-card {
+  background: linear-gradient(145deg, #ffe0ec, #ffc2e1);
+  border-radius: 28px;
+  padding: 25px;
+  text-align: center;
+  margin: 20px 0;
+}
+.score-card .puntuacion {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ff4f9a;
+}
+.score-card .categoria {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #4a2a36;
+}
+
+.footer {
+  width: 100%;
+  padding: 25px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li>
+          <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+            <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+            <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+          </ul>
+        </li>
+        <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li>
+          <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+            <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+            <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+            <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+          </ul>
+        </li>
+        <li><a href="certificados.html"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+ 
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-chart-line"></i> Actividad 17: Evaluación de vulnerabilidades con CVSS 3.1</h3>
+    </div>
+
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('act17-Equipo3.pdf', '_blank')">
+        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
+      </button>
+    </div>
+
+    <!-- ========== INTRODUCCIÓN CONTEXTUAL ========= -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-info-circle"></i> Introducción contextual</h4>
+      <p>El <strong>Common Vulnerability Scoring System (CVSS)</strong> es el estándar internacional para evaluar la severidad de las vulnerabilidades de seguridad. Actualmente en su versión 3.1, este sistema permite a las organizaciones priorizar sus esfuerzos de remediación mediante una puntuación numérica objetiva y reproducible. El CVSS se compone de tres grupos de métricas: Base (características intrínsecas de la vulnerabilidad), Temporal (factores que cambian con el tiempo) y Entorno (características específicas de la organización). En esta actividad nos enfocamos exclusivamente en las métricas base, que son las más universales y permiten comparar vulnerabilidades entre diferentes sistemas.</p>
+      <p>A partir de un escenario proporcionado, se construyó el vector de ataque utilizando las métricas: Attack Vector (AV), Attack Complexity (AC), Privileges Required (PR), User Interaction (UI), Scope (S), Confidentiality (C), Integrity (I) y Availability (A). El vector resultante fue: <strong>CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:L</strong>. Con esta información se calculó la puntuación base (4.7) y se clasificó como vulnerabilidad de nivel <strong>MEDIO</strong>. A continuación se detalla la construcción, interpretación técnica, cálculo y conclusiones derivadas del análisis.</p>
+    </div>
+
+    <!-- ========== DATOS GENERALES ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-users"></i> Datos Generales</h4>
+      <p><b>Integrantes:</b></p>
+      <ul>
+        <li>Benites Rangel Cesar Yahir – 179091</li>
+        <li>Cortes Beltrán Carol Elizabeth – 177203</li>
+        <li>Guerra Ramírez América Fabiola – 179888</li>
+        <li>Larios Guerra Gustavo Michael – 178318</li>
+        <li>Montelongo Martínez Laura Ivon – 177291</li>
+        <li>Puente Luna Bruno Axel – 177876</li>
+        <li>Rodríguez Moreno Cristian Alejandro – 181641</li>
+      </ul>
+      <p><b>Docente:</b> Mtro. Servando López Contreras</p>
+      <p><b>Grupo:</b> T46A</p>
+      <p><b>Fecha:</b> Marzo 2026</p>
+      <p><b>Asignatura:</b> CNO V – Seguridad Informática | Actividad 17: Evaluación de vulnerabilidades con CVSS 3.1</p>
+    </div>
+
+    <!-- ========== 1. CONSTRUCCIÓN DEL VECTOR ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-calculator"></i> 1. Construcción del vector</h4>
+      <p>Con base en el escenario proporcionado, se asignaron las siguientes métricas base:</p>
+      <table class="tabla-metricas">
+        <thead>
+          <tr><th>Métrica</th><th>Valor</th><th>Significado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AV (Attack Vector)</td><td><strong>N (Network)</strong></td><td>La vulnerabilidad puede explotarse a través de la red.</td></tr>
+          <tr><td>AC (Attack Complexity)</td><td><strong>L (Low)</strong></td><td>La explotación requiere baja complejidad.</td></tr>
+          <tr><td>PR (Privileges Required)</td><td><strong>H (High)</strong></td><td>Se necesitan privilegios elevados.</td></tr>
+          <tr><td>UI (User Interaction)</td><td><strong>N (None)</strong></td><td>No requiere interacción del usuario.</td></tr>
+          <tr><td>S (Scope)</td><td><strong>U (Unchanged)</strong></td><td>No cambia el alcance del componente afectado.</td></tr>
+          <tr><td>C (Confidentiality)</td><td><strong>L (Low)</strong></td><td>Impacto bajo en confidencialidad.</td></tr>
+          <tr><td>I (Integrity)</td><td><strong>L (Low)</strong></td><td>Impacto bajo en integridad.</td></tr>
+          <tr><td>A (Availability)</td><td><strong>L (Low)</strong></td><td>Impacto bajo en disponibilidad.</td></tr>
+        </tbody>
+      </table>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act17_1.png" alt="Primeros Pasos - SET Console " style="width: 80%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <br>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act17_2.png" alt="Primeros Pasos - SET Console " style="width: 80%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <br>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act17_3.png" alt="Primeros Pasos - SET Console " style="width: 80%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
+    <!-- ========== 2. INTERPRETACIÓN TÉCNICA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-chalkboard-user"></i> 2. Interpretación técnica</h4>
+      <p>Aunque esta vulnerabilidad necesita privilegios elevados para poder explotarse, sigue siendo importante debido a que un atacante con acceso administrativo o permisos avanzados podría utilizarla para afectar aún más los sistemas internos de la organización. Este tipo de fallas representa un riesgo especialmente en situaciones donde existen cuentas comprometidas, amenazas internas o procesos previos de escalamiento de privilegios.</p>
+      <p>Quienes podrían aprovecharla serían principalmente usuarios internos malintencionados, administradores comprometidos o atacantes externos que hayan conseguido credenciales privilegiadas mediante técnicas como phishing, filtración de información o ataques de fuerza bruta. Aunque el impacto en la confidencialidad, integridad y disponibilidad es bajo, esto únicamente indica que no ocasiona daños críticos ni pérdida total de información; aun así, puede generar accesos parciales a datos, cambios menores en el sistema o interrupciones limitadas del servicio, por lo que continúa siendo una vulnerabilidad que requiere atención y mitigación.</p>
+    </div>
+
+    <!-- ========== 3. CÁLCULO DE PUNTUACIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-chart-simple"></i> 3. Cálculo de puntuación base</h4>
+      <p>Usando la calculadora oficial CVSS v3.1 (FIRST.org) con el vector <code>CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:L</code> se obtiene:</p>
+      <div class="score-card">
+        <div class="puntuacion">4.7</div>
+        <div class="categoria">🔶 Riesgo MEDIO</div>
+        <p style="margin-top: 15px;">Según la escala CVSS v3.1:</p>
+        <ul style="list-style: none; padding-left: 0;">
+          <li>🔹 Baja → 0.1 – 3.9</li>
+          <li>🔸 Media → 4.0 – 6.9</li>
+          <li>🔹 Alta → 7.0 – 8.9</li>
+          <li>🔸 Crítica → 9.0 – 10.0</li>
+        </ul>
+      </div>
+      <p><strong>Nota:</strong> La puntuación base refleja únicamente las características intrínsecas de la vulnerabilidad, sin considerar factores temporales o ambientales. El valor 4.7 se ubica dentro del rango medio, lo que indica que no es crítica, pero sí requiere acción planificada de mitigación.</p>
+    </div>
+
+    <!-- ========== 4. CONCLUSIÓN ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-check-circle"></i> 4. Conclusión</h4>
+      <p>La vulnerabilidad analizada alcanzó una puntuación de <strong>4.7 en CVSS v3.1</strong>, por lo que se considera de nivel <strong>medio</strong>. A pesar de que para explotarla se requieren privilegios elevados, sigue representando un riesgo importante, ya que podría ser utilizada por usuarios internos maliciosos o por atacantes que hayan obtenido acceso a cuentas privilegiadas. Asimismo, el hecho de que pueda explotarse remotamente y con baja complejidad técnica aumenta su importancia dentro de la infraestructura de una organización.</p>
+      <p>Aunque las afectaciones en confidencialidad, integridad y disponibilidad son bajas y no implican un daño crítico al sistema, es recomendable implementar controles de seguridad, supervisión de cuentas con altos privilegios y estrategias de mitigación que ayuden a disminuir la probabilidad de explotación. Entre las acciones sugeridas se incluyen: auditorías periódicas de cuentas privilegiadas, monitoreo de logs, aplicación del principio de mínimo privilegio y segmentación de red para limitar el alcance de posibles accesos no autorizados.</p>
+    </div>
+
+    <!-- ========== REFLEXIÓN TÉCNICA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-lightbulb"></i> Reflexión técnica</h4>
+      <p>El CVSS es una herramienta fundamental para cualquier profesional de ciberseguridad, pero también tiene limitaciones. Una vulnerabilidad con puntuación "media" (4.7) puede ser crítica en un contexto específico si el activo afectado es sensible. Por ello, la evaluación de vulnerabilidades no debe terminar con el cálculo de la métrica base; es necesario complementar con análisis de contexto (métricas de entorno) y con la criticidad del sistema evaluado.</p>
+      <p>En esta actividad comprendí la importancia de cada métrica: <strong>Privileges Required (PR:H)</strong> reduce significativamente la puntuación, pero en entornos donde los privilegios elevados están mal gestionados (por ejemplo, contraseñas débiles de administrador), la vulnerabilidad se vuelve mucho más peligrosa. Además, la métrica <strong>Attack Vector (AV:N)</strong> indica que no se necesita acceso físico o local, por lo que un atacante externo podría intentar explotarla desde cualquier parte del mundo, siempre que consiga credenciales privilegiadas. Esto refuerza la necesidad de implementar autenticación multifactor (MFA) y monitoreo de accesos anómalos a cuentas administrativas.</p>
+      <p>Finalmente, el CVSS 3.1 nos da un lenguaje común para comunicar riesgos a equipos de dirección y a otros equipos técnicos. Saber interpretar y construir vectores correctamente es una habilidad indispensable para la gestión de vulnerabilidades en entornos corporativos.</p>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p>
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Actividad 17 · CVSS 3.1
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
+    btn.addEventListener('click', function() {
+      console.log('✅ Abriendo PDF de la actividad 17 (CVSS 3.1)');
+    });
+  });
+</script>
+
+</body>
+</html>
