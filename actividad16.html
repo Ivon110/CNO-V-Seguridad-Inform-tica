@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 16 · Dilemas éticos en ciberseguridad</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav {
+  margin-top: 40px;
+}
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+}
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+nav ul li {
+  position: relative;
+}
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.3rem;
+  color: #4a2a36;
+  margin: 25px 0 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seccion p, .seccion li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.seccion ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.2);
+}
+
+.footer {
+  width: 100%;
+  padding: 25px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li>
+          <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+            <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+            <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+          </ul>
+        </li>
+        <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li>
+          <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+            <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+            <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+            <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+          </ul>
+        </li>
+        <li><a href="certificados.html"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+ 
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-balance-scale"></i> Actividad 16: Dilemas éticos en ciberseguridad</h3>
+    </div>
+
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('act16-Equipo3.pdf', '_blank')">
+        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
+      </button>
+    </div>
+
+    <!-- ========== INTRODUCCIÓN CONTEXTUAL ========= -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-info-circle"></i> Introducción contextual</h4>
+      <p>La ética en ciberseguridad no es una abstracción académica: es la línea que separa a un profesional confiable de un agente de riesgo. Cada día, los especialistas en seguridad informática se enfrentan a dilemas donde la técnica permite ciertas acciones, pero la moral, la ley y el código deontológico las prohíben. Desde accesos no autorizados "justificados" por buenas intenciones, hasta el uso de vulnerabilidades no reportadas para beneficio personal, o la tentación de convertir información pública en herramienta de presión psicológica.</p>
+      <p>En esta actividad analizamos tres escenarios realistas que ponen a prueba la integridad del profesional de seguridad. A través del análisis ético basado en marcos como el utilitarismo, los derechos humanos y el bien común, así como los mandamientos de la ética informática y la legislación mexicana, se busca formar criterio para actuar correctamente en situaciones de alta presión. La conclusión es clara: la formación técnica debe ir siempre acompañada de una sólida brújula ética.</p>
+    </div>
+
+    <!-- ========== DATOS GENERALES ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-users"></i> Datos Generales</h4>
+      <p><b>Integrantes:</b></p>
+      <ul>
+        <li>Benites Rangel Cesar Yahir – 179091</li>
+        <li>Cortes Beltrán Carol Elizabeth – 177203</li>
+        <li>Guerra Ramírez América Fabiola – 179888</li>
+        <li>Larios Guerra Gustavo Michael – 178318</li>
+        <li>Montelongo Martínez Laura Ivon – 177291</li>
+        <li>Puente Luna Bruno Axel – 177876</li>
+        <li>Rodríguez Moreno Cristian Alejandro – 181641</li>
+      </ul>
+      <p><b>Docente:</b> Mtro. Servando López Contreras</p>
+      <p><b>Grupo:</b> T46A</p>
+      <p><b>Fecha:</b> Marzo 2026</p>
+      <p><b>Asignatura:</b> CNO V – Seguridad Informática | Actividad 16: Dilemas éticos en ciberseguridad</p>
+    </div>
+
+    <!-- ========== RESUMEN EJECUTIVO ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-file-contract"></i> Resumen ejecutivo</h4>
+      <p>Se analizaron tres dilemas éticos representativos del ejercicio profesional de la ciberseguridad: (1) acceso no autorizado a correos corporativos por parte de un compañero, (2) hallazgo de una vulnerabilidad crítica en un sistema financiero antes de firmar contrato, y (3) uso de información OSINT para acoso psicológico por orden de un superior. En cada caso se identificó el conflicto central, se propuso una actuación profesional basada en estándares internacionales, se aplicaron marcos éticos (utilitarismo, derechos, bien común), se evaluaron los mandamientos de la ética informática violados y respetados, y se clasificó el delito informático asociado. La conclusión principal es que la ética no es negociable: el prestigio y la responsabilidad social deben prevalecer sobre incentivos económicos o presiones jerárquicas.</p>
+    </div>
+
+    <!-- ========== DESARROLLO: ESCENARIO 01 ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-lock"></i> Escenario 01: Acceso no autorizado interno</h4>
+      <p><strong>Contexto:</strong> Trabajas en el área de ciberseguridad de una empresa. Durante una revisión de logs detectas que un compañero accedió a correos privados del director general sin autorización. El compañero argumenta que lo hizo para “detectar posibles fugas de información”.</p>
+      
+      <h5><i class="fas fa-question-circle"></i> 1. ¿Cuál es el dilema ético?</h5>
+      <p>El conflicto central es la tensión entre la Seguridad Proactiva y la Privacidad Individual. Se presenta el dilema de si el fin (prevenir una fuga de información) justifica los medios (violar la confidencialidad de la alta dirección). Además, existe un conflicto de debido proceso: el empleado actuó por cuenta propia, rompiendo la cadena de mando y los protocolos de auditoría interna.</p>
+      
+      <h5><i class="fas fa-user-tie"></i> 2. ¿Qué harías tú como especialista?</h5>
+      <p>Como experto, procedería a la contención y reporte inmediato:</p>
+      <ul>
+        <li><i class="fas fa-ban"></i> <strong>Inhabilitación temporal de permisos:</strong> Restringir el acceso del compañero mientras se investiga.</li>
+        <li><i class="fas fa-ticket-alt"></i> <strong>Apertura de un Ticket de Incidente:</strong> Documentar el hallazgo en los logs para asegurar la trazabilidad.</li>
+        <li><i class="fas fa-bell"></i> <strong>Notificación al CISO y Recursos Humanos:</strong> Un acceso no autorizado a correos de nivel C (C‑Suite) es una falta grave que puede derivar en despido justificado, según la Ley Federal del Trabajo y las políticas de la empresa.</li>
+      </ul>
+      
+      <h5><i class="fas fa-book-open"></i> 3. Justificación desde marcos éticos</h5>
+      <p><strong>A) Ética Utilitarista:</strong> El beneficio de "posiblemente" detectar una fuga no supera el daño de crear una cultura organizacional de espionaje. La desconfianza generalizada reduciría la productividad y aumentaría la rotación de talento, dañando la utilidad total de la empresa.</p>
+      <p><strong>B) Enfoque de Derechos:</strong> El Director General posee el derecho fundamental a la privacidad de sus comunicaciones (secreto de telecomunicaciones). Ningún empleado tiene la facultad de revocar este derecho unilateralmente sin una orden judicial o una política interna de monitoreo previamente firmada y aceptada.</p>
+      <p><strong>C) Enfoque del Bien Común:</strong> La integridad del sistema de seguridad depende de que todos sigan las reglas. Permitir "excepciones" por "buenas intenciones" destruye el orden institucional y el bienestar de la comunidad laboral.</p>
+      
+      <h5><i class="fas fa-gavel"></i> 4. Mandamientos de la ética informática</h5>
+      <p><strong>Violados:</strong> II. No interferirás con el trabajo informático de otros. · IV. No indagarás en los archivos informáticos de los demás.<br>
+      <strong>Respetados:</strong> X. Siempre utilizarás una computadora de maneras que garanticen la consideración y el respeto de otros humanos (esto se cumple al reportar la falta para mantener la integridad del sistema).</p>
+      
+      <h5><i class="fas fa-balance-scale"></i> 5. Clasificación del Delito</h5>
+      <p><strong>Delito Informático:</strong> Se clasifica así porque la conducta afecta directamente la Confidencialidad (pilar de la tríada CIA) mediante un acceso no autorizado a un sistema de información. En México puede encuadrar en el artículo 211 Bis del Código Penal Federal (acceso no autorizado a sistemas).</p>
+    </div>
+
+    <!-- ========== ESCENARIO 02 ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-chart-line"></i> Escenario 02: Vulnerabilidad crítica no reportada</h4>
+      <p><strong>Contexto:</strong> Durante un pentest encuentras una vulnerabilidad crítica en un sistema financiero que permite extraer dinero. El cliente aún no ha firmado el contrato final y tú sabes que podrías explotarla sin ser detectado.</p>
+      
+      <h5><i class="fas fa-question-circle"></i> 1. ¿Cuál es el dilema ético?</h5>
+      <p>Se enfrenta el interés personal/lucro económico contra la integridad profesional y responsabilidad social. El dilema es si aprovechar un vacío legal (falta de contrato) para beneficio propio o cumplir con la ética del "Hacker de Sombrero Blanco" para proteger el ecosistema financiero.</p>
+      
+      <h5><i class="fas fa-user-tie"></i> 2. ¿Qué harías tú como especialista?</h5>
+      <p>Aplicar el protocolo de Divulgación Responsable (Responsible Disclosure):</p>
+      <ul>
+        <li><i class="fas fa-envelope"></i> <strong>Reportar inmediatamente:</strong> Notificar al contacto técnico del cliente sobre el hallazgo antes de cualquier otra acción.</li>
+        <li><i class="fas fa-chart-simple"></i> <strong>Demostrar valor profesional:</strong> Explicar que el hallazgo es parte del valor que aportas como especialista, lo que acelera y justifica la firma del contrato.</li>
+        <li><i class="fas fa-hand-peace"></i> <strong>Cero explotación:</strong> No extraer ni un solo centavo, ya que esto invalidaría cualquier defensa legal futura y destruiría mi reputación permanentemente.</li>
+      </ul>
+      
+      <h5><i class="fas fa-book-open"></i> 3. Justificación desde marcos éticos</h5>
+      <p><strong>A) Ética Utilitarista:</strong> Explotar la falla causaría un pánico financiero, pérdida de ahorros de terceros y posibles quiebras. Reportarla salva el capital de miles de personas, lo cual genera el mayor bien para el mayor número.</p>
+      <p><strong>B) Enfoque de Derechos:</strong> Los clientes del banco tienen derecho a la propiedad privada y a la seguridad de sus activos. Robar vulnera estos derechos humanos básicos.</p>
+      <p><strong>C) Enfoque del Bien Común:</strong> El sistema financiero se basa en la confianza. Un ataque de este tipo debilita la confianza en la banca digital, afectando la economía nacional, que es un bien compartido.</p>
+      
+      <h5><i class="fas fa-gavel"></i> 4. Mandamientos de la ética informática</h5>
+      <p><strong>Violados:</strong> No interferirás con los archivos informáticos de otros. · No usarás una computadora para robar.<br>
+      <strong>Respetados:</strong> No te apropiarás de la producción intelectual de otras personas (al respetar la propiedad del código y fondos).</p>
+      
+      <h5><i class="fas fa-balance-scale"></i> 5. Clasificación del Delito</h5>
+      <p><strong>Delito asistido por computadora:</strong> El sistema informático es el medio para cometer un delito tradicional: el robo y fraude financiero (artículos 223 y 386 del Código Penal Federal).</p>
+    </div>
+
+    <!-- ========== ESCENARIO 03 ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-search"></i> Escenario 03: Uso de herramientas OSINT</h4>
+      <p><strong>Contexto:</strong> Estás investigando a una persona sospechosa de fraude. Encuentras información personal (dirección, familia, hábitos) en fuentes abiertas. Tu superior te pide usar esa información para presionarlo psicológicamente.</p>
+      
+      <h5><i class="fas fa-question-circle"></i> 1. ¿Cuál es el dilema ético?</h5>
+      <p>El conflicto es entre el cumplimiento de órdenes superiores (lealtad a la empresa) y la ética humana/legalidad. El dilema radica en si es lícito usar información pública (OSINT) para fines de extorsión, acoso o presión psicológica, cruzando la línea entre investigación y victimización.</p>
+      
+      <h5><i class="fas fa-user-tie"></i> 2. ¿Qué harías tú como especialista?</h5>
+      <p>Ejercer la Objeción de Conciencia Profesional:</p>
+      <ul>
+        <li><i class="fas fa-hand-fist"></i> <strong>Negativa rotunda al hostigamiento:</strong> Informar al superior que la presión psicológica es una táctica ilegal y poco ética que puede invalidar la investigación.</li>
+        <li><i class="fas fa-folder-open"></i> <strong>Entrega de evidencia técnica:</strong> Entregar los hallazgos OSINT de forma objetiva (direcciones, vínculos, registros) para que el equipo legal o las autoridades los procesen.</li>
+        <li><i class="fas fa-database"></i> <strong>Preservación de la Cadena de Custodia:</strong> Asegurar que la información se use solo para fines probatorios en un juicio, no para ataques personales.</li>
+      </ul>
+      
+      <h5><i class="fas fa-book-open"></i> 3. Justificación desde marcos éticos</h5>
+      <p><strong>A) Ética Utilitarista:</strong> Usar tácticas de presión puede generar una demanda por acoso contra la empresa, resultando en pérdidas millonarias y desprestigio. Es más útil seguir el camino legal.</p>
+      <p><strong>B) Enfoque de Derechos:</strong> Todo individuo (incluso un sospechoso) tiene derecho a la dignidad humana y a no ser sometido a tratos crueles o degradantes. Involucrar a la familia viola el derecho a la paz de terceros inocentes.</p>
+      <p><strong>C) Enfoque del Bien Común:</strong> La justicia debe ser impartida por el Estado, no por empresas privadas. Evitar el "vigilantismo digital" protege la paz social y el orden jurídico.</p>
+      
+      <h5><i class="fas fa-gavel"></i> 4. Mandamientos de la ética informática</h5>
+      <p><strong>Violados:</strong> No usarás una computadora para dañar a otras personas. · Pensarás en las consecuencias sociales del programa que escribes o del sistema que diseñas (aplicado aquí al uso de la metodología de investigación).<br>
+      <strong>Respetados:</strong> Siempre usarás una computadora de manera que asegure la consideración y el respeto de tus semejantes.</p>
+      
+      <h5><i class="fas fa-balance-scale"></i> 5. Clasificación del Delito</h5>
+      <p><strong>Delito Incidental:</strong> Se trata de extorsión o acoso (artículos 227, 228 o 240 del Código Penal Federal). La computadora y el OSINT son incidentales porque el acoso podría hacerse por otros medios, pero la tecnología facilitó la obtención de los datos para llevarlo a cabo.</p>
+    </div>
+
+    <!-- ========== REFLEXIÓN TÉCNICA Y ÉTICA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-lightbulb"></i> Reflexión técnica y ética</h4>
+      <p>Estos tres escenarios me han hecho reflexionar profundamente sobre la responsabilidad del profesional de ciberseguridad. La primera lección es que <strong>buenas intenciones no justifican malas acciones</strong>: el compañero que accedió a los correos del director general pudo creer que ayudaba, pero violó derechos fundamentales y la política de la empresa. La segunda lección es que <strong>la reputación es el activo más valioso</strong>: explotar una vulnerabilidad financiera antes de firmar contrato no solo es un delito, sino que destruiría para siempre mi carrera como pentester. La tercera lección es que <strong>debemos tener valor para decir "no" a órdenes ilegales</strong>, incluso si vienen de un superior. Usar OSINT para acoso psicológico es convertirnos en victimarios, no en investigadores.</p>
+      <p>Además, el análisis desde el utilitarismo, los derechos humanos y el bien común muestra una coincidencia ética: en los tres casos la conducta correcta es reportar, abstenerse y proteger a las personas. Los mandamientos de la ética informática son una guía universal que debemos interiorizar. En el plano legal, las leyes mexicanas (Código Penal Federal, Ley Federal de Protección de Datos Personales) sancionan estas conductas. Como futuros ingenieros, debemos entender que la técnica sin ética es peligrosa, y que la confianza depositada en nosotros exige integridad absoluta.</p>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p>
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Actividad 16 · Dilemas éticos en ciberseguridad
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
+    btn.addEventListener('click', function() {
+      console.log('✅ Abriendo PDF de la actividad 16 (Dilemas éticos)');
+    });
+  });
+</script>
+
+</body>
+</html>

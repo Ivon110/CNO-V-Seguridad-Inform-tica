@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 15 · SET</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav {
+  margin-top: 40px;
+}
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+}
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+nav ul li {
+  position: relative;
+}
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion p, .seccion li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.seccion ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.img-placeholder {
+  background: linear-gradient(145deg, #ffe0ec, #ffb3d9);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 20px 0;
+  text-align: center;
+  border: 2px dashed #ff4f9a;
+}
+
+.img-placeholder img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(255,79,154,0.2);
+}
+
+.footer {
+  width: 100%;
+  padding: 25px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li>
+          <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+            <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+            <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+          </ul>
+        </li>
+        <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li>
+          <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+            <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+            <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+            <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+          </ul>
+        </li>
+        <li><a href="certificados.html"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+ 
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-bug"></i> Curso de Núcleo Optativo V: Seguridad Informática - Actividad 15: SET</h3>
+    </div>
+
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('act15_Equipo3.pdf', '_blank')">
+        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
+      </button>
+    </div>
+
+    <!-- ========== INTRODUCCIÓN CONTEXTUAL========= -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-info-circle"></i> Introducción contextual</h4>
+      <p>El <strong>Social Engineering Toolkit (SET)</strong> es una de las herramientas más populares en el ámbito de la seguridad ofensiva. Desarrollada en Python, está diseñada específicamente para realizar pruebas de ingeniería social, un vector de ataque que explota el factor humano en lugar de vulnerabilidades técnicas puras. En esta actividad, nos enfrentamos a un escenario realista: <strong>simular una campaña de phishing</strong> dirigida a la infraestructura de nuestra propia universidad (UPSLP), con el objetivo de comprender cómo un atacante podría engañar a un usuario para que revele credenciales o ejecute código malicioso.</p>
+      <p>La elección de SET no fue casualidad. Esta herramienta integra múltiples vectores de ataque: desde clonación de páginas web hasta ataques de “mass mailer” (envío masivo de correos). En nuestro caso, optamos por un ataque de <strong>phishing por correo electrónico</strong>, utilizando un servidor <strong>Postfix</strong> como agente de transferencia de correo (MTA) y configurando un remitente falso (spoofing) para simular un mensaje de soporte técnico de la universidad. El objetivo era medir no solo la capacidad técnica de entrega, sino también la efectividad de los filtros de seguridad perimetral (como <strong>Spamhaus</strong> y <strong>Microsoft Exchange Online Protection</strong>) y, sobre todo, reflexionar sobre la vulnerabilidad del eslabón más débil en cualquier organización: las personas.</p>
+      <p>A lo largo de esta práctica, combinamos conceptos de administración de servidores de correo, listas negras en tiempo real (RBL), y técnicas de evasión básicas. El resultado nos dejó lecciones valiosas sobre la importancia de la reputación de IP, el uso de entornos controlados (sandbox) como <strong>MailHog</strong> y la necesidad de programas de concientización para los usuarios finales.</p>
+    </div>
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-users"></i> Datos Generales</h4>
+      <p><b>Integrantes:</b></p>
+      <ul>
+        <li>Benites Rangel Cesar Yahir – 179091 </li>
+        <li>Cortes Beltrán Carol Elizabeth – 177203 </li>
+        <li>Guerra Ramírez América Fabiola – 179888 </li>
+        <li>Larios Guerra Gustavo Michael – 178318 </li>
+        <li>Montelongo Martínez Laura Ivon – 177291 </li>
+        <li>Puente Luna Bruno Axel – 177876 </li>
+        <li>Rodríguez Moreno Cristian Alejandro – 181641 </li>
+      </ul>
+      <p><b>Docente:</b> Mtro. Servando López Contreras </p>
+      <p><b>Grupo:</b> T46A</p>
+      <p><b>Fecha:</b> March 26, 2026 </p>
+    </div>
+
+    <div class="seccion">
+      <h4><i class="fas fa-file-contract"></i> Resumen Ejecutivo </h4>
+      <p>El presente informe documenta la ejecución de una prueba de concepto (PoC) centrada en el despliegue de una campaña de phishing controlada.</p>
+      <p>A través de la integración de Social Engineer Toolkit (SET) y un servidor Postfix, se analizó la ruta de entrega de un vector de ataque orientado a la infraestructura de la Universidad Politécnica de San Luis Potosí (UPSLP). </p>
+      <p>El estudio concluye que, si bien el sistema de ataque fue configurado correctamente, los mecanismos de seguridad perimetral de Microsoft Exchange Online Protection mitigaron el riesgo con éxito.</p>
+    </div>
+
+    <div class="seccion">
+      <h4><i class="fas fa-laptop-code"></i> Desarrollo </h4>
+      <h5>Primeros Pasos</h5>
+      
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_1.png" alt="Primeros Pasos - SET Console " style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <p>Seleccionamos el ataque que deseamos realizar, en este caso, se trata de la primera opción </p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_2.png" alt="Selección de ataque"  style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <p>Se seleccionaron dos vectores de ataque:</p>
+      <p>1) Social Engineering Attacks</p>
+      <p>5) Mass Mailer Attack</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_3.png" alt="Mass Mailer Attack">
+      </div>
+
+      <p>Se estableció el envío de pishing, el objetivo establecido para la prueba fue un correo institucional 179091@upslp.edu.mx, el cual el método de envío es la opción 2, usar nuestro propio servidor.</p>
+      <p>El remitente falso (soporte@lab.local) sirve como herramienta de spoofing, haciéndonos pasar por administración y soporte de la universidad.</p>
+      <p>Servidor Relay 127.0.0.1 (localhost); el correo proviene de la propia máquina.</p>
+      <p>Utilizamos el puerto 25, puerto estándar para SMTP sin cifrar.</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_4.png" alt="Configuración de Phishing">
+      </div>
+
+      <p>Visualización del servidor Postfix</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_5.png" alt="Servidor Postfix">
+      </div>
+
+      <p>Visualización de los registros obtenidos.:</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_6.png" alt="Registros obtenidos">
+      </div>
+
+      <p>Se mantuvieron las mismas configuraciones en ambas pruebas, con la diferencia de que una se ejecutó utilizando MailHog y la otra se realizó sin su uso, con el fin de comparar los resultados.</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_7.png" alt="Comparación de resultados">
+      </div>
+    </div>
+
+    <div class="seccion">
+      <h4><i class="fas fa-server"></i> Análisis técnico de la infraestructura (postfix mta)</h4>
+      <p>Para validar la correcta implementación del ataque, se realizó una auditoría forense de los registros del sistema (logs), es importante para demostrar que el fallo en la entrega no se debió a un error de configuración local, sino a una respuesta de seguridad externa.</p>
+      
+      <h5>Validación de Operatividad del Servidor Postfix</h5>
+      <p>A través del análisis del proceso de Postfix, se confirma que el servidor cumplió satisfactoriamente con todas las etapas internas de un Agente de Transferencia de Correo (MTA).</p>
+      <p>El flujo se desglosa de la siguiente manera:</p>
+      
+      <p><b>Fase de Recepción (smtpd):</b></p>
+      <p>postfix/smtpd[4924]: connect from localhost[127.0.0.1] Interpretación: Se confirma que el servicio SMTP está en escucha activa.</p>
+      <p>El servidor aceptó exitosamente la conexión proveniente de la herramienta SET, estableciendo el canal de comunicación inicial.</p>
+      
+      <p><b>Fase de Aceptación y Limpieza (cleanup):</b></p>
+      <p>9EACEC6C2A: client=localhost[127.0.0.1] Interpretación: El mensaje fue procesado por el módulo cleanup.</p>
+      <p>Postfix asignó un ID de seguimiento único (9EACEC6C2A), lo que garantiza que el mensaje cumple con los estándares RFC de correo electrónico y que la configuración del servidor es robusta.</p>
+      
+      <p><b>Fase de Gestión de Colas (qmgr):</b></p>
+      <p>from=soporte@lab.local, size=829, nrcpt=1 (queue active) Interpretación: El gestor de colas tomó el mensaje y lo posicionó en la fila de salida activa.</p>
+      <p>En este punto, el servidor Postfix cumplió al 100% con su función técnica, entregando el paquete de datos a la interfaz de red para su distribución externa.</p>
+
+      <h5>Análisis del bloqueo y respuesta del target </h5>
+      <p>Un punto crítico en esta auditoría es identificar que la interrupción del ataque no ocurrió por un error técnico del atacante, sino por la ejecución de políticas de seguridad del servidor de destino (Microsoft Outlook / Infraestructura UPSLP).</p>
+      <p><b>Interpretación de la Respuesta del Servidor (SMTP Error)</b> </p>
+      <p>El log presenta la siguiente línea crítica de diagnóstico: </p>
+      <p>status=bounced (host upslp-edu-mx.mail.protection.outlook.com[...] said: 550 5.7.1 Service unavailable, Client host [2806:...] blocked using Spamhaus.)</p>
+      <p>A continuación, se detalla el análisis forense de esta respuesta: </p>
+      <ul>
+        <li>Status: Bounced (Rebote): Indica que el servidor Postfix logró contactar con el host de la UPSLP, pero este último rechazó la entrega.</li>
+        <li>El mensaje no se perdió en la red; fue "regresado" con una negativa explícita.</li>
+        <li>Código de Error 550 5.7.1: Este es el código estándar internacional para "Acceso Denegado". </li>
+        <li>Informa que el remitente no tiene los permisos suficientes o su identidad no es confiable para el receptor.</li>
+        <li>Filtrado por Reputación (Spamhaus): Esta es la evidencia más relevante.</li>
+        <li>El servidor de Microsoft consultó la lista negra global Spamhaus, identificando que la dirección IP de origen es una IP residencial (doméstica).</li>
+      </ul>
+
+      <p><b>Conclusión del Bloqueo</b></p>
+      <p>El sistema de seguridad de la UPSLP aplicó una política de "Denegación por Defecto" para IPs no comerciales. </p>
+      <p>Esta medida previene ataques masivos de spam o phishing provenientes de equipos domésticos que podrían estar infectados.</p>
+      <p>Esto valida que la infraestructura de la universidad cuenta con capas de protección de transporte robustas.</p>
+
+      <h5>Ciclo de notificación de no-entrega (ndr) y purga de datos</h5>
+      <p>Tras el rechazo del servidor de Microsoft, el sistema entró en una fase de notificación fallida que revela detalles importantes sobre la configuración de dominios:</p>
+      <ul>
+        <li>Generación del Aviso de Fallo:</li>
+        <li>sender non-delivery notification: B5A6BC6C2C Al no poder entregar el correo original, Postfix actuó de manera autónoma intentando generar un mensaje de error (NDR) para informar al remitente sobre el rebote.</li>
+        <li>Fallo en la Notificación por Inexistencia de Dominio: Debido a que el remitente configurado en SET fue soporte@lab.local (un dominio ficticio y no resoluble), el servidor Postfix no pudo localizar un destino para el aviso de error.</li>
+        <li>Finalización del Proceso (Removed): Al agotar los reintentos y no encontrar una ruta válida para devolver el error, el sistema procedió a la purga definitiva del registro de la memoria activa (removed).</li>
+      </ul>
+      <p>Esto asegura que la cola de correo no se sature con mensajes huérfanos.</p>
+    </div>
+
+    <div class="seccion">
+      <h4><i class="fas fa-piggy-bank"></i> Entorno Controlado: MailHog</h4>
+      <p>Descarga, permisos y ejecución de MailHog:</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_8.png" alt="Descarga y ejecución de MailHog"  style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <p>Con el objetivo de validar la entrega del correo en un entorno controlado, se implementó la herramienta MailHog, la cual permite capturar y visualizar correos electrónicos sin necesidad de enviarlos a un servidor externo.</p>
+      <p>El proceso incluyó la descarga del ejecutable, la asignación de permisos correspondientes y su ejecución en el entorno local.</p>
+      <p>MailHog actúa como un servidor SMTP falso, interceptando los mensajes generados por Postfix para su análisis.</p>
+
+      <h5>Editar postfix:</h5>
+      <p>Para redirigir los correos generados hacia MailHog, fue necesario modificar la configuración del servidor Postfix.</p>
+      <p>Esto se realizó editando el archivo principal de configuración (main.cf), donde se ajustaron parámetros como el relayhost para apuntar al puerto utilizado por MailHog (generalmente 1025).</p>
+      <p>Estas modificaciones permiten desviar el flujo de correos hacia un entorno de pruebas seguro, evitando interacción con servidores reales.</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_9.png" alt="Edición de main.cf"  style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Reiniciar postfix:</h5>
+      <p>Una vez realizados los cambios en la configuración, se procedió a reiniciar el servicio de Postfix para aplicar las nuevas directivas.</p>
+      <p>Este paso es esencial para asegurar que el servidor opere bajo la nueva configuración establecida.</p>
+      <p>El reinicio se llevó a cabo mediante comandos administrativos del sistema, garantizando que no existieran errores en la carga del servicio.</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_10.png" alt="Reinicio de Postfix"  style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Volver a mandar el correo de phishing:</h5>
+      <p>Con el entorno configurado correctamente, se realizó un nuevo envío del correo de phishing utilizando la herramienta SET.</p>
+      <p>En esta ocasión, el objetivo no era evaluar mecanismos de defensa externos, sino verificar la correcta entrega y visualización del mensaje en un entorno controlado.</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_11.png" alt="Reenvío de correo con SET"  style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">v
+      </div>
+
+      <h5>Recepción correcta con MailHog: </h5>
+      <p>La herramienta MailHog permitió confirmar la recepción exitosa del correo electrónico.</p>
+      <p>A través de su interfaz web, se pudo visualizar el contenido completo del mensaje, incluyendo encabezados, cuerpo y posibles enlaces maliciosos.</p>
+      <p>Esto valida que el servidor Postfix funciona correctamente en términos de generación y envío de correos dentro de un entorno simulado.</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_12.png" alt="Recepción en la interfaz web de MailHog"  style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Respuesta de MailHog en terminal: </h5>
+      <p>Adicionalmente, la ejecución de MailHog en terminal proporciona información en tiempo real sobre las conexiones SMTP entrantes y los mensajes procesados.</p>
+      <p>Esta salida permite corroborar técnicamente que el correo fue interceptado sin errores.</p>
+
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act15_13.png" alt="Salida de MailHog en terminal" style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
+    <div class="seccion">
+      <h4><i class="fas fa-check-circle"></i> Conclusión.</h4>
+      
+      <h5>Validación Final: Entorno Sandbox (Mailhog): </h5>
+      <p>Dada la restricción de las IPs residenciales, se procedió a una fase de validación en un entorno de desarrollo utilizando MailHog.</p>
+      <p>Resultado: Éxito absoluto. Al dirigir el tráfico hacia un recolector SMTP local, se confirmó que el vector de ataque es funcional.</p>
+      <p>Análisis del Vector: El correo se recibió con el formato visual de GitHub intacto, demostrando que si el atacante utilizara una IP comercial limpia o un relay autenticado, el correo evadiría los filtros técnicos y llegaría a la bandeja de entrada, quedando la seguridad enteramente en manos del criterio del usuario.</p>
+
+      <h5>Diagnóstico De Bloqueo Perimetral:</h5>
+      <p>Al intentar la entrega al dominio institucional (@upslp.edu.mx), se identificó un bloqueo en la capa de transporte:</p>
+      <p>status=bounced (550 5.7.1 Service unavailable, Client host blocked using Spamhaus)</p>
+      <p>Interpretación Técnica: El ataque fue mitigado por los filtros de Microsoft y Spamhaus.</p>
+      <p>Este rechazo es una medida de seguridad que bloquea conexiones provenientes de IPs residenciales.</p>
+      <p>Esto demuestra que la infraestructura de la UPSLP posee capas de protección robustas basadas en la reputación de la red de origen.</p>
+      <p>La ejecución de esta práctica de Ingeniería Social permitió analizar el ciclo completo de una amenaza, desde su concepción hasta su intercepción o entrega.</p>
+      <p>El desarrollo del proyecto arrojó conclusiones críticas sobre la infraestructura de red y las capas de defensa actuales.</p>
+      <p>Uno de los aprendizajes más valiosos de esta auditoría fue la implementación de MailHog como entorno de Sandbox.</p>
+      <p>Ante el bloqueo preventivo de los servidores de Microsoft (basado en la reputación de la IP residencial), MailHog se consolidó como la mejor alternativa técnica por las siguientes razones:</p>
+      <ul>
+        <li>Validación de la "Capa de Aplicación": Confirmó que, si bien la Capa de Transporte falló (bloqueo de IP), el diseño visual y la lógica del ataque en la Capa de Aplicación eran 100% efectivos.</li>
+        <li>Inspección de Cabeceras: Facilitó la revisión de los headers del correo, demostrando que la herramienta SET es capaz de generar correos con una apariencia de alta fidelidad que el ojo humano difícilmente distinguiría de uno real.</li>
+      </ul>
+
+      <h5>Lecciones Aprendidas en Ciberseguridad</h5>
+      <p>La Reputación es el Primer Escudo: El rechazo del servidor de la UPSLP mediante Spamhaus demostró que la seguridad institucional es robusta contra atacantes con infraestructura básica.</p>
+      <p>Sin embargo, esto también resalta que un atacante con un Smart Host o una IP comercial limpia podría evadir esta primera capa.</p>
+      <p>El Factor Humano como Eslabón Crítico: El éxito de la entrega final en el entorno de MailHog evidencia que la ingeniería social sigue siendo el vector de entrada más peligroso. </p>
+      <p>Una vez que el filtro técnico es superado, la seguridad depende enteramente del criterio del usuario.</p>
+    </div>
+
+    <div class="seccion">
+      <h4><i class="fas fa-book"></i> Glosario técnico especializado</h4>
+      <ul>
+        <li><b>MTA (Mail Transfer Agent):</b> Software encargado de transferir mensajes de correo electrónico entre servidores utilizando el protocolo SMTP.En esta práctica, Postfix actuó como el MTA local responsable de procesar y despachar el ataque.</li>
+        <li><b>smtpd (MTA Receive Daemon):</b> Proceso del servidor Postfix que gestiona las conexiones entrantes. Es el primer punto de contacto que valida la conexión desde la herramienta de ataque (SET). </li>
+        <li><b>cleanup (Message Canonicalization):</b> Módulo interno de Postfix encargado de procesar los mensajes entrantes, añadir encabezados faltantes y asignar un Queue ID (identificador único) para asegurar la trazabilidad del correo.</li>
+        <li><b>qmgr (Queue Manager):</b> El "corazón" del servidor Postfix. Se encarga de gestionar la cola de mensajes, decidiendo cuándo y cómo intentar la entrega de un correo a su destino final. </li>
+        <li><b>Queue ID:</b> Código alfanumérico único (ej. 9EACEC6C2A) asignado a cada mensaje. Es fundamental para la auditoría forense, ya que permite rastrear el ciclo de vida completo de un correo específico en los registros de sistema.</li>
+        <li><b>SMTP Error 550 5.7.1:</b> Código de respuesta estandarizado que indica un rechazo permanente. El "5.7.1" especifica que el rechazo se debe a políticas de seguridad o falta de autorización del remitente. </li>
+        <li><b>Bounced (Rebote):</b> Estado de un correo que ha sido rechazado por el servidor de destino. Esto genera un evento de retorno donde el MTA local intenta notificar al remitente sobre la falla. </li>
+        <li><b>RBL / Blacklist (Spamhaus):</b> Base de datos en tiempo real que lista direcciones IP con mala reputación. En este análisis, fue el mecanismo utilizado por Microsoft para identificar la IP residencial del atacante y bloquear la intrusión.</li>
+        <li><b>NDR (Non-Delivery Report):</b> Informe de No Entrega. Es el mensaje automático que el servidor intenta enviar de vuelta al remitente (soporte@lab.local) para explicar por qué el correo falló. </li>
+        <li><b>Removed (Purga de Cola):</b> Acción final del MTA donde, tras fallar la entrega y la notificación de error, el registro se elimina de la memoria activa para optimizar los recursos del servidor y mantener la higiene de los logs. </li>
+        <li><b>MailHog:</b> Herramienta de código abierto diseñada para la fase de pruebas y desarrollo (Sandbox).  Actúa como un servidor SMTP falso que captura todos los correos electrónicos enviados hacia él, permitiendo inspeccionar el contenido, las cabeceras y el formato HTML del ataque sin necesidad de una conexión a internet o de enfrentar filtros perimetrales reales. Es la alternativa más robusta para validar la fidelidad de un vector de ingeniería social en entornos controlados.</li>
+      </ul>
+    </div>
+
+     <!-- ========== REFLEXIÓN TÉCNICA========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-lightbulb"></i> Reflexión técnica</h4>
+      <p>Realizar esta actividad con SET me permitió comprender en carne propia que <strong>la seguridad informática no es solo cuestión de firewalls y antivirus</strong>. El eslabón más vulnerable sigue siendo el usuario, y las técnicas de ingeniería social aprovechan precisamente eso. Al configurar el ataque de phishing, me sorprendió lo fácil que resulta clonar una página legítima (como la de GitHub) y generar un correo que parece provenir de una fuente confiable. Si no hubiera sido por el bloqueo de Spamhaus debido a nuestra IP residencial, el correo habría llegado directamente a la bandeja de entrada de la víctima.</p>
+      <p>Otro aprendizaje clave fue el valor de los <strong>entornos controlados o sandbox</strong>. Al no poder entregar el correo real por las políticas de seguridad, recurrimos a MailHog. Y fue ahí donde validamos que nuestro vector de ataque era perfectamente funcional. Esta herramienta me enseñó a separar los problemas de infraestructura (bloqueo perimetral) de los problemas de diseño del ataque. Además, analizar los logs de Postfix me resultó fascinante: pude seguir el viaje de un correo desde que sale de SET hasta que es rechazado por Microsoft, entendiendo conceptos como <em>queue ID</em>, <em>cleanup</em>, <em>qmgr</em> y los códigos SMTP 550. Esa trazabilidad es fundamental para un analista de seguridad.</p>
+      <p>En el plano personal, esta práctica me dejó una reflexión ética importante. Herramientas como SET son de doble filo: en manos de un administrador ayudan a probar y mejorar defensas, pero en manos malintencionadas pueden causar daños reales. Por eso valoro que en la universidad trabajemos en entornos autorizados y con fines educativos. Ahora soy más consciente de cómo los atacantes piensan y operan, y eso me ayudará a diseñar mejores estrategias de defensa. Definitivamente, la ingeniería social no es un juego, y debemos capacitarnos constantemente para no caer en sus trampas.</p>
+    </div>
+
+  </div> </div> <footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
+    <p>
+      <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> · Actividad 15 · SET
+    </p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
+    btn.addEventListener('click', function() {
+      console.log('✅ Abriendo PDF de la actividad 06...');
+    });
+  });
+</script>
+
+</body>
+</html>

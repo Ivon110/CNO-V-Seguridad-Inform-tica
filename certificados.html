@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificaciones · Laura Ivon Montelongo · Ciberseguridad ✨</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* ===== ESTILOS BASE (MISMO QUE EL LABORATORIO 1) ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+  position: relative;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Navegación con submenús (original) */
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 500;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer {
+  width: 100%;
+  padding: 25px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  margin-top: 60px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-content {
+  color: #f3f3f3;
+}
+
+.footer-content a {
+  color: white;
+  text-decoration: underline;
+  text-decoration-color: #ff8fc4;
+}
+
+/* ===== ESTILOS PROPIOS PARA CERTIFICACIONES (WOW) ===== */
+.particle-cert {
+  position: absolute;
+  pointer-events: none;
+  background: radial-gradient(circle, #ff99cc, #ff66aa);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: floatParticle 12s infinite ease-in-out;
+  z-index: 0;
+}
+
+@keyframes floatParticle {
+  0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.2; }
+  50% { transform: translateY(-40px) translateX(30px) scale(1.3); opacity: 0.7; }
+  100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.2; }
+}
+
+.tabs-container {
+  margin: 45px 0;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 35px;
+  justify-content: center;
+}
+
+.tab-btn {
+  background: rgba(255,240,248,0.9);
+  border: none;
+  padding: 14px 28px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 80px;
+  color: #b33a6b;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+}
+
+.tab-btn i {
+  font-size: 1.3rem;
+  transition: transform 0.2s;
+}
+
+.tab-btn:hover i {
+  transform: rotate(5deg) scale(1.1);
+}
+
+.tab-btn.active {
+  background: linear-gradient(125deg, #ff4f9a, #ffab3a);
+  color: white;
+  box-shadow: 0 12px 28px rgba(255,79,154,0.6), 0 0 15px #ff99cc;
+  transform: scale(1.02);
+}
+
+.tab-content {
+  display: none;
+  animation: slideUpGlow 0.5s ease forwards;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes slideUpGlow {
+  0% { opacity: 0; transform: translateY(30px); filter: blur(2px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.cert-card {
+  background: linear-gradient(145deg, rgba(255,250,252,0.98), rgba(255,240,248,0.95));
+  border-radius: 48px;
+  padding: 35px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.25), 0 0 0 2px rgba(255,200,220,0.6);
+  transition: all 0.4s;
+  border: 1px solid rgba(255,255,200,0.9);
+}
+
+.cert-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 35px 55px rgba(255,79,154,0.4), 0 0 0 3px #ffaaee;
+}
+
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  border-bottom: 3px solid #ffd0e4;
+  padding-bottom: 18px;
+  margin-bottom: 28px;
+}
+
+.cert-header h4 {
+  font-size: 2rem;
+  background: linear-gradient(135deg, #d43f7a, #ffa055);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+
+.btn-badge {
+  background: radial-gradient(circle at 30%, #fff0f5, #ffe0ec);
+  border-radius: 100px;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  color: #dd3377;
+  border: 1px solid #ffaacc;
+  transition: all 0.3s;
+  cursor: pointer;
+  animation: badgeGlow 2s infinite alternate;
+  font-size: 0.9rem;
+}
+
+@keyframes badgeGlow {
+  0% { box-shadow: 0 0 2px #ff66aa; border-color: #ffaacc; }
+  100% { box-shadow: 0 0 18px #ff44aa; border-color: #ff66aa; }
+}
+
+.btn-badge:hover {
+  transform: rotate(2deg) scale(1.05);
+  background: #ffe6f0;
+}
+
+.resena {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #2a1a24;
+  margin: 28px 0;
+  background: rgba(255,245,250,0.9);
+  padding: 25px;
+  border-radius: 32px;
+  text-align: justify;
+  border-left: 8px solid #ff77aa;
+}
+
+.evidencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 35px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff3888, #ff77bb);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 60px;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  transition: 0.25s;
+  box-shadow: 0 10px 20px rgba(255,50,100,0.4);
+  font-size: 0.95rem;
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 20px 30px rgba(255,30,100,0.6);
+  background: linear-gradient(145deg, #ff5599, #ff99cc);
+}
+
+.reflexion-global {
+  background: linear-gradient(125deg, #fff0f7, #ffe4ef);
+  border-radius: 48px;
+  padding: 40px;
+  margin: 65px 0 20px;
+  border-left: 15px solid #ff44aa;
+  box-shadow: 0 25px 35px rgba(255,50,120,0.2);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.reflexion-global:hover {
+  transform: scale(1.01);
+}
+
+.reflexion-global::before {
+  content: "✨🎓✨";
+  font-size: 80px;
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.reflexion-global h4 {
+  font-size: 2rem;
+  display: flex;
+  gap: 18px;
+  color: #cc3377;
+  margin-bottom: 25px;
+}
+
+/* MODAL PARA LAS IMÁGENES DE BADGES */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  animation: fadeInModal 0.3s;
+}
+
+.modal-content {
+  background: rgba(255,255,255,0.95);
+  border-radius: 32px;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90%;
+  position: relative;
+  box-shadow: 0 30px 50px rgba(0,0,0,0.5);
+  animation: zoomIn 0.3s;
+}
+
+.modal-content img {
+  width: 100%;
+  height: auto;
+  border-radius: 24px;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.close-modal {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  background: #ff4f9a;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 2px solid white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.close-modal:hover {
+  background: #ff1f6a;
+  transform: scale(1.1);
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 850px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; }
+  .tab-btn { padding: 8px 18px; font-size: 0.8rem; }
+  .cert-header h4 { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ORIGINAL ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026 · PD05 · Reflexión profesional</p>
+    </div>
+
+    <!-- ========== NAVEGACIÓN CON SUBMENÚS ========= -->
+    <nav>
+      <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li>
+          <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+            <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+            <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+          </ul>
+        </li>
+        <li><a href="#"><i class="fas fa-file-alt"></i> Notas</a></li>
+        <li>
+          <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+          <ul class="submenu">
+            <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+            <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02-01</a></li>
+            <li><a href="PR02_02.html"><i class="fas fa-file-alt"></i>PR02-02</a></li>
+            <li><a href="PR02_03.html"><i class="fas fa-file-alt"></i>PR02-03</a></li>
+          </ul>
+        </li>
+        <li><a href="#" class="activo"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+      </ul>
+    </nav>
+
+    <!-- ========== TÍTULO SECCIÓN CERTIFICACIONES ========= -->
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-certificate"></i> Certificaciones Profesionales · Ciberseguridad</h3>
+    </div>
+
+    <!-- ========== TABS CON CERTIFICADOS ========= -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="tab1"><i class="fas fa-shield-virus"></i> Introducción a la ciberseguridad</button>
+        <button class="tab-btn" data-tab="tab2"><i class="fas fa-network-wired"></i> Conceptos básicos de redes</button>
+        <button class="tab-btn" data-tab="tab3"><i class="fas fa-microchip"></i> Dispositivos</button>
+        <button class="tab-btn" data-tab="tab4"><i class="fas fa-terminal"></i> Seguridad en Terminales</button>
+        <button class="tab-btn" data-tab="tab5"><i class="fas fa-bug"></i> Administración de amenazas cibernéticas</button>
+        <button class="tab-btn" data-tab="tab6"><i class="fas fa-user-graduate"></i> Carrera Profesional de Analista Jr en Ciberseguridad</button>
+        <button class="tab-btn" data-tab="tab7"><i class="fas fa-user-secret"></i> Hacker Ético</button>
+      </div>
+
+     <!-- Certificación 1 -->
+      <div id="tab1" class="tab-content active">
+        <div class="cert-card">
+          <div class="cert-header"><h4>📘 Introducción a la Ciberseguridad</h4><button class="btn-badge" onclick="openBadgeModal('introduction-to-cybersecurity.png')"><i class="fas fa-id-card"></i> Ver Badge Digital</button></div>
+          <div class="resena"><strong>🌟 Reflexión:</strong> Este certificado de Introducción a la Ciberseguridad marcó un punto de inflexión en mi formación y fue mi primer contacto formal con este complejo ecosistema. A nivel técnico, logré interiorizar los pilares fundamentales: la tríada CIA (confidencialidad, integridad y disponibilidad) y las bases de la gestión de riesgos. Sin embargo, el aprendizaje más revelador fue comprender que las vulnerabilidades críticas no siempre provienen de fallas de software. Al analizar incidentes de impacto global y adentrarme en conceptos de ingeniería social, me di cuenta de que el eslabón más débil suele ser el factor humano.<br><br>El mayor reto durante el curso fue asimilar la inmensa amplitud y la constante evolución del panorama de amenazas. Pasar de la teoría a dimensionar cómo un simple engaño psicológico puede comprometer toda una infraestructura corporativa resultó abrumador, pero al mismo tiempo fascinante.<br><br>A nivel práctico y profesional, esta base ha cambiado mi perspectiva por completo. En mi entorno corporativo de TI, ahora evalúo los procesos no solo por su eficiencia, sino por su seguridad desde el diseño. Me ha permitido entender las políticas de protección de datos de manera crítica y me ha otorgado un criterio más agudo para identificar posibles brechas en los flujos de trabajo rutinarios.<br><br>En lo personal, este curso encendió una vocación muy clara. Me hizo darme cuenta de que proteger la información no es solo aplicar configuraciones en una terminal, sino salvaguardar la confianza de las personas. Es el pilar absoluto sobre el cual construyo mi carrera.</div>
+          <div class="evidencias">
+            <button class="btn-pdf" onclick="window.open('I2CSUpdate20260509-32-7uojvp.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad</button>
+          </div>
+        </div>
+      </div>
+      <!-- Certificación 2 -->
+      <div id="tab2" class="tab-content">
+        <div class="cert-card">
+          <div class="cert-header">
+            <h4>🌐 Conceptos básicos de redes</h4>
+            <button class="btn-badge" onclick="openBadgeModal('networking-basics.png')"><i class="fas fa-id-card"></i> Ver Badge Digital</button>
+          </div>
+          <div class="resena">
+            <strong>📡 Reflexión:</strong> El curso de Conceptos básicos de redes fue fundamental para entender el terreno sobre el que operan las tecnologías de la información. Más allá de simplemente conectar dispositivos, me permitió ver la red como el sistema nervioso de cualquier organización. A nivel técnico, dominar el modelo OSI, la arquitectura TCP/IP y el cálculo de subredes fue clave. Aprender a utilizar herramientas como Wireshark para analizar el tráfico de datos me ayudó a visualizar lo que antes me parecía abstracto.<br><br>El mayor reto, sin duda, fue comprender a profundidad el proceso de encapsulamiento y cómo los datos se transforman al viajar por las distintas capas. Al principio, la teoría resultaba bastante densa, pero al aterrizar estos conceptos en los laboratorios prácticos, todo cobró sentido y las piezas encajaron.<br><br>Profesionalmente, este conocimiento es mi base para la defensa de redes. En mi día a día dentro del entorno de TI corporativo, entender cómo fluye la información me da las herramientas para visualizar arquitecturas segmentadas, aplicar políticas de seguridad efectivas e identificar anomalías de tráfico. Comprendí que no puedes proteger una infraestructura si no entiendes exactamente cómo se comunica.<br><br>En lo personal, esta certificación me dio muchísima seguridad técnica. Me quitó el miedo a enfrentarme a configuraciones complejas y me demostró que, con práctica, los protocolos tienen una lógica fascinante. Es un piso firme, realista y totalmente necesario para seguir avanzando en mi especialización.
+          </div>
+          <div class="evidencias">
+            <button class="btn-pdf" onclick="window.open('Networking_Basics_certificate_177291-upslp-edu-mx_486564d0-cc5f-4deb-83fe-66730e55c74c.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad</button>
+          </div>
+        </div>
+      </div>
+      <!-- Certificación 3 -->
+      <div id="tab3" class="tab-content">
+        <div class="cert-card">
+          <div class="cert-header">
+            <h4>⚙️ Dispositivos de red y configuración inicial</h4>
+            <button class="btn-badge" onclick="openBadgeModal('networking-devices-and-initial-configuration.png')"><i class="fas fa-id-card"></i> Ver Badge Digital</button>
+          </div>
+          <div class="resena">
+            <strong>🛠️ Reflexión:</strong> Este curso representó el paso definitivo de la teoría a la acción. Si en los fundamentos entendí cómo viajan los datos, aquí aprendí a manipular el hardware que hace posible ese viaje. A nivel técnico, el aprendizaje clave fue dominar la interfaz de línea de comandos (CLI) de Cisco IOS. Logré configurar switches y routers desde cero, levantando interfaces y estableciendo barreras de seguridad esenciales, como el acceso remoto seguro mediante SSH y el cifrado de contraseñas locales.<br><br>El mayor reto fue la transición de las interfaces gráficas a la pura consola. Memorizar la sintaxis, navegar entre los distintos modos de ejecución (usuario, privilegiado y configuración global) y diagnosticar errores basándome solo en mensajes de texto fue frustrante al principio. Sin embargo, la práctica repetitiva transformó esa frustración en fluidez.<br><br>En el ámbito profesional, esta habilidad es sumamente práctica. En mi experiencia dentro del entorno de TI corporativo, entender cómo interactuar directamente con los equipos de red me permite ser mucho más proactiva. Ahora sé cómo verificar una interfaz caída o auditar rápidamente la configuración inicial de un equipo, atacando los problemas desde la infraestructura misma.<br><br>A nivel personal, perderle el miedo a la terminal fue un gran logro que me llenó de confianza. Te da una sensación de control real sobre la tecnología, ver cómo unas líneas de comando aseguran un dispositivo me confirmó que este nivel de interacción técnica es lo que realmente disfruto.
+          </div>
+          <div class="evidencias">
+            <button class="btn-pdf" onclick="window.open('Networking_Devices_and_Initial_Configuration_certificate_177291-upslp-edu-mx_27da85dd-85a4-433b-928a-6010c699b35f.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad</button>
+          </div>
+        </div>
+      </div>
+      <!-- Certificación 4 -->
+
+      <!-- Certificación 4 -->
+      <div id="tab4" class="tab-content">
+        <div class="cert-card">
+          <div class="cert-header">
+            <h4>🖥️ Seguridad en terminales</h4>
+            <button class="btn-badge" onclick="openBadgeModal('endpoint-security.png')"><i class="fas fa-id-card"></i> Ver Badge Digital</button>
+          </div>
+          <div class="resena">
+            <strong>🛡️ Reflexión:</strong> El curso de Seguridad en terminales fue crucial porque me hizo entender que la primera línea de defensa suele estar directamente en los dispositivos de los usuarios. A nivel técnico, aprendí a asegurar sistemas operativos, configurar firewalls de host, analizar registros de eventos y gestionar el control de acceso y el cifrado de datos para mitigar vulnerabilidades locales.<br><br>El mayor reto fue cambiar el enfoque general de "red" a "host". Comprender el comportamiento del malware a nivel de sistema, aprender a rastrear procesos sospechosos y entender cómo aislar amenazas sin detener por completo la productividad del usuario requirió de mucha capacidad de análisis y paciencia durante los laboratorios prácticos.<br><br>Profesionalmente, este aprendizaje tiene una aplicación directa e inmediata. En el entorno corporativo de TI donde me desenvuelvo, el aseguramiento de los endpoints es vital. Ahora entiendo mucho mejor cómo se implementan las políticas de seguridad que protegen los equipos frente a ataques como el ransomware o la exfiltración de información. Me permite tener una visión preventiva para asegurar que un solo dispositivo comprometido no ponga en jaque a toda la infraestructura.<br><br>A nivel personal, este módulo conectó perfectamente con mi interés en la defensa técnica. Me hizo ver que de nada sirve tener una red perimetral blindada si un equipo final está desprotegido. Esta certificación consolidó mi pasión por la ciberseguridad, brindándome herramientas tangibles para auditar y proteger el eslabón más cercano a las personas.
+          </div>
+          <div class="evidencias">
+            <button class="btn-pdf" onclick="window.open('Endpoint_Security_certificate_177291-upslp-edu-mx_80ce3ad3-300f-4fbf-91f3-095745a455e6.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad</button>
+          </div>
+        </div>
+      </div>
+      <!-- Certificación 5 -->
+      <div id="tab5" class="tab-content">
+        <div class="cert-card">
+          <div class="cert-header">
+            <h4>🛡️ Administración de amenazas cibernéticas</h4>
+            <button class="btn-badge" onclick="openBadgeModal('cyber-threat-management.png')"><i class="fas fa-id-card"></i> Ver Badge Digital</button>
+          </div>
+          <div class="resena">
+            <strong>🎯 Reflexión:</strong> Esta certificación representó la transición de una visión operativa a una postura de defensa estratégica y táctica. El aprendizaje fundamental fue la implementación de modelos de inteligencia como el <em>Diamond Model of Intrusion Analysis</em> y el análisis de cadenas de exterminio para desarticular ataques complejos. El desafío crítico consistió en desarrollar la agudeza analítica necesaria para priorizar amenazas dentro de grandes volúmenes de datos, evitando la fatiga por alertas y enfocándome en Indicadores de Compromiso (IoCs) de alto impacto. Profesionalmente, esta formación me capacitó para gestionar el ciclo de vida de un incidente bajo estándares internacionales, permitiéndome diseñar planes de respuesta que aseguren la continuidad del negocio y la integridad de la infraestructura. A nivel personal, este curso forjó en mí una mentalidad de vigilancia proactiva; comprendí que en ciberseguridad la complacencia es el mayor riesgo y que la resiliencia depende de la capacidad de anticipación y mejora continua ante un panorama de amenazas en constante evolución.
+          </div>
+          <div class="evidencias">
+            <button class="btn-pdf" onclick="window.open('Cyber_Threat_Management_certificate.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad</button>
+          </div>
+        </div>
+      </div>
+      <!-- Certificación 6 -->
+       <div id="tab6" class="tab-content">
+        <div class="cert-card">
+          <div class="cert-header">
+            <h4>🚀 Carrera Profesional de Analista Junior</h4>
+            <button class="btn-badge" onclick="openBadgeModal('ethical-hacker.png')"><i class="fas fa-id-card"></i> Ver Badge Digital</button>
+          </div>
+          <div class="resena">
+            <strong>🎯 Reflexión:</strong> Esta ruta consolidó mis competencias técnicas bajo un perfil de analista de SOC altamente eficiente. El aprendizaje clave fue el dominio de la correlación de eventos y el análisis forense, utilizando herramientas de monitoreo para identificar tácticas, técnicas y procedimientos (TTPs) de adversarios modernos. El reto más exigente fue la integración de conocimientos multidisciplinarios para resolver escenarios de crisis simulados, donde la toma de decisiones basada en evidencia técnica es vital para la contención de amenazas. En el ámbito profesional, esta certificación valida mi capacidad para operar en entornos corporativos complejos, aportando rigor analítico en la detección temprana y mitigación de riesgos críticos. Personalmente, representó la culminación de un proceso académico riguroso, reafirmando mi compromiso de actuar como una barrera defensiva ética. Me motiva profundamente contar con las herramientas necesarias para proteger la integridad digital de las organizaciones mediante un enfoque metódico.
+          </div>
+          <div class="evidencias">
+            <button class="btn-pdf" onclick="window.open('Ethical_Hacker_certificate_177291-upslp-edu-mx_025e27fd-bc81-4aeb-ab1d-6d16aff98750.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad</button>
+          </div>
+        </div>
+      </div>
+      <!-- Certificación 7 -->  
+    <div id="tab7" class="tab-content">
+        <div class="cert-card">
+          <div class="cert-header">
+            <h4>⚡ Hacker ético</h4>
+            <button class="btn-badge" onclick="openBadgeModal('ethical-hacker.png')"><i class="fas fa-id-card"></i> Ver Badge Digital</button>
+          </div>
+          <div class="resena">
+            <strong>🎯 Reflexión:</strong> Este curso integró la teoría de defensa con la práctica ofensiva controlada, permitiéndome adoptar la mentalidad del adversario para robustecer infraestructuras. Aprendí a ejecutar fases críticas de un <em>Penetration Test</em>: desde el reconocimiento y escaneo de vulnerabilidades hasta la explotación y post-explotación, bajo un marco ético estricto. El mayor desafío fue dominar la diversidad de vectores de ataque y asimilar que la seguridad es un proceso dinámico contra la creatividad del atacante. Profesionalmente, esta competencia me permite realizar auditorías internas preventivas y proponer arquitecturas de seguridad resilientes desde su diseño inicial. A nivel personal, transformó mi perspectiva técnica; ahora veo los sistemas como ecosistemas que requieren una protección audaz y responsable. Este conocimiento me otorga una ventaja estratégica para identificar brechas críticas antes de que sean explotadas, fortaleciendo mi perfil como especialista en ciberseguridad.
+          </div>
+          <div class="evidencias">
+            <button class="btn-pdf" onclick="window.open('Ethical_Hacker_certificate_177291-upslp-edu-mx_025e27fd-bc81-4aeb-ab1d-6d16aff98750.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== FOOTER ORIGINAL ========= -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio</p>
+            <p>
+            <a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a> 
+            <!-- <a href="https://github.com/livtech" target="_blank" rel="noopener">GitHub</a>-->
+            </p>
+            <p>
+            Sitio seguro con certificado SSL
+            </p>
+        </div>
+    </footer>
+
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<!-- MODAL PARA BADGES -->
+<div id="badgeModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeBadgeModal()">&times;</span>
+    <img id="badgeImage" src="" alt="Badge Digital">
+  </div>
+</div>
+
+<script>
+  // Funciones para el modal del badge
+  function openBadgeModal(imageSrc) {
+    const modal = document.getElementById('badgeModal');
+    const img = document.getElementById('badgeImage');
+    img.src = imageSrc;
+    modal.style.display = 'flex';
+  }
+  function closeBadgeModal() {
+    document.getElementById('badgeModal').style.display = 'none';
+  }
+  // Cerrar modal si se hace clic fuera del contenido
+  window.onclick = function(event) {
+    const modal = document.getElementById('badgeModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  }
+
+  // Lógica de tabs
+  const btns = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+  function activateTab(tabId) {
+    contents.forEach(c => c.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btns.forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+  }
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.getAttribute('data-tab');
+      if (tabId) activateTab(tabId);
+    });
+  });
+
+  // Partículas flotantes
+  for (let i = 0; i < 25; i++) {
+    let p = document.createElement('div');
+    p.classList.add('particle-cert');
+    let size = Math.random() * 10 + 3;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = Math.random() * 100 + '%';
+    p.style.animationDuration = 7 + Math.random() * 10 + 's';
+    p.style.animationDelay = Math.random() * 5 + 's';
+    document.querySelector('.card').appendChild(p);
+  }
+
+  // Confeti de bienvenida
+  const scriptConfetti = document.createElement('script');
+  scriptConfetti.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1';
+  scriptConfetti.onload = () => {
+    canvasConfetti({ particleCount: 180, spread: 85, origin: { y: 0.6 }, colors: ['#ff66aa', '#ffaa44', '#ff88bb'] });
+    setTimeout(() => {
+      canvasConfetti({ particleCount: 60, spread: 50, origin: { y: 0.4 }, colors: ['#ff99cc', '#ffcc66'] });
+    }, 400);
+  };
+  document.head.appendChild(scriptConfetti);
+</script>
+</body>
+</html>
