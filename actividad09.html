@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 09 · Red Team Report · My File Server 1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.equipo {
+  margin-top: 15px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 28px;
+  padding: 15px 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #4a2a36;
+  border: 1px solid rgba(255,79,154,0.3);
+}
+
+.equipo i {
+  color: #ff4f9a;
+  margin-right: 8px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.4rem;
+  color: #4a2a36;
+  margin: 30px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-container {
+  overflow-x: auto;
+  margin: 25px 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.5);
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+th {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 600;
+  padding: 15px 12px;
+  text-align: left;
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #ffe0ec;
+  background: rgba(255,255,255,0.7);
+}
+
+tr:hover td {
+  background: rgba(255,225,235,0.9);
+}
+
+pre {
+  background: #2d2a2e;
+  color: #f8f8f2;
+  padding: 20px;
+  border-radius: 20px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin: 20px 0;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+}
+
+code {
+  font-family: 'Courier New', monospace;
+}
+
+.indice-contenido {
+  background: white;
+  border-radius: 28px;
+  padding: 30px;
+  margin: 25px 0 35px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.2);
+  border-left: 6px solid #ff4f9a;
+}
+
+.indice-contenido h4 {
+  font-size: 1.8rem;
+  color: #ff4f9a;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 15px;
+}
+
+.indice-doble-columna {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 30px;
+}
+
+.indice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dotted #ffd9e6;
+}
+
+.indice-item .titulo {
+  color: #4a2a36;
+  font-weight: 500;
+}
+
+.indice-item .pagina {
+  color: #ff4f9a;
+  font-weight: 700;
+  background: #ffe0ec;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #ffe0ec;
+}
+
+.lista-personalizada li i {
+  color: #ff4f9a;
+  width: 24px;
+  text-align: center;
+}
+
+.caja-reflexion {
+  background: linear-gradient(145deg, #fff5f9, #ffe9f0);
+  padding: 35px;
+  border-radius: 28px;
+  border: 2px dashed #ff4f9a;
+  margin: 30px 0;
+}
+
+.caja-reflexion i {
+  color: #ff4f9a;
+  font-size: 2.5rem;
+  float: left;
+  margin-right: 20px;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  margin-top: 40px;
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer-content a {
+  color: #f3f3f3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+  .indice-doble-columna { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ========== ENCABEZADO ========= -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026</p>
+    </div>
+
+    <!-- ========== NAVEGACIÓN ========= -->
+    <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="notasMenu.html"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02</a></li>
+            </ul>
+          </li>
+          <li><a href="certificados.html"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+      
+    <!-- ========== TÍTULO ACTIVIDAD 09 ========= -->
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-file-alt"></i> Actividad 09 · Red Team Report: Pentesting de “My File Server 1”</h3>
+    </div>
+
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('act09-Equipo3.pdf', '_blank')">
+        <i class="fas fa-file-pdf"></i> Abrir PDF de la actividad
+      </button>
+    </div>
+
+    <!-- ========== INTRODUCCIÓN CONTEXTUAL ========= -->
+  <div class="seccion" style="margin-top: 20px;">
+    <h4><i class="fas fa-flag-checkered"></i> Introducción contextual</h4>
+    <p>En el ámbito de la ciberseguridad ofensiva, los ejercicios de <strong>Red Team</strong> simulan ataques realistas contra la infraestructura de una organización con el objetivo de evaluar su postura de seguridad, identificar vulnerabilidades explotables y medir la capacidad de detección y respuesta del equipo de defensa (Blue Team). Este tipo de pruebas van más allá del simple escaneo automatizado: implican el uso de tácticas, técnicas y procedimientos (TTPs) similares a los de adversarios reales, emulando su comportamiento para descubrir fallos que podrían llevar a un compromiso total del sistema.</p>
+    <p>En esta ocasión, el equipo asumió el rol de Red Team para atacar la máquina virtual <strong>"My File Server 1"</strong>, un servidor de archivos ficticio que forma parte de un entorno de laboratorio controlado. El objetivo principal era <strong>comprometer la confidencialidad, integridad y disponibilidad</strong> de los datos alojados en el servidor, siguiendo una metodología estructurada de pentesting en caja negra (black box), es decir, sin información previa sobre la configuración interna del objetivo. A lo largo del informe se documentan las fases de reconocimiento, enumeración, explotación, escalada de privilegios y las recomendaciones para mitigar los hallazgos críticos.</p>
+    <p>Este ejercicio no solo demuestra la importancia de aplicar parches de seguridad y buenas prácticas de hardening, sino que también resalta cómo una cadena de vulnerabilidades aparentemente menores (como una contraseña en texto plano o un kernel sin actualizar) puede derivar en la pérdida total del control del sistema. La reflexión final y las lecciones aprendidas sirven como base para fortalecer la postura de seguridad en entornos productivos reales.</p>
+  </div>
+
+    <!-- ========== INTRODUCCIÓN CONTEXTUAL ========= -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-flag"></i> Curso de Núcleo Optativo V: Seguridad Informática<br>Red Team Report: Pentesting de “My File Server 1”</h4>
+      <p><strong>Integrantes:</strong> Benites Rangel Cesar Yahir – 179091 · Cortes Beltran Carol Elizabeth – 177203 · Guerra Ramirez America Fabiola – 179888 · Larios Guerra Gustavo Michael – 178318 · Montelongo Martinez Laura Ivon – 177291 · Puente Luna Bruno Axel – 177876 · Rodríguez Moreno Cristian Alejandro – 181641</p>
+      <p><strong>Docente:</strong> Mtro. Servando López Contreras</p>
+      <p><strong>Grupo:</strong> T46A</p>
+    </div>
+
+    <!-- ========== Executive Summary ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-chart-line"></i> Executive Summary</h4>
+      <p>El presente documento detalla los resultados de la evaluación de seguridad realizada sobre el servidor objetivo "My File Server 1". Durante la auditoría, se logró comprometer el sistema en su totalidad debido a fallos críticos en los mecanismos de Autenticación y Control de Acceso. La exposición de credenciales en texto claro a través del servicio web permitió el acceso no autorizado mediante FTP. Posteriormente, se logró establecer persistencia interactiva en el servidor a través de SSH. El riesgo global del sistema se clasifica como CRÍTICO, representando una pérdida total de la Confidencialidad y la Integridad de los datos.</p>
+      <p>Durante la fase de post-explotación, se logró evadir los mecanismos de Control de Acceso locales explotando una vulnerabilidad crítica a nivel del kernel de Linux (CVE-2016-5195, conocida como "Dirty COW"). Esto permitió realizar una escalada de privilegios vertical, transitando de un usuario con privilegios limitados (smbuser) a obtener el control absoluto del sistema (root), resultando en el compromiso total de la Confidencialidad, Integridad y Disponibilidad de la infraestructura evaluada.</p>
+    </div>
+
+    <!-- ========== Alcance ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-bullseye"></i> Alcance</h4>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-desktop"></i> <strong>Objetivo:</strong> Máquina virtual "My File Server 1".</li>
+        <li><i class="fas fa-network-wired"></i> <strong>Dirección IP identificada:</strong> 192.168.56.102</li>
+        <li><i class="fas fa-plug"></i> <strong>Servicios evaluados:</strong> HTTP (80), FTP (21/2121), SMB (445), SSH (22), NFS (2049), RPCbind.</li>
+        <li><i class="fas fa-shield-alt"></i> <strong>Limitaciones:</strong> Las pruebas se realizaron en un entorno de red local controlada.</li>
+      </ul>
+    </div>
+
+    <!-- ========== Metodología aplicada ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-sitemap"></i> Metodología aplicada</h4>
+      <p>La evaluación se ejecutó siguiendo un enfoque estructurado de caja negra (Black-Box), emulando las tácticas de un actor de amenazas real. La metodología incluyó las fases de: Reconocimiento pasivo/activo, Enumeración de servicios, Explotación de vulnerabilidades lógicas y Post-explotación (Mantenimiento de acceso).</p>
+    </div>
+
+    <!-- ========== Fases de reconocimiento ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-search-location"></i> Fases de reconocimiento</h4>
+      <p>Se inició la auditoría analizando el segmento de red local para identificar activos vivos sin generar alertas masivas. Utilizando la herramienta netdiscover mediante la inspección de paquetes ARP, se logró identificar la dirección MAC (08:00:27:e4:b3:e4) y asignar de manera inequívoca la dirección IP 192.168.56.102 al servidor objetivo.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act09_01.png" alt="Mapa del oleoducto Colonial Pipeline"  style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
+    <!-- ========== Enumeración ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-list-ul"></i> Enumeración</h4>
+      <p>Se ejecutó un escaneo de puertos y detección de servicios utilizando <code>nmap -sS -sC -p- -T4 192.168.56.102</code>, confirmando la disponibilidad de múltiples vectores de entrada (FTP, SSH, HTTP, RPC, SMB, NFS).</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act09_02.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <br>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act09_03.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Enumeración Web (HTTP)</h5>
+      <p>Tras descartar vulnerabilidades evidentes en el código fuente de la página principal, y ante la demora de herramientas de fuerza bruta de directorios, se optó por un escaneo de vulnerabilidades web con nikto. Esto reveló la existencia de un archivo público en la raíz (readme.txt), el cual contenía una contraseña hardcodeada (rootroot1), evidenciando una falla crítica en la protección de la Confidencialidad de los Datos.</p>
+       <div class="img-placeholder" style="padding: 20px;">
+        <img src="act09_04.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+
+      <h5>Enumeración SMB</h5>
+      <p>Para identificar usuarios válidos y evadir los mecanismos de Control de Acceso, se utilizó <code>smbmap -H 192.168.56.102</code>. El análisis de los recursos compartidos expuso los directorios print$, IPC$, smbdata (con permisos de lectura y escritura) y, de manera crucial, un directorio nombrado smbuser. Mediante inferencia lógica, se determinó que smbuser correspondía a una cuenta válida del sistema.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act09_05.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
+    <!-- ========== Explotación ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-bolt"></i> Explotación</h4>
+      <p>Con el vector de Autenticación comprometido (usuario: smbuser, contraseña: rootroot1), se procedió a vulnerar el servicio FTP (vsFTPd). El inicio de sesión fue exitoso, otorgando acceso de lectura y escritura a la estructura de archivos del usuario. Esta brecha confirma la ineficacia de los controles de seguridad lógicos del servidor frente a la fuga de información previa.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act09_06.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 30%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
+    <!-- ========== Escalada de privilegios ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-chart-line"></i> Escalada de privilegios</h4>
+      <p>Para elevar el nivel de acceso desde una sesión de transferencia de archivos (FTP) a una consola interactiva completa (bypasseando futuras rotaciones de contraseñas), se ejecutó una técnica de persistencia basada en criptografía asimétrica.</p>
+      <p>Se generó un par de llaves criptográficas localmente utilizando <code>ssh-keygen -t ed25519</code>.</p>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="act09_07.png" alt="Mapa del oleoducto Colonial Pipeline" style="width: 60%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <p>A través de la sesión FTP previamente vulnerada, se aprovechó la falta de validación de Integridad de los Datos para crear un directorio oculto <code>/.ssh</code> en la raíz del usuario. Se inyectó la llave pública (id_ed25519.pub) en el servidor. Esto permitió autenticarse posteriormente de forma directa a través del servicio SSH, garantizando un acceso remoto continuo y sin restricciones.</p>
+      
+      <p>Una vez estabilizada la sesión interactiva, se realizó una enumeración del sistema operativo, detectando una versión del kernel de Linux susceptible a la vulnerabilidad de condición de carrera (Race Condition) documentada como CVE-2016-5195 (Dirty COW). Para realizar la transferencia del vector de ataque, se estructuró el código fuente del exploit en un archivo local (dirtycow.c) con el repositorio <code>https://github.com/SecWiki/linux-kernel-exploits/blob/master/2016/CVE-2016-5195/40616.c</code> y se desplegó un servidor HTTP temporal (puerto 8080) en la infraestructura del atacante. A través de este canal, se instruyó al servidor objetivo para descargar el archivo malicioso.</p>
+      
+    </div>
+
+    <!-- ========== Análisis de impacto CIA ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-lock"></i> Análisis de impacto (CIA)</h4>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Principio</th><th>Descripción del Impacto</th><th>Evidencia del Caso</th></tr></thead>
+          <tbody>
+            <tr><td>Confidencialidad</td><td>Exfiltración de archivos del servidor mediante acceso FTP y SSH.</td><td>Credenciales en texto claro en readme.txt; acceso no autorizado a recursos compartidos SMB.</td></tr>
+            <tr><td>Integridad</td><td>Modificación de archivos del sistema, inyección de claves SSH y ejecución de exploits.</td><td>Escritura en directorio .ssh, compilación de código malicioso en el servidor.</td></tr>
+            <tr><td>Disponibilidad</td><td>El atacante podría interrumpir servicios o cifrar archivos (riesgo de ransomware).</td><td>Control total como root permite detener servicios, eliminar logs o instalar backdoors.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== Recomendaciones técnicas ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-tools"></i> Recomendaciones técnicas</h4>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-key"></i> Implementar autenticación multifactor (MFA) en todos los accesos remotos (SSH, FTP, SMB).</li>
+        <li><i class="fas fa-eye-slash"></i> Nunca almacenar credenciales en texto claro dentro de archivos públicos del servidor web.</li>
+        <li><i class="fas fa-network-wired"></i> Segmentar redes y aplicar el principio de mínimo privilegio en recursos compartidos SMB.</li>
+        <li><i class="fas fa-database"></i> Migrar de FTP a SFTP y restringir la capacidad de subir archivos a directorios del sistema.</li>
+        <li><i class="fas fa-microchip"></i> Actualizar el kernel a una versión parchada contra CVE-2016-5195 (Dirty COW).</li>
+        <li><i class="fas fa-code-branch"></i> Remover compiladores (gcc, make) en entornos de producción para evitar compilación de exploits.</li>
+        <li><i class="fas fa-history"></i> Establecer copias de seguridad offline y probar periódicamente los planes de recuperación.</li>
+      </ul>
+    </div>
+
+    <!-- ========== Tabla de hallazgos ========= -->
+    <div class="seccion">
+      <h4><i class="fas fa-exclamation-triangle"></i> Tabla de hallazgos</h4>
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Vulnerabilidad</th><th>Nivel</th><th>Descripción</th><th>Impacto</th><th>Mitigación</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>VULN-01</td><td>Exposición de credenciales en texto claro</td><td>Crítica</td><td>Archivo readme.txt accesible vía HTTP contiene la contraseña "rootroot1".</td><td>Compromiso de cuentas de usuario (smbuser).</td><td>Eliminar archivos con credenciales; usar gestores de secretos.</td></tr>
+            <tr><td>VULN-02</td><td>Control de acceso inadecuado en recursos SMB</td><td>Alta</td><td>El recurso smbdata y smbuser tienen permisos READ/WRITE globales.</td><td>Exfiltración o modificación de datos.</td><td>Restringir permisos por usuario y aplicar ACLs.</td></tr>
+            <tr><td>VULN-03</td><td>Reutilización y configuración insegura de credenciales</td><td>Crítica</td><td>La misma contraseña (rootroot1) funciona para FTP y SMB.</td><td>Movimiento lateral fácil.</td><td>Políticas de contraseñas robustas y prohibir reutilización.</td></tr>
+            <tr><td>VULN-04</td><td>Falta de controles de integridad en entorno FTP</td><td>Alta</td><td>Permite crear directorio .ssh e inyectar claves autorizadas.</td><td>Persistencia no autorizada vía SSH.</td><td>Auditar escrituras en FTP; migrar a SFTP con chroot.</td></tr>
+            <tr><td>VULN-05</td><td>Escalada de privilegios locales (CVE-2016-5195 / Dirty COW)</td><td>Crítica</td><td>Versión de kernel 3.13.0-32 susceptible a CVE-2016-5195.</td><td>Escalada de privilegios local a root.</td><td>Actualizar kernel inmediatamente.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="seccion">
+      <h4><i class="fas fa-list-ol"></i> Presentación</h4>
+      
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt1.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt2.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt3.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt4.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt5.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt6.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt7.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt8.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt9.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+      <div class="img-placeholder" style="padding: 20px;">
+        <img src="ppt10.jpg" alt="Paso 1 - Página principal del laboratorio" style="width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      </div>
+    </div>
+
+    <!-- ========== REFLEXIÓN TÉCNICA ========= -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-lightbulb"></i> Reflexión técnica</h4>
+      <p>Este ejercicio práctico demostró cómo una cadena de vulnerabilidades aparentemente simples puede llevar al compromiso total de un servidor. La exposición de una contraseña en un archivo de texto accesible por web fue el punto de partida; a partir de ahí, la falta de controles de acceso en SMB y la ausencia de restricciones en FTP permitieron la inyección de claves SSH. Finalmente, un kernel sin parches (Dirty COW) convirtió un acceso de usuario limitado en control absoluto como root.</p>
+      <p>La lección más importante es que la seguridad no puede depender de una única capa de defensa. Se requiere un enfoque en profundidad: desde políticas de credenciales robustas, segmentación de red, actualizaciones constantes del sistema operativo hasta la monitorización de actividades anómalas. Además, entornos de producción deben eliminar herramientas de compilación y restringir al máximo los permisos de escritura en directorios del sistema.</p>
+      <p>Como equipo Red Team, este ejercicio refuerza la importancia de documentar cada hallazgo con evidencias claras y proponer remediaciones concretas, alineadas con buenas prácticas y marcos como NIST o ISO 27001.</p>
+    </div>
+
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio de Ciberseguridad</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a></p>
+    <p>Equipo 3 · Red Team Report · My File Server 1</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
+    btn.addEventListener('click', () => console.log('Exportación de informe a PDF (simulación)'));
+  });
+</script>
+
+</body>
+</html>

