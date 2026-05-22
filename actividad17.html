@@ -6,35 +6,19 @@
 <title>Actividad 17 · Evaluación de vulnerabilidades con CVSS 3.1</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  
-.pdf-export {
-  display: flex;
-  justify-content: flex-end;
-  margin: 20px 0;
-}
+/* ========================================================
+   🔥 ESTILOS BASE, VARIABLES Y ANIMACIONES 3D/NEÓN 🔥
+   ======================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600;700;800;900&display=swap');
 
-.btn-pdf {
-  background: linear-gradient(145deg, #ff4f9a, #ff2e7d);
-  border: none;
-  padding: 16px 36px;
-  border-radius: 50px;
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 15px 30px rgba(255,79,154,0.4);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.3);
+:root {
+  --titulo-color-1: #ff1f6a;
+  --titulo-color-2: #ff75b5;
+  --titulo-color-3: #ff007f;
+  --titulo-color-4: #ffb3d9;
+  --titulo-scale: 1;
+  --titulo-shadow: rgba(255, 31, 106, 0.4);
 }
-
-.btn-pdf:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 25px 45px rgba(255,79,154,0.5);
-}
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
 * {
   margin: 0;
@@ -48,340 +32,458 @@ body {
   background: linear-gradient(180deg, #fff5f9, #ffe0ec);
   overflow-x: hidden;
   color: #3a1c2b;
+  perspective: 1200px;
 }
 
-.blur {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.6;
-  z-index: 0;
-  animation: float 6s ease-in-out infinite;
-}
-
-.blur.one {
-  width: 360px;
-  height: 360px;
-  background: #ff9ac1;
-  top: -120px;
-  left: -120px;
-}
-
-.blur.two {
-  width: 300px;
-  height: 300px;
-  background: #ffb3d9;
-  bottom: -100px;
-  right: -100px;
-  animation-delay: 2s;
-}
-
-.blur.three {
-  width: 240px;
-  height: 240px;
-  background: #ffc2e1;
-  top: 40%;
-  right: 20%;
-  animation-delay: 4s;
-}
-
+/* --- ANIMACIONES MAGISTRALES --- */
 @keyframes float {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-20px) scale(1.05); }
+  0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+  50% { transform: translateY(-25px) scale(1.05) rotate(3deg); }
 }
 
+@keyframes textShine {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes scannerRay {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(300%); opacity: 0; }
+}
+
+@keyframes shineEffect {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+@keyframes spinBorder {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 174, 0, 0.3), 0 0 30px rgba(255, 31, 106, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(255, 174, 0, 0.6), 0 0 50px rgba(255, 31, 106, 0.5); }
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(60px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- BURBUJAS DE FONDO --- */
+.blur {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.7; z-index: 0;
+  animation: float 8s ease-in-out infinite;
+}
+.blur.one { width: 360px; height: 360px; background: #ff4f9a; top: -120px; left: -120px; }
+.blur.two { width: 300px; height: 300px; background: #ff1f6a; bottom: -100px; right: -100px; animation-delay: 2s; animation-duration: 12s; }
+.blur.three { width: 240px; height: 240px; background: #ff9ac1; top: 40%; right: 20%; animation-delay: 4s; animation-duration: 10s; }
+
+/* --- CONTENEDOR 3D --- */
 .wrapper {
-  position: relative;
-  z-index: 1;
-  max-width: 1400px;
-  margin: 70px auto;
-  padding: 20px;
+  position: relative; z-index: 1; max-width: 1400px; margin: 70px auto; padding: 20px;
 }
 
 .card {
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(12px);
-  border-radius: 32px;
-  padding: 50px;
-  box-shadow: 0 40px 80px rgba(255,122,168,0.25), inset 0 1px 0 rgba(255,255,255,0.6);
-  transition: transform 0.5s ease;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-radius: 40px;
+  padding: 60px;
+  box-shadow: 0 40px 100px rgba(255,79,154,0.2), inset 0 2px 5px rgba(255,255,255,1);
+  border: 1px solid rgba(255, 200, 220, 0.6);
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s ease;
+  animation: slideUpFade 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 50px 100px rgba(255,122,168,0.35);
-}
+/* --- CABECERA --- */
+.header { text-align: center; margin-bottom: 40px; transform: translateZ(40px); }
+.header h1 { font-size: 3rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; text-shadow: 0 5px 15px rgba(255,79,154,0.3); }
+.header h1 i { color: #ff1f6a; }
+.alias { font-size: 1.1rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #ff4f9a, #ff1f6a); padding: 5px 18px; border-radius: 30px; box-shadow: 0 0 15px rgba(255,79,154,0.5); }
+.header h2 { margin-top: 15px; font-size: 1.6rem; color: #ff4f9a; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; }
+.meta { margin-top: 10px; font-size: 1rem; color: #6b3a52; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; font-weight: 600; }
 
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.header h1 {
-  font-size: 2.8rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.alias {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #ff4f9a;
-}
-
-.header h2 {
-  margin-top: 12px;
-  font-size: 1.4rem;
-  color: #ff4f9a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.meta {
-  margin-top: 6px;
-  font-size: 0.95rem;
-  color: #6b3a52;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-nav {
-  margin-top: 40px;
-}
-nav ul {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 18px;
-  list-style: none;
-}
+/* --- NAVEGACIÓN --- */
+nav { margin-top: 40px; transform: translateZ(30px); }
+nav ul { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; list-style: none; }
 nav a {
-  text-decoration: none;
-  padding: 12px 24px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.7);
-  color: #3a1c2b;
-  font-weight: 600;
-  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(255,255,255,0.5);
+  text-decoration: none; padding: 14px 28px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #3a1c2b; font-weight: 700;
+  box-shadow: 0 8px 20px rgba(255,79,154,0.15); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px;
 }
 nav a:hover, nav a.activo {
-  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
-  color: #fff;
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 16px 30px rgba(255,79,154,0.35);
+  background: linear-gradient(135deg, #ff4f9a, #ffab3a); color: #fff; transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(255,79,154,0.5);
 }
-nav ul li {
-  position: relative;
-}
+nav ul li { position: relative; }
 .submenu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 10px 0;
-  min-width: 200px;
-  box-shadow: 0 20px 40px rgba(255,79,154,0.3);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  z-index: 100;
-  list-style: none;
-  border: 1px solid rgba(255,255,255,0.5);
+  position: absolute; top: 100%; left: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(15px); border-radius: 20px; padding: 15px 0; min-width: 220px;
+  box-shadow: 0 25px 50px rgba(255,79,154,0.3); opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s ease; z-index: 100;
 }
-nav ul li:hover .submenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(10px);
-}
-.submenu a {
-  padding: 12px 24px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.7);
-  color: #3a1c2b;
-  font-weight: 600;
-  box-shadow: 0 8px 18px rgba(255,79,154,0.15);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(255,255,255,0.5);
-}
-.submenu a:hover {
-  background: linear-gradient(135deg, #ff4f9a, #ff8fc4);
-  color: #fff;
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 16px 30px rgba(255,79,154,0.5);
-}
+nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translateY(10px); }
+.submenu a { background: transparent; box-shadow: none; padding: 12px 24px; font-weight: 600; color: #6b3a52; }
+.submenu a:hover { background: rgba(255,79,154,0.1); color: #ff1f6a; transform: translateX(8px); }
 
-.titulo-actividad {
-  margin: 30px 0 25px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  border-bottom: 5px solid #ff8fc4;
-  padding-bottom: 15px;
+/* --- TÍTULO INTERACTIVO INTELIGENTE --- */
+.titulo-actividad { 
+  margin: 60px 0 30px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 15px; 
+  transform: translateZ(80px);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .titulo-actividad h3 {
-  font-size: 2.2rem;
-  color: #ff4f9a;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  font-size: 2.5rem; 
+  font-weight: 900; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 15px; 
+  text-align: center;
+  line-height: 1.3;
+  
+  background: linear-gradient(
+    45deg, 
+    var(--titulo-color-1) 0%, 
+    var(--titulo-color-2) 30%, 
+    var(--titulo-color-3) 60%, 
+    var(--titulo-color-4) 100%
+  );
+  background-size: 200% auto;
+  color: transparent; 
+  -webkit-background-clip: text; 
+  background-clip: text;
+  
+  transform: scale(var(--titulo-scale));
+  filter: drop-shadow(0 8px 15px var(--titulo-shadow));
+  animation: textShine 4s linear infinite;
+  transition: background 0.6s ease, filter 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.titulo-actividad h3 i { 
+  background: linear-gradient(135deg, var(--titulo-color-1), var(--titulo-color-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.5s ease;
+}
+
+/* --- BOTÓN DEGRADADO SUNSET HOLOGRÁFICO --- */
+.pdf-export { display: flex; justify-content: center; margin: 40px 0; transform: translateZ(50px); }
+.btn-pdf {
+  position: relative; 
+  overflow: hidden; 
+  background: linear-gradient(135deg, #ff007f 0%, #ff4f9a 45%, #ff7b00 100%);
+  background-size: 200% auto;
+  border: none; 
+  padding: 18px 50px; 
+  border-radius: 50px;
+  color: white; 
+  font-weight: 900; 
+  font-size: 1.2rem; 
+  display: flex; 
+  align-items: center; 
+  gap: 15px;
+  letter-spacing: 0.5px;
+  cursor: pointer; 
+  box-shadow: 0 10px 30px rgba(255, 15, 115, 0.35), 0 4px 15px rgba(255, 123, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-pdf::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-25deg);
+  animation: shineEffect 4s infinite ease-in-out;
+}
+
+.btn-pdf:hover {
+  background-position: right center; 
+  transform: translateY(-6px) scale(1.06);
+  box-shadow: 0 20px 40px rgba(255, 0, 127, 0.5), 0 10px 25px rgba(255, 123, 0, 0.4);
+}
+
+.btn-pdf i { font-size: 1.4rem; transition: transform 0.4s ease; }
+.btn-pdf:hover i { transform: rotate(-15deg) scale(1.25); }
+
+/* --- SECCIONES ESCÁNER --- */
 .seccion {
-  background: rgba(255,255,255,0.7);
-  border-radius: 28px;
-  padding: 35px;
-  margin-top: 40px;
-  box-shadow: 0 15px 35px rgba(255,122,168,0.15);
-  border-left: 6px solid #ff4f9a;
-  transition: transform 0.3s;
+  background: rgba(255,255,255,0.75); border-radius: 32px; padding: 45px; margin-top: 45px;
+  box-shadow: 0 15px 35px rgba(255,122,168,0.1); border-left: 8px solid #ff4f9a;
+  position: relative; overflow: hidden; transform-style: preserve-3d;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0; transform: translateY(50px) translateZ(10px);
+}
+.seccion.visible { opacity: 1; transform: translateY(0) translateZ(10px); }
+
+.seccion::after {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+  background: linear-gradient(to right, transparent, #ff1f6a, #ffab3a, #ff1f6a, transparent);
+  box-shadow: 0 0 15px #ff1f6a, 0 0 30px #ffab3a;
+  animation: scannerRay 5s linear infinite; z-index: 5; pointer-events: none;
 }
 
 .seccion:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 45px rgba(255,79,154,0.2);
+  transform: translateY(-8px) translateZ(25px);
+  box-shadow: 0 30px 60px rgba(255,79,154,0.25), 0 0 30px rgba(255, 170, 238, 0.4);
+  border-left: 12px solid #ff1f6a; background: rgba(255,255,255,0.9);
 }
+
+.seccion * { position: relative; z-index: 2; }
 
 .seccion h4 {
-  font-size: 1.9rem;
-  color: #ff4f9a;
-  margin-bottom: 25px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 2px solid #ffe0ec;
-  padding-bottom: 12px;
+  font-size: 2.1rem; color: #ff4f9a; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;
+  border-bottom: 3px dashed #ffe0ec; padding-bottom: 15px; font-weight: 800; text-shadow: 0 2px 10px rgba(255,79,154,0.2);
 }
+.seccion h4 i { background: #ffe0ec; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 5px 15px rgba(255,79,154,0.3); color: #ff1f6a;}
 
 .seccion h5 {
-  font-size: 1.3rem;
-  color: #4a2a36;
-  margin: 25px 0 15px;
-  font-weight: 600;
+  font-size: 1.3rem; color: #fff; margin: 30px 0 15px; font-weight: 800; display: inline-flex; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, #ff4f9a, #ffab3a); padding: 10px 25px; border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(255,79,154,0.4); transition: 0.3s;
+}
+.seccion:hover h5 { transform: translateX(10px); }
+.seccion p { margin-bottom: 18px; line-height: 1.8; font-size: 1.1rem; color: #2a1a24; text-align: justify; }
+
+/* Listas interactivas estilo cyber */
+.seccion ul { list-style: none; padding-left: 0; margin-bottom: 20px; }
+.seccion ul li { 
+  position: relative; padding: 12px 15px 12px 45px; margin-bottom: 10px; font-size: 1.1rem; color: #4a2a36;
+  background: rgba(255, 255, 255, 0.6); border-radius: 15px; border: 1px solid rgba(255,200,220,0.5);
+  transition: all 0.3s ease;
+}
+.seccion ul li::before {
+  content: '\f105'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+  position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #ff4f9a; font-size: 1.3rem; transition: 0.3s;
+}
+.seccion ul li:hover { transform: translateX(15px); background: #fff5f9; color: #ff1f6a; font-weight: 700; box-shadow: 0 5px 15px rgba(255,79,154,0.2); border-color: #ffb3d9; }
+.seccion ul li:hover::before { transform: translateY(-50%) scale(1.4); color: #ffab3a; }
+
+/* Tablas estilizadas */
+.tabla-metricas {
+  width: 100%; border-collapse: separate; border-spacing: 0; margin: 25px 0;
+  border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(255,79,154,0.08);
+  border: 1px solid rgba(255,200,220,0.4);
+}
+.tabla-metricas th, .tabla-metricas td { padding: 16px 20px; text-align: left; }
+.tabla-metricas th {
+  background: linear-gradient(135deg, #ff4f9a, #ff7b00); color: white;
+  font-weight: 800; font-size: 1.1rem; letter-spacing: 0.5px;
+}
+.tabla-metricas td { background: rgba(255,255,255,0.6); border-bottom: 1px solid #ffe0ec; font-size: 1.05rem; }
+.tabla-metricas tr:hover td { background: rgba(255,245,249,0.9); color: #ff1f6a; transition: 0.2s; }
+.tabla-metricas tr:last-child td { border-bottom: none; }
+
+/* ========================================================
+   ✨ NUEVO: MARCO GIRATORIO DEGRADADO PARA IMÁGENES ✨
+   ======================================================== */
+.gold-wrapper {
+  position: relative;
+  width: 85%;
+  margin: 35px auto;
+  padding: 5px; /* Espacio para que se note el borde */
+  border-radius: 25px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: pulseGlow 4s infinite alternate;
+}
+
+/* El pseudo-elemento que hace el giro cromático */
+.gold-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 150%; height: 150%;
+  /* Degradado premium solicitado: Dorados de alta definición cruzados con rosa y naranja mandarina */
+  background: conic-gradient(
+    #d4af37 0%, 
+    #ff4f9a 25%, 
+    #f3e5ab 50%, 
+    #ff7b00 75%, 
+    #d4af37 100%
+  );
+  animation: spinBorder 6s linear infinite;
+  z-index: 1;
+}
+
+.gold-inner {
+  position: relative;
+  width: 100%;
+  background: #fff;
+  border-radius: 22px;
+  padding: 15px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.gold-inner img {
+  width: 100%;
+  border-radius: 15px;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.gold-wrapper:hover .gold-inner img {
+  transform: scale(1.02);
+}
+
+/* ========================================================
+   ⚡ NUEVO: SCORE-CARD ULTRA-ANIMADA (CVSS CONTADOR) ⚡
+   ======================================================== */
+.score-container {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.seccion p, .seccion li {
-  margin-bottom: 12px;
-  line-height: 1.6;
-}
-
-.seccion ul {
-  padding-left: 20px;
-  margin-bottom: 15px;
-}
-
-.tabla-metricas {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background: rgba(255,255,255,0.5);
-  border-radius: 20px;
-  overflow: hidden;
-}
-.tabla-metricas th, .tabla-metricas td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ffe0ec;
-}
-.tabla-metricas th {
-  background: linear-gradient(145deg, #ff4f9a, #ff8fc4);
-  color: white;
-  font-weight: 600;
-}
-.tabla-metricas tr:last-child td {
-  border-bottom: none;
-}
-
-.vector-box {
-  background: #2d2a2e;
-  color: #f8f8f2;
-  padding: 20px;
-  border-radius: 20px;
-  font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  text-align: center;
-  margin: 20px 0;
-  letter-spacing: 0.5px;
+  justify-content: center;
+  gap: 40px;
+  margin: 30px 0;
+  flex-wrap: wrap;
 }
 
 .score-card {
-  background: linear-gradient(145deg, #ffe0ec, #ffc2e1);
-  border-radius: 28px;
-  padding: 25px;
-  text-align: center;
-  margin: 20px 0;
+  background: linear-gradient(145deg, #ffffff, #fff0f6);
+  border: 2px solid #ffb3d9;
+  border-radius: 35px;
+  padding: 35px;
+  width: 280px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(255, 31, 106, 0.15);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* Círculo de progreso neón de fondo */
+.score-circle-svg {
+  position: absolute;
+  width: 240px; height: 240px;
+  transform: rotate(-90deg);
+  z-index: 1;
+}
+
+.score-circle-svg circle {
+  width: 100%; height: 100%;
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.circle-bg { stroke: #ffe0ec; }
+.circle-progress {
+  stroke: url(#goldSunset);
+  stroke-dasharray: 691; /* 2 * PI * r (r=110) */
+  stroke-dashoffset: 691; /* Empieza vacío */
+  transition: stroke-dashoffset 2s ease-out;
+}
+
+.score-data {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+}
+
+/* Puntuación animada con contador */
 .score-card .puntuacion {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #ff4f9a;
+  font-size: 4.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff007f, #ff7b00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1;
 }
+
 .score-card .categoria {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #4a2a36;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ff5900;
+  margin-top: 5px;
+  letter-spacing: 1px;
 }
 
+.score-card:hover {
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 30px 60px rgba(255, 123, 0, 0.3);
+  border-color: #ff7b00;
+}
+
+/* Leyenda lateral */
+.score-legend {
+  flex: 1;
+  min-width: 300px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 30px;
+  border-radius: 28px;
+  border: 1px solid rgba(255,200,220,0.5);
+}
+.score-legend h6 { font-size: 1.2rem; margin-bottom: 15px; color: #6b3a52; font-weight: 800; }
+.legend-item {
+  display: flex; justify-content: space-between; padding: 10px 15px; margin-bottom: 8px;
+  border-radius: 12px; font-weight: 700; font-size: 1rem;
+}
+.legend-item.active {
+  background: linear-gradient(90deg, rgba(255,123,0,0.15), rgba(255,31,106,0.15));
+  border-left: 5px solid #ff7b00; color: #ff1f6a;
+  box-shadow: 0 4px 15px rgba(255,79,154,0.1);
+}
+
+/* --- FOOTER --- */
 .footer {
-  width: 100%;
-  padding: 25px 0;
-  text-align: center;
-  background: rgba(0,0,0,0.35);
-  border-radius: 20px;
-  margin-top: 60px;
-  backdrop-filter: blur(5px);
+  width: 100%; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.5); border-radius: 30px; margin-top: 80px; backdrop-filter: blur(15px);
 }
+.footer-content { color: #f3f3f3; font-size: 1.05rem; }
+.footer-content a { color: #ffb3d9; text-decoration: none; font-weight: 700; }
 
-.footer-content {
-  color: #f3f3f3;
-}
-
-.footer-content a {
-  color: white;
-  text-decoration: underline;
-  text-decoration-color: #ff8fc4;
-}
-
+/* ========================================================
+   📱 RESPONSIVE 📱
+   ======================================================== */
 @media (max-width: 900px) {
-  .card { padding: 30px 20px; }
+  body { perspective: none; }
+  .wrapper { margin: 15px auto; padding: 10px; }
+  .card { padding: 30px 15px; border-radius: 30px; }
   .header h1 { font-size: 2rem; flex-direction: column; }
-  .titulo-actividad h3 { font-size: 1.8rem; }
-  .seccion { padding: 25px; }
-  .seccion h4 { font-size: 1.6rem; }
+  nav ul { flex-direction: column; gap: 10px; }
+  nav a { justify-content: center; border-radius: 20px; }
+  .submenu { position: static; visibility: visible; opacity: 1; display: none; padding-left: 15px; background: transparent; border: none; box-shadow: none;}
+  nav ul li:hover .submenu { display: block; }
+  .submenu a { justify-content: flex-start; border-radius: 0; border-left: 3px solid #ff4f9a; background: rgba(255,255,255,0.5); }
+  .titulo-actividad { flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.7rem; }
+  .seccion { padding: 30px 20px; border-radius: 24px; }
+  .seccion h4 { font-size: 1.5rem; flex-direction: column; align-items: flex-start; }
+  .score-container { flex-direction: column; gap: 20px; }
+  .gold-wrapper { width: 100%; }
 }
 </style>
 </head>
 <body>
+
+<!-- Elementos gráficos SVG para degradados complejos en trazados -->
+<svg style="width:0; height:0; position:absolute;">
+  <linearGradient id="goldSunset" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ff007f" />
+    <stop offset="50%" stop-color="#ff7b00" />
+    <stop offset="100%" stop-color="#d4af37" />
+  </linearGradient>
+</svg>
 
 <div class="blur one"></div>
 <div class="blur two"></div>
 <div class="blur three"></div>
 
 <div class="wrapper">
-  <div class="card">
+  <div class="card" id="tilt-card">
 
     <div class="header">
       <h1><i class="fas fa-user-secret"></i> Laura Ivon Montelongo Martínez<span class="alias">| Alias: Ivonne</span></h1>
@@ -418,9 +520,9 @@ nav ul li:hover .submenu {
           <li><a href="certificados.html"><i class="fas fa-certificate"></i> Certificaciones</a></li>
         </ul>
       </nav>
- 
-    <div class="titulo-actividad">
-      <h3><i class="fas fa-chart-line"></i> Actividad 17: Evaluación de vulnerabilidades con CVSS 3.1</h3>
+      
+    <div class="titulo-actividad" id="main-title-container">
+      <h3 id="main-title"><i class="fas fa-chart-line"></i> Actividad 17: Evaluación de vulnerabilidades con CVSS 3.1</h3>
     </div>
 
     <div class="pdf-export">
@@ -459,6 +561,7 @@ nav ul li:hover .submenu {
     <div class="seccion">
       <h4><i class="fas fa-calculator"></i> 1. Construcción del vector</h4>
       <p>Con base en el escenario proporcionado, se asignaron las siguientes métricas base:</p>
+      
       <table class="tabla-metricas">
         <thead>
           <tr><th>Métrica</th><th>Valor</th><th>Significado</th></tr>
@@ -467,23 +570,33 @@ nav ul li:hover .submenu {
           <tr><td>AV (Attack Vector)</td><td><strong>N (Network)</strong></td><td>La vulnerabilidad puede explotarse a través de la red.</td></tr>
           <tr><td>AC (Attack Complexity)</td><td><strong>L (Low)</strong></td><td>La explotación requiere baja complejidad.</td></tr>
           <tr><td>PR (Privileges Required)</td><td><strong>H (High)</strong></td><td>Se necesitan privilegios elevados.</td></tr>
-          <tr><td>UI (User Interaction)</td><td><strong>N (None)</strong></td><td>No requiere interacción del usuario.</td></tr>
+          <tr><td>UI (User Interaction)</td><td><strong>None (N)</strong></td><td>No requiere interacción del usuario.</td></tr>
           <tr><td>S (Scope)</td><td><strong>U (Unchanged)</strong></td><td>No cambia el alcance del componente afectado.</td></tr>
           <tr><td>C (Confidentiality)</td><td><strong>L (Low)</strong></td><td>Impacto bajo en confidencialidad.</td></tr>
           <tr><td>I (Integrity)</td><td><strong>L (Low)</strong></td><td>Impacto bajo en integridad.</td></tr>
           <tr><td>A (Availability)</td><td><strong>L (Low)</strong></td><td>Impacto bajo en disponibilidad.</td></tr>
         </tbody>
       </table>
-      <div class="img-placeholder" style="padding: 20px;">
-        <img src="act17_1.png" alt="Primeros Pasos - SET Console " style="width: 80%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+
+      <!-- MARCO GIRATORIO SOLICITADO - IMAGEN 1 -->
+      <div class="gold-wrapper">
+        <div class="gold-inner">
+          <img src="act17_1.png" alt="Primeros Pasos - SET Console Parte 1">
+        </div>
       </div>
-      <br>
-      <div class="img-placeholder" style="padding: 20px;">
-        <img src="act17_2.png" alt="Primeros Pasos - SET Console " style="width: 80%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      
+      <!-- MARCO GIRATORIO SOLICITADO - IMAGEN 2 -->
+      <div class="gold-wrapper">
+        <div class="gold-inner">
+          <img src="act17_2.png" alt="Primeros Pasos - SET Console Parte 2">
+        </div>
       </div>
-      <br>
-      <div class="img-placeholder" style="padding: 20px;">
-        <img src="act17_3.png" alt="Primeros Pasos - SET Console " style="width: 80%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(255,79,154,0.2);">
+      
+      <!-- MARCO GIRATORIO SOLICITADO - IMAGEN 3 -->
+      <div class="gold-wrapper">
+        <div class="gold-inner">
+          <img src="act17_3.png" alt="Primeros Pasos - SET Console Parte 3">
+        </div>
       </div>
     </div>
 
@@ -491,25 +604,42 @@ nav ul li:hover .submenu {
     <div class="seccion">
       <h4><i class="fas fa-chalkboard-user"></i> 2. Interpretación técnica</h4>
       <p>Aunque esta vulnerabilidad necesita privilegios elevados para poder explotarse, sigue siendo importante debido a que un atacante con acceso administrativo o permisos avanzados podría utilizarla para afectar aún más los sistemas internos de la organización. Este tipo de fallas representa un riesgo especialmente en situaciones donde existen cuentas comprometidas, amenazas internas o procesos previos de escalamiento de privilegios.</p>
-      <p>Quienes podrían aprovecharla serían principalmente usuarios internos malintencionados, administradores comprometidos o atacantes externos que hayan conseguido credenciales privilegiadas mediante técnicas como phishing, filtración de información o ataques de fuerza bruta. Aunque el impacto en la confidencialidad, integridad y disponibilidad es bajo, esto únicamente indica que no ocasiona daños críticos ni pérdida total de información; aun así, puede generar accesos parciales a datos, cambios menores en el sistema o interrupciones limitadas del servicio, por lo que continúa siendo una vulnerabilidad que requiere atención y mitigación.</p>
+      <p>Quienes podrían aprovecharla serían principalmente usuarios internos malintencionados, administradores comprometidos o atacantes externos que hayan conseguido credenciales privilegiadas mediante técnicas como phishing, filtración de información o ataques de fuerza bruta. Aunque el impacto en la confidencialidad, integridad y disponibilidad es bajo, esto únicamente indica que no ocaasiona daños críticos ni pérdida total de información; aun así, puede generar accesos parciales a datos, cambios menores en el sistema o interrupciones limitadas del servicio, por lo que continúa siendo una vulnerabilidad que requiere atención y mitigación.</p>
     </div>
 
-    <!-- ========== 3. CÁLCULO DE PUNTUACIÓN ========= -->
-    <div class="seccion">
+    <!-- ========== 3. CÁLCULO DE PUNTUACIÓN ANIMADO ========= -->
+    <div class="seccion" id="seccion-score">
       <h4><i class="fas fa-chart-simple"></i> 3. Cálculo de puntuación base</h4>
-      <p>Usando la calculadora oficial CVSS v3.1 (FIRST.org) con el vector <code>CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:L</code> se obtiene:</p>
-      <div class="score-card">
-        <div class="puntuacion">4.7</div>
-        <div class="categoria">🔶 Riesgo MEDIO</div>
-        <p style="margin-top: 15px;">Según la escala CVSS v3.1:</p>
-        <ul style="list-style: none; padding-left: 0;">
-          <li>🔹 Baja → 0.1 – 3.9</li>
-          <li>🔸 Media → 4.0 – 6.9</li>
-          <li>🔹 Alta → 7.0 – 8.9</li>
-          <li>🔸 Crítica → 9.0 – 10.0</li>
-        </ul>
+      <p>Usando la calculadora oficial CVSS v3.1 (FIRST.org) con el vector de severidad global de la industria:</p>
+      
+      <div class="vector-box">
+        CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:L
       </div>
-      <p><strong>Nota:</strong> La puntuación base refleja únicamente las características intrínsecas de la vulnerabilidad, sin considerar factores temporales o ambientales. El valor 4.7 se ubica dentro del rango medio, lo que indica que no es crítica, pero sí requiere acción planificada de mitigación.</p>
+
+      <!-- INTERFAZ DE SCORE DE ALTA ANIMACIÓN -->
+      <div class="score-container">
+        <div class="score-card">
+          <svg class="score-circle-svg">
+            <circle class="circle-bg" cx="120" cy="120" r="110"></circle>
+            <circle class="circle-progress" id="progress-bar" cx="120" cy="120" r="110"></circle>
+          </svg>
+          <div class="score-data">
+            <!-- JavaScript inyectará el conteo aquí -->
+            <div class="puntuacion" id="live-score">0.0</div>
+            <div class="categoria">MEDIO</div>
+          </div>
+        </div>
+
+        <div class="score-legend">
+          <h6>Escala de Severidad CVSS v3.1</h6>
+          <div class="legend-item" style="color: #00aa66;"><span>Informativa / Baja</span><span>0.1 – 3.9</span></div>
+          <div class="legend-item active"><span>🔶 Severidad Media (Asignada)</span><span>4.0 – 6.9</span></div>
+          <div class="legend-item" style="color: #ff3300;"><span>Alta</span><span>7.0 – 8.9</span></div>
+          <div class="legend-item" style="color: #990000;"><span>Crítica</span><span>9.0 – 10.0</span></div>
+        </div>
+      </div>
+
+      <p style="margin-top: 15px;"><strong>Nota:</strong> La puntuación base refleja únicamente las características intrínsecas de la vulnerabilidad, sin considerar factores temporales o ambientales. El valor final se ubica justamente en el rango medio, estableciendo una urgencia de remediación programada dentro del ciclo de desarrollo de parches.</p>
     </div>
 
     <!-- ========== 4. CONCLUSIÓN ========= -->
@@ -520,15 +650,15 @@ nav ul li:hover .submenu {
     </div>
 
     <!-- ========== REFLEXIÓN TÉCNICA ========= -->
-    <div class="seccion">
+    <div class="seccion" style="border-left-color: #ff1f6a; background: linear-gradient(145deg, rgba(255,240,248,0.9), rgba(255,255,255,0.95));">
       <h4><i class="fas fa-lightbulb"></i> Reflexión técnica</h4>
       <p>El CVSS es una herramienta fundamental para cualquier profesional de ciberseguridad, pero también tiene limitaciones. Una vulnerabilidad con puntuación "media" (4.7) puede ser crítica en un contexto específico si el activo afectado es sensible. Por ello, la evaluación de vulnerabilidades no debe terminar con el cálculo de la métrica base; es necesario complementar con análisis de contexto (métricas de entorno) y con la criticidad del sistema evaluado.</p>
       <p>En esta actividad comprendí la importancia de cada métrica: <strong>Privileges Required (PR:H)</strong> reduce significativamente la puntuación, pero en entornos donde los privilegios elevados están mal gestionados (por ejemplo, contraseñas débiles de administrador), la vulnerabilidad se vuelve mucho más peligrosa. Además, la métrica <strong>Attack Vector (AV:N)</strong> indica que no se necesita acceso físico o local, por lo que un atacante externo podría intentar explotarla desde cualquier parte del mundo, siempre que consiga credenciales privilegiadas. Esto refuerza la necesidad de implementar autenticación multifactor (MFA) y monitoreo de accesos anómalos a cuentas administrativas.</p>
       <p>Finalmente, el CVSS 3.1 nos da un lenguaje común para comunicar riesgos a equipos de dirección y a otros equipos técnicos. Saber interpretar y construir vectores correctamente es una habilidad indispensable para la gestión de vulnerabilidades en entornos corporativos.</p>
     </div>
 
-  </div> <!-- fin card -->
-</div> <!-- fin wrapper -->
+  </div>
+</div>
 
 <footer class="footer">
   <div class="footer-content">
@@ -540,6 +670,112 @@ nav ul li:hover .submenu {
 </footer>
 
 <script>
+  // 1. CONFETI IMPACTANTE DE BIENVENIDA
+  const scriptConfetti = document.createElement('script');
+  scriptConfetti.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1';
+  scriptConfetti.onload = () => {
+    canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#d4af37', '#ff1f6a', '#ff7b00', '#ffffff'], zIndex: 3000 });
+  };
+  document.head.appendChild(scriptConfetti);
+
+  // 2. EFECTO 3D EN LA TARJETA HOLOGRÁFICA
+  const wrapper = document.querySelector('.wrapper');
+  const card = document.getElementById('tilt-card');
+  
+  wrapper.addEventListener('mousemove', (e) => {
+    if(window.innerWidth <= 900) return;
+    const rect = wrapper.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -2.5; 
+    const rotateY = ((x - centerX) / centerX) * 2.5;
+    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+
+  wrapper.addEventListener('mouseleave', () => {
+    card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+  });
+
+  // 3. INTERSECTION OBSERVER: CASCADA Y REACCIÓN DINÁMICA DEL TÍTULO
+  const rootStyle = document.documentElement.style;
+  let titleTimer = null;
+  let scoreAnimated = false; // Bandera para ejecutar la animación del score una sola vez
+
+  // Función para ejecutar el contador dinámico del CVSS y rellenar la barra circular
+  function animateScore() {
+    if (scoreAnimated) return;
+    scoreAnimated = true;
+    
+    const scoreElement = document.getElementById('live-score');
+    const progressBar = document.getElementById('progress-bar');
+    
+    let currentScore = 0.0;
+    const targetScore = 4.7;
+    const duration = 2000; // 2 segundos totales
+    const intervalTime = 30; // ms por ciclo
+    const totalSteps = duration / intervalTime;
+    const stepIncrement = targetScore / totalSteps;
+
+    // Animación de la barra circular SVG
+    const maxOffset = 691; 
+    // Calculamos el porcentaje de llenado (4.7 sobre 10)
+    const targetOffset = maxOffset - (maxOffset * (targetScore / 10));
+    progressBar.style.strokeDashoffset = targetOffset;
+
+    // Contador numérico flotante
+    const counterInterval = setInterval(() => {
+      currentScore += stepIncrement;
+      if (currentScore >= targetScore) {
+        currentScore = targetScore;
+        clearInterval(counterInterval);
+      }
+      scoreElement.innerText = currentScore.toFixed(1);
+    }, intervalTime);
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+
+        // Disparador especial: si la sección que entra es la del Score, inicia la animación
+        if (entry.target.id === 'seccion-score') {
+          animateScore();
+        }
+
+        // Mutación reactiva del título principal (Cyber Sunset Glow)
+        if(window.innerWidth > 900) {
+          clearTimeout(titleTimer);
+          rootStyle.setProperty('--titulo-color-1', '#ff007f'); 
+          rootStyle.setProperty('--titulo-color-2', '#ff5900');
+          rootStyle.setProperty('--titulo-color-3', '#d4af37');
+          rootStyle.setProperty('--titulo-color-4', '#ff0055');
+          rootStyle.setProperty('--titulo-scale', '1.04');
+          rootStyle.setProperty('--titulo-shadow', 'rgba(255, 123, 0, 0.5)');
+
+          titleTimer = setTimeout(() => {
+            rootStyle.setProperty('--titulo-color-1', '#ff1f6a');
+            rootStyle.setProperty('--titulo-color-2', '#ff75b5');
+            rootStyle.setProperty('--titulo-color-3', '#ff007f');
+            rootStyle.setProperty('--titulo-color-4', '#ffb3d9');
+            rootStyle.setProperty('--titulo-scale', '1');
+            rootStyle.setProperty('--titulo-shadow', 'rgba(255, 31, 106, 0.4)');
+          }, 2500);
+        }
+      }
+    });
+  }, { 
+    threshold: 0.15,
+    rootMargin: "-5% 0px -30% 0px"
+  });
+
+  document.querySelectorAll('.seccion').forEach(seccion => {
+    observer.observe(seccion);
+  });
+
+  // 4. LOG DE ACCIÓN DEL BOTÓN
   document.querySelectorAll('.btn-pdf').forEach(btn => {
     btn.addEventListener('click', function() {
       console.log('✅ Abriendo PDF de la actividad 17 (CVSS 3.1)');
