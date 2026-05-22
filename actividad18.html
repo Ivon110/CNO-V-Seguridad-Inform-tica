@@ -82,11 +82,6 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes radarSweep {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 /* --- BURBUJAS DE FONDO --- */
 .blur {
   position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.7; z-index: 0;
@@ -121,9 +116,11 @@ body {
 .header h2 { margin-top: 15px; font-size: 1.6rem; color: #ff4f9a; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; }
 .meta { margin-top: 10px; font-size: 1rem; color: #6b3a52; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; font-weight: 600; }
 
-/* --- NAVEGACIÓN --- */
-nav { margin-top: 40px; transform: translateZ(30px); }
-nav ul { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; list-style: none; }
+/* ========================================================
+   🛠️ NAVEGACIÓN CORREGIDA (HUECOS Y ESPACIOS REPARADOS) 🛠️
+   ======================================================== */
+nav { margin-top: 40px; transform: translateZ(30px); position: relative; z-index: 1000; }
+nav > ul { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; list-style: none; }
 nav a {
   text-decoration: none; padding: 14px 28px; border-radius: 999px; background: rgba(255,255,255,0.9); color: #3a1c2b; font-weight: 700;
   box-shadow: 0 8px 20px rgba(255,79,154,0.15); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px;
@@ -131,151 +128,102 @@ nav a {
 nav a:hover, nav a.activo {
   background: linear-gradient(135deg, #ff4f9a, #ffab3a); color: #fff; transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(255,79,154,0.5);
 }
-nav ul li { position: relative; }
-.submenu {
-  position: absolute; top: 100%; left: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(15px); border-radius: 20px; padding: 15px 0; min-width: 220px;
-  box-shadow: 0 25px 50px rgba(255,79,154,0.3); opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s ease; z-index: 100;
+nav > ul > li { position: relative; }
+
+/* Puente invisible para evitar que se pierda el hover al bajar el mouse */
+.submenu::before {
+  content: ''; position: absolute; top: -25px; left: 0; width: 100%; height: 25px;
 }
-nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translateY(10px); }
-.submenu a { background: transparent; box-shadow: none; padding: 12px 24px; font-weight: 600; color: #6b3a52; }
+
+/* Reset del submenú para evitar la herencia de gap:15px del nav padre */
+.submenu {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(20px); 
+  background: rgba(255,255,255,0.98); backdrop-filter: blur(15px); border-radius: 20px; 
+  padding: 10px; min-width: 220px; box-shadow: 0 25px 50px rgba(255,79,154,0.3); 
+  opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 100;
+  display: flex; flex-direction: column; gap: 5px; list-style: none;
+}
+nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(10px); }
+.submenu a { background: transparent; box-shadow: none; padding: 12px 20px; font-weight: 600; color: #6b3a52; width: 100%; justify-content: flex-start; }
 .submenu a:hover { background: rgba(255,79,154,0.1); color: #ff1f6a; transform: translateX(8px); }
 
 /* --- TÍTULO INTERACTIVO --- */
 .titulo-actividad { 
-  margin: 60px 0 30px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  gap: 15px; 
-  transform: translateZ(80px);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: 60px 0 30px; display: flex; align-items: center; justify-content: center; gap: 15px; 
+  transform: translateZ(80px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .titulo-actividad h3 {
-  font-size: 2.3rem; 
-  font-weight: 900; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  gap: 15px; 
-  text-align: center;
-  line-height: 1.3;
-  
-  background: linear-gradient(
-    45deg, 
-    var(--titulo-color-1) 0%, 
-    var(--titulo-color-2) 30%, 
-    var(--titulo-color-3) 60%, 
-    var(--titulo-color-4) 100%
-  );
-  background-size: 200% auto;
-  color: transparent; 
-  -webkit-background-clip: text; 
-  background-clip: text;
-  
-  transform: scale(var(--titulo-scale));
-  filter: drop-shadow(0 8px 15px var(--titulo-shadow));
-  animation: textShine 4s linear infinite;
-  transition: background 0.6s ease, filter 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-size: 2.3rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 15px; 
+  text-align: center; line-height: 1.3;
+  background: linear-gradient(45deg, var(--titulo-color-1) 0%, var(--titulo-color-2) 30%, var(--titulo-color-3) 60%, var(--titulo-color-4) 100%);
+  background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text;
+  transform: scale(var(--titulo-scale)); filter: drop-shadow(0 8px 15px var(--titulo-shadow));
+  animation: textShine 4s linear infinite; transition: background 0.6s ease, filter 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .titulo-actividad h3 i { 
   background: linear-gradient(135deg, var(--titulo-color-1), var(--titulo-color-2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: all 0.5s ease;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: all 0.5s ease;
 }
 
 /* --- BOTÓN DEGRADADO SUNSET HOLOGRÁFICO --- */
 .pdf-export { display: flex; justify-content: center; margin: 40px 0; transform: translateZ(50px); }
 .btn-pdf {
-  position: relative; 
-  overflow: hidden; 
-  background: linear-gradient(135deg, #ff007f 0%, #ff4f9a 45%, #ff7b00 100%);
-  background-size: 200% auto;
-  border: none; 
-  padding: 18px 50px; 
-  border-radius: 50px;
-  color: white; 
-  font-weight: 900; 
-  font-size: 1.2rem; 
-  display: flex; 
-  align-items: center; 
-  gap: 15px;
-  letter-spacing: 0.5px;
-  cursor: pointer; 
-  box-shadow: 0 10px 30px rgba(255, 15, 115, 0.35), 0 4px 15px rgba(255, 123, 0, 0.2);
+  position: relative; overflow: hidden; background: linear-gradient(135deg, #ff007f 0%, #ff4f9a 45%, #ff7b00 100%);
+  background-size: 200% auto; border: none; padding: 18px 50px; border-radius: 50px;
+  color: white; font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; gap: 15px; letter-spacing: 0.5px;
+  cursor: pointer; box-shadow: 0 10px 30px rgba(255, 15, 115, 0.35), 0 4px 15px rgba(255, 123, 0, 0.2);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .btn-pdf::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 50%; height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transform: skewX(-25deg);
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent); transform: skewX(-25deg);
   animation: shineEffect 4s infinite ease-in-out;
 }
-
 .btn-pdf:hover {
-  background-position: right center; 
-  transform: translateY(-6px) scale(1.06);
+  background-position: right center; transform: translateY(-6px) scale(1.06);
   box-shadow: 0 20px 40px rgba(255, 0, 127, 0.5), 0 10px 25px rgba(255, 123, 0, 0.4);
 }
-
 .btn-pdf i { font-size: 1.4rem; transition: transform 0.4s ease; }
 .btn-pdf:hover i { transform: rotate(-15deg) scale(1.25); }
 
-/* --- SECCIONES ESCÁNER --- */
+/* --- SECCIONES ESCÁNER (CORREGIDO EL BUG DE OPACIDAD) --- */
 .seccion {
   background: rgba(255,255,255,0.75); border-radius: 32px; padding: 45px; margin-top: 45px;
   box-shadow: 0 15px 35px rgba(255,122,168,0.1); border-left: 8px solid #ff4f9a;
   position: relative; overflow: hidden; transform-style: preserve-3d;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  opacity: 0; transform: translateY(50px) translateZ(10px);
+  /* Reduje la transformación a 30px en lugar de 50px para evitar que colapse */
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  opacity: 0; transform: translateY(30px);
 }
-.seccion.visible { opacity: 1; transform: translateY(0) translateZ(10px); }
-
+.seccion.visible { opacity: 1; transform: translateY(0); }
 .seccion::after {
   content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
   background: linear-gradient(to right, transparent, #ff1f6a, #ffab3a, #ff1f6a, transparent);
-  box-shadow: 0 0 15px #ff1f6a, 0 0 30px #ffab3a;
-  animation: scannerRay 5s linear infinite; z-index: 5; pointer-events: none;
+  box-shadow: 0 0 15px #ff1f6a, 0 0 30px #ffab3a; animation: scannerRay 5s linear infinite; z-index: 5; pointer-events: none;
 }
-
 .seccion:hover {
-  transform: translateY(-8px) translateZ(25px);
-  box-shadow: 0 30px 60px rgba(255,79,154,0.25), 0 0 30px rgba(255, 170, 238, 0.4);
+  transform: translateY(-8px); box-shadow: 0 30px 60px rgba(255,79,154,0.25), 0 0 30px rgba(255, 170, 238, 0.4);
   border-left: 12px solid #ff1f6a; background: rgba(255,255,255,0.9);
 }
-
 .seccion * { position: relative; z-index: 2; }
-
 .seccion h4 {
   font-size: 2.1rem; color: #ff4f9a; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;
   border-bottom: 3px dashed #ffe0ec; padding-bottom: 15px; font-weight: 800; text-shadow: 0 2px 10px rgba(255,79,154,0.2);
 }
 .seccion h4 i { background: #ffe0ec; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 5px 15px rgba(255,79,154,0.3); color: #ff1f6a;}
-
 .seccion h5 {
   font-size: 1.3rem; color: #fff; margin: 30px 0 15px; font-weight: 800; display: inline-flex; align-items: center; gap: 12px;
-  background: linear-gradient(135deg, #ff4f9a, #ffab3a); padding: 10px 25px; border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(255,79,154,0.4); transition: 0.3s;
+  background: linear-gradient(135deg, #ff4f9a, #ffab3a); padding: 10px 25px; border-radius: 20px; box-shadow: 0 8px 20px rgba(255,79,154,0.4); transition: 0.3s;
 }
 .seccion:hover h5 { transform: translateX(10px); }
 .seccion p { margin-bottom: 18px; line-height: 1.8; font-size: 1.1rem; color: #2a1a24; text-align: justify; }
 
 /* --- TABLAS ESTILIZADAS --- */
 .tabla-modelo {
-  width: 100%; border-collapse: separate; border-spacing: 0; margin: 25px 0;
-  border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(255,79,154,0.08);
-  border: 1px solid rgba(255,200,220,0.4);
+  width: 100%; border-collapse: separate; border-spacing: 0; margin: 25px 0; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(255,79,154,0.08); border: 1px solid rgba(255,200,220,0.4);
 }
 .tabla-modelo th, .tabla-modelo td { padding: 16px 20px; text-align: left; }
-.tabla-modelo th {
-  background: linear-gradient(135deg, #ff4f9a, #ff7b00); color: white; font-weight: 800; font-size: 1.1rem;
-}
+.tabla-modelo th { background: linear-gradient(135deg, #ff4f9a, #ff7b00); color: white; font-weight: 800; font-size: 1.1rem; }
 .tabla-modelo td { background: rgba(255,255,255,0.6); border-bottom: 1px solid #ffe0ec; font-size: 1.05rem; vertical-align: top;}
 .tabla-modelo tr:last-child td { border-bottom: none; }
 .tabla-modelo tr:hover td { background: rgba(255,245,249,0.9); transition: 0.2s; }
@@ -284,182 +232,88 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
    💎 INTERFAZ DEL DIAMANTE ULTRA-DINÁMICO (FASE 01) 💎
    ======================================================== */
 .cyber-diamond-container {
-  display: flex; gap: 40px; margin: 40px 0; align-items: center; justify-content: center; flex-wrap: wrap;
-  background: rgba(255, 245, 249, 0.5); padding: 30px; border-radius: 30px; border: 1px dashed #ffb3d9;
+  display: flex; gap: 40px; margin: 40px 0; align-items: center; justify-content: center; flex-wrap: wrap; background: rgba(255, 245, 249, 0.5); padding: 30px; border-radius: 30px; border: 1px dashed #ffb3d9;
 }
-
-.diamond-canvas {
-  position: relative; width: 420px; height: 420px; display: flex; justify-content: center; align-items: center;
-}
-
-.diamond-svg-links {
-  position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; pointer-events: none;
-}
-.diamond-link {
-  stroke: #ffd4e5; stroke-width: 3; fill: none; transition: stroke 0.5s ease, stroke-width 0.3s ease;
-}
-.diamond-link.flowing {
-  stroke: url(#cyberFlowGradient); stroke-width: 5; stroke-dasharray: 8, 8; animation: dashFlow 1s linear infinite;
-}
-
+.diamond-canvas { position: relative; width: 420px; height: 420px; display: flex; justify-content: center; align-items: center; }
+.diamond-svg-links { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; pointer-events: none; }
+.diamond-link { stroke: #ffd4e5; stroke-width: 3; fill: none; transition: stroke 0.5s ease, stroke-width 0.3s ease; }
+.diamond-link.flowing { stroke: url(#cyberFlowGradient); stroke-width: 5; stroke-dasharray: 8, 8; animation: dashFlow 1s linear infinite; }
 .diamond-node {
   position: absolute; width: 90px; height: 90px; background: #fff; border: 3px solid #ffb3d9; border-radius: 50%;
-  display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; z-index: 3;
-  box-shadow: 0 10px 25px rgba(255, 79, 154, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; z-index: 3; box-shadow: 0 10px 25px rgba(255, 79, 154, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .diamond-node i { font-size: 1.7rem; color: #ff1f6a; transition: transform 0.3s; }
 .diamond-node span { font-size: 0.75rem; font-weight: 800; margin-top: 4px; color: #6b3a52; text-transform: uppercase;}
-
 .node-adversario { top: 15px; left: calc(50% - 45px); }
 .node-capacidad { left: 15px; top: calc(50% - 45px); }
 .node-infraestructura { right: 15px; top: calc(50% - 45px); }
 .node-victima { bottom: 15px; left: calc(50% - 45px); }
-
-.diamond-node:hover, .diamond-node.active {
-  transform: scale(1.15); background: linear-gradient(135deg, #ff007f, #ff7b00); border-color: #ffffff; animation: pulseNode 1.5s infinite;
-}
+.diamond-node:hover, .diamond-node.active { transform: scale(1.15); background: linear-gradient(135deg, #ff007f, #ff7b00); border-color: #ffffff; animation: pulseNode 1.5s infinite; }
 .diamond-node:hover i, .diamond-node.active i { color: #fff; transform: scale(1.1); }
 .diamond-node:hover span, .diamond-node.active span { color: #fff; }
-
-.diamond-core {
-  width: 80px; height: 80px; background: linear-gradient(145deg, #fff0f5, #ffe0ec); border: 2px dashed #ff4f9a; border-radius: 20px;
-  transform: rotate(45deg); display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(255, 79, 154, 0.2);
-}
+.diamond-core { width: 80px; height: 80px; background: linear-gradient(145deg, #fff0f5, #ffe0ec); border: 2px dashed #ff4f9a; border-radius: 20px; transform: rotate(45deg); display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(255, 79, 154, 0.2); }
 .diamond-core i { transform: rotate(-45deg); font-size: 1.8rem; color: #ff4f9a; }
-
-.diamond-display-panel {
-  flex: 1; min-width: 320px; background: rgba(255, 255, 255, 0.8); border: 2px solid #ff4f9a;
-  border-radius: 32px; padding: 35px; box-shadow: 0 15px 40px rgba(255,31,106,0.15); position: relative; min-height: 280px;
-}
+.diamond-display-panel { flex: 1; min-width: 320px; background: rgba(255, 255, 255, 0.8); border: 2px solid #ff4f9a; border-radius: 32px; padding: 35px; box-shadow: 0 15px 40px rgba(255,31,106,0.15); position: relative; min-height: 280px; }
 .panel-glitch-title { font-size: 1.6rem; font-weight: 900; color: #ff1f6a; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 .panel-body-box { font-size: 1.1rem; line-height: 1.8; color: #3a1c2b; transition: opacity 0.3s ease; }
-.panel-example-badge {
-  display: inline-block; margin-top: 15px; padding: 10px 18px; background: linear-gradient(135deg, #ffe0ec, #ffc2e1);
-  border-radius: 15px; font-weight: 700; font-size: 1rem; color: #ff007f; border: 1px solid rgba(255,0,127,0.2);
-}
+.panel-example-badge { display: inline-block; margin-top: 15px; padding: 10px 18px; background: linear-gradient(135deg, #ffe0ec, #ffc2e1); border-radius: 15px; font-weight: 700; font-size: 1rem; color: #ff007f; border: 1px solid rgba(255,0,127,0.2); }
 
 /* ========================================================
    🌟 NUEVO: TRACKER DINÁMICO DE EVENTOS (FASE 02) 🌟
    ======================================================== */
-.cyber-tracker {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin: 30px 0;
-  position: relative;
-  padding-left: 40px;
-}
-.cyber-tracker::before {
-  content: '';
-  position: absolute;
-  left: 15px; top: 0; bottom: 0;
-  width: 4px;
-  background: linear-gradient(to bottom, #ff1f6a, #ff7b00, #ff1f6a);
-  border-radius: 10px;
-}
-.tracker-item {
-  position: relative;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(255,79,154,0.3);
-  padding: 15px 25px;
-  border-radius: 20px;
-  font-size: 1.15rem;
-  color: #3a1c2b;
-  box-shadow: 0 5px 15px rgba(255,79,154,0.1);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-}
-.tracker-item::before {
-  content: counter(step-counter);
-  counter-increment: step-counter;
-  position: absolute;
-  left: -42px;
-  width: 30px; height: 30px;
-  background: linear-gradient(135deg, #ff007f, #ff7b00);
-  border-radius: 50%;
-  display: flex; justify-content: center; align-items: center;
-  color: white; font-weight: bold; font-size: 1rem;
-  box-shadow: 0 0 10px rgba(255,31,106,0.5);
-  border: 3px solid #fff;
-  transition: transform 0.3s;
-}
+.cyber-tracker { display: flex; flex-direction: column; gap: 15px; margin: 30px 0; position: relative; padding-left: 40px; }
+.cyber-tracker::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #ff1f6a, #ff7b00, #ff1f6a); border-radius: 10px; }
+.tracker-item { position: relative; background: rgba(255,255,255,0.8); border: 1px solid rgba(255,79,154,0.3); padding: 15px 25px; border-radius: 20px; font-size: 1.15rem; color: #3a1c2b; box-shadow: 0 5px 15px rgba(255,79,154,0.1); transition: all 0.3s ease; display: flex; align-items: center; }
+.tracker-item::before { content: counter(step-counter); counter-increment: step-counter; position: absolute; left: -42px; width: 30px; height: 30px; background: linear-gradient(135deg, #ff007f, #ff7b00); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 1rem; box-shadow: 0 0 10px rgba(255,31,106,0.5); border: 3px solid #fff; transition: transform 0.3s; }
 .cyber-tracker { counter-reset: step-counter; }
-.tracker-item:hover {
-  transform: translateX(15px);
-  background: #fff0f5;
-  border-color: #ff007f;
-  box-shadow: 0 10px 25px rgba(255,31,106,0.2);
-  color: #ff007f;
-  font-weight: 600;
-}
-.tracker-item:hover::before {
-  transform: scale(1.3);
-  box-shadow: 0 0 20px rgba(255,123,0,0.8);
-}
+.tracker-item:hover { transform: translateX(15px); background: #fff0f5; border-color: #ff007f; box-shadow: 0 10px 25px rgba(255,31,106,0.2); color: #ff007f; font-weight: 600; }
+.tracker-item:hover::before { transform: scale(1.3); box-shadow: 0 0 20px rgba(255,123,0,0.8); }
 
 /* ========================================================
-   🚀 NUEVO: GRID INTERACTIVO KILL CHAIN (FASE 03) 🚀
+   🚀 NUEVO: GRID INTERACTIVO KILL CHAIN SUPER MEJORADO (FASE 03) 🚀
    ======================================================== */
-.killchain-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin: 30px 0;
-}
+.killchain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 30px 0; }
 .kc-card {
-  background: rgba(255,255,255,0.7);
-  border-radius: 20px;
-  padding: 25px;
-  border: 1px solid rgba(255,79,154,0.3);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s ease;
-  box-shadow: 0 5px 15px rgba(255,79,154,0.05);
+  background: rgba(255,255,255,0.85); border-radius: 24px; padding: 30px; border: 1px solid rgba(255,79,154,0.3);
+  position: relative; overflow: hidden; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(255,79,154,0.08); z-index: 1;
 }
 .kc-card::before {
-  content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%;
-  background: linear-gradient(to bottom, #ff1f6a, #ffab3a);
-  transition: width 0.3s ease;
+  content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%;
+  background: linear-gradient(to bottom, #ff1f6a, #ffab3a); transition: width 0.4s ease; z-index: -1;
+}
+.kc-card::after {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(255,31,106,0.1) 0%, rgba(255,171,58,0.1) 100%);
+  opacity: 0; transition: opacity 0.4s ease; z-index: -1;
 }
 .kc-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(255,31,106,0.2);
-  background: #fff;
+  transform: translateY(-12px) scale(1.03); box-shadow: 0 25px 50px rgba(255,31,106,0.25), 0 0 20px rgba(255,171,58,0.2); border-color: #ffab3a;
 }
-.kc-card:hover::before { width: 10px; }
+.kc-card:hover::before { width: 100%; opacity: 0.05; }
+.kc-card:hover::after { opacity: 1; }
 .kc-title {
-  font-size: 1.25rem; font-weight: 800; color: #ff1f6a; margin-bottom: 10px; padding-left: 15px;
+  font-size: 1.35rem; font-weight: 900; background: linear-gradient(90deg, #ff1f6a, #ff7b00); 
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
 }
-.kc-desc {
-  font-size: 1.05rem; color: #4a2a36; line-height: 1.6; padding-left: 15px;
-}
-.kc-desc ul { margin-top: 10px; padding-left: 20px; list-style: disc; color: #ff7b00; }
+.kc-desc { font-size: 1.05rem; color: #3a1c2b; line-height: 1.7; font-weight: 500; }
+.kc-desc ul { margin-top: 15px; padding-left: 20px; list-style: none; }
+.kc-desc ul li { position: relative; margin-bottom: 8px; }
+.kc-desc ul li::before { content: '⚡'; position: absolute; left: -20px; top: 0; font-size: 0.9rem; }
 .kc-desc ul li span { color: #4a2a36; }
 
 /* ========================================================
    ✨ MARCO GIRATORIO PREMIUM PARA CAPTURAS (FASE 04) ✨
    ======================================================== */
-.gold-wrapper {
-  position: relative; width: 75%; margin: 35px auto; padding: 6px;
-  border-radius: 25px; overflow: hidden; display: flex; justify-content: center; align-items: center;
-  animation: pulseGlow 4s infinite alternate;
-}
-.gold-wrapper::before {
-  content: ''; position: absolute; width: 160%; height: 160%;
-  background: conic-gradient(#d4af37 0%, #ff4f9a 25%, #f3e5ab 50%, #ff7b00 75%, #d4af37 100%);
-  animation: spinBorder 6s linear infinite; z-index: 1;
-}
-.gold-inner {
-  position: relative; width: 100%; background: #fff; border-radius: 22px; padding: 15px; z-index: 2;
-}
-.gold-inner img { width: 100%; border-radius: 15px; display: block; transition: transform 0.4s ease; }
+.gold-wrapper { position: relative; width: 75%; margin: 35px auto; padding: 6px; border-radius: 25px; overflow: hidden; display: flex; justify-content: center; align-items: center; animation: pulseGlow 4s infinite alternate; }
+.gold-wrapper::before { content: ''; position: absolute; width: 160%; height: 160%; background: conic-gradient(#d4af37 0%, #ff4f9a 25%, #f3e5ab 50%, #ff7b00 75%, #d4af37 100%); animation: spinBorder 6s linear infinite; z-index: 1; }
+/* Se agregó min-height por si la imagen no carga, para que no colapse */
+.gold-inner { position: relative; width: 100%; min-height: 150px; background: #fff; border-radius: 22px; padding: 15px; z-index: 2; display: flex; justify-content: center; align-items: center; }
+.gold-inner img { width: 100%; height: auto; border-radius: 15px; display: block; transition: transform 0.4s ease; position: relative; z-index: 3; }
 .gold-wrapper:hover .gold-inner img { transform: scale(1.03); }
 
 /* --- FOOTER --- */
-.footer {
-  width: 100%; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.5); border-radius: 30px; margin-top: 80px; backdrop-filter: blur(15px);
-}
+.footer { width: 100%; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.5); border-radius: 30px; margin-top: 80px; backdrop-filter: blur(15px); }
 .footer-content { color: #f3f3f3; font-size: 1.05rem; }
 .footer-content a { color: #ffb3d9; text-decoration: none; font-weight: 700; }
 
@@ -473,9 +327,12 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
   .header h1 { font-size: 2rem; flex-direction: column; gap: 8px; }
   nav ul { flex-direction: column; gap: 10px; margin-top: 30px; }
   nav a { justify-content: center; border-radius: 20px; }
-  .submenu { position: static; visibility: visible; opacity: 1; display: none; padding-left: 15px; background: transparent; border: none; box-shadow: none;}
-  nav ul li:hover .submenu { display: block; }
+  
+  /* Submenú responsivo adaptado para móvil (sin hover, directo) */
+  .submenu { position: static; visibility: visible; opacity: 1; display: none; padding-left: 15px; background: transparent; border: none; box-shadow: none; transform: none;}
+  nav > ul > li:hover .submenu { display: flex; transform: none; }
   .submenu a { justify-content: flex-start; border-radius: 0; border-left: 3px solid #ff4f9a; background: rgba(255,255,255,0.5); }
+  
   .titulo-actividad { flex-direction: column; }
   .titulo-actividad h3 { font-size: 1.6rem; }
   .seccion { padding: 30px 20px; border-radius: 24px; }
@@ -556,14 +413,12 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       </button>
     </div>
 
-    <!-- ========== INTRODUCCIÓN CONTEXTUAL ========= -->
     <div class="seccion">
       <h4><i class="fas fa-info-circle"></i> Introducción contextual</h4>
       <p>El <strong>Modelo del Diamante para el análisis de intrusiones</strong> es un marco formal desarrollado por Sergio Caltagirone, Andrew Pendergast y Christopher Betz en 2013. Este modelo describe cada incidente de intrusión cibernética a través de cuatro elementos interconectados dispuestos en forma de diamante: <strong>Adversario, Capacidad, Infraestructura y Víctima</strong>. Su principal fortaleza es permitir un análisis estructurado de la inteligencia sobre amenazas basado en las relaciones entre estos cuatro ejes, facilitando la correlación de eventos y la atribución de ataques.</p>
       <p>En esta actividad aplicamos el modelo diamante a un escenario realista de infección por malware con comunicación a servidores de Comando y Control (C2), así como a un caso de ataque APT con pivoting entre dos víctimas. Adicionalmente, relacionamos el modelo con la Cyber Kill Chain de Lockheed Martin para comprender cómo se integran ambos marcos en el análisis de incidentes. Las referencias bibliográficas incluidas al final del documento sirven como base para profundizar en estos estándares de la industria.</p>
     </div>
     
-    <!-- ========== DATOS GENERALES ========= -->
     <div class="seccion" style="margin-top: 20px;">
       <h4><i class="fas fa-users"></i> Datos Generales</h4>
       <p><b>Integrantes:</b></p>
@@ -582,12 +437,10 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       <p><b>Asignatura:</b> CNO V – Seguridad Informática | Actividad 18: Modelo Diamante</p>
     </div>
 
-    <!-- ========== PARTE 01: COMPRENSIÓN DEL MODELO ========= -->
     <div class="seccion">
       <h4><i class="fas fa-gem"></i> Parte 01: Comprensión del modelo</h4>
       <p>El Modelo del Diamante para el análisis de intrusiones describe cada incidente a través de cuatro elementos interconectados dispuestos en forma de diamante, permitiendo un análisis estructurado de la inteligencia sobre amenazas basado en las relaciones. <strong>Explora el diagrama interactivo a continuación seleccionando cada nodo:</strong></p>
       
-      <!-- TABLA ORIGINAL INTACTA -->
       <table class="tabla-modelo">
         <thead>
           <tr><th>Elemento</th><th>Descripción</th><th>Ejemplo Práctico</th></tr>
@@ -600,7 +453,6 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
         </tbody>
       </table>
 
-      <!-- ELEMENTO DINÁMICO E INNOVADOR: EL DIAMANTE INTERACTIVO -->
       <div class="cyber-diamond-container">
         <div class="diamond-canvas" id="diamond-board">
           <svg class="diamond-svg-links">
@@ -650,12 +502,10 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       </div>
     </div>
 
-    <!-- ========== PARTE 02: ANÁLISIS DE EVENTO ========= -->
     <div class="seccion">
       <h4><i class="fas fa-chart-line"></i> Parte 02: Análisis de evento (modelo diamante)</h4>
       <p><strong>Escenario:</strong> Una organización detecta comportamiento anómalo en un equipo. El análisis revela lo siguiente (sigue el flujo de eventos en nuestro rastreador):</p>
       
-      <!-- ELEMENTO DINÁMICO E INNOVADOR: TRACKER DE EVENTOS -->
       <div class="cyber-tracker">
         <div class="tracker-item">La víctima detecta malware en su sistema.</div>
         <div class="tracker-item">El análisis del malware contiene dominios de Comando y Control (C2).</div>
@@ -664,7 +514,6 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
         <div class="tracker-item">Una consulta WHOIS/IP revela el posible origen geográfico del atacante.</div>
       </div>
       
-      <!-- TABLA ORIGINAL INTACTA -->
       <table class="tabla-modelo">
         <thead><tr><th>Meta característica</th><th>Descripción del evento</th></tr></thead>
         <tbody>
@@ -694,23 +543,21 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       Sí. El hecho de que los logs muestren "múltiples hosts" conectándose a las mismas IPs de C2 sugiere que el malware se ha propagado internamente (movimiento lateral) o que se realizó un despliegue masivo tras comprometer un controlador de dominio o mediante herramientas de administración.</p>
     </div>
 
-    <!-- ========== PARTE 03: RELACIÓN CON LA KILL CHAIN ========= -->
     <div class="seccion">
       <h4><i class="fas fa-link"></i> Parte 03: Relación con la Kill Chain</h4>
       <p>Explora las 7 fases de un ciberataque modeladas bajo el estándar de Lockheed Martin. (Pasa el cursor por las tarjetas para analizar cada fase).</p>
       
-      <!-- ELEMENTO DINÁMICO E INNOVADOR: GRID DE TARJETAS KILL CHAIN -->
       <div class="killchain-grid">
         <div class="kc-card">
-          <div class="kc-title">Fase 1: Reconocimiento</div>
+          <div class="kc-title"><i class="fas fa-eye"></i> Fase 1: Reconocimiento</div>
           <div class="kc-desc">En esta etapa, el atacante recopila información sobre el objetivo. Esto puede incluir la identificación de empleados, sistemas vulnerables, y cualquier otra información útil para el ataque.</div>
         </div>
         <div class="kc-card">
-          <div class="kc-title">Fase 2: Armamento</div>
+          <div class="kc-title"><i class="fas fa-tools"></i> Fase 2: Armamento</div>
           <div class="kc-desc">El atacante utiliza la información recopilada durante la fase de reconocimiento para desarrollar o adaptar un arma cibernética que explotará las vulnerabilidades específicas del objetivo.</div>
         </div>
         <div class="kc-card" style="grid-column: span 2;">
-          <div class="kc-title">Fase 3: Entrega</div>
+          <div class="kc-title"><i class="fas fa-paper-plane"></i> Fase 3: Entrega</div>
           <div class="kc-desc">El malware se transmite al objetivo. Los vectores de entrega comunes incluyen:
             <ul>
               <li><span><em>Correos electrónicos de phishing:</em> Correos engañosos que incitan a hacer clic en enlaces o descargar archivos infectados.</span></li>
@@ -720,19 +567,19 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
           </div>
         </div>
         <div class="kc-card">
-          <div class="kc-title">Fase 4: Explotación</div>
+          <div class="kc-title"><i class="fas fa-bomb"></i> Fase 4: Explotación</div>
           <div class="kc-desc">Una vez que el malware se ha entregado con éxito, la fase de explotación se centra en activar el código malicioso.</div>
         </div>
         <div class="kc-card">
-          <div class="kc-title">Fase 5: Instalación</div>
+          <div class="kc-title"><i class="fas fa-download"></i> Fase 5: Instalación</div>
           <div class="kc-desc">Tras la explotación exitosa, la fase de instalación busca establecer una presencia persistente en el sistema comprometido para asegurar acceso continuo.</div>
         </div>
         <div class="kc-card">
-          <div class="kc-title">Fase 6: Comando y Control</div>
+          <div class="kc-title"><i class="fas fa-satellite-dish"></i> Fase 6: Comando y Control</div>
           <div class="kc-desc">El atacante establece y mantiene una comunicación (C&C) con el sistema comprometido para enviar instrucciones.</div>
         </div>
         <div class="kc-card" style="grid-column: span 2;">
-          <div class="kc-title">Fase 7: Acciones sobre el Objetivo</div>
+          <div class="kc-title"><i class="fas fa-bullseye"></i> Fase 7: Acciones sobre el Objetivo</div>
           <div class="kc-desc">En la fase final, el atacante lleva a cabo los objetivos del ataque:
             <ul>
               <li><span><em>Robo de datos:</em> Extracción de información confidencial, propiedad intelectual, etc.</span></li>
@@ -743,7 +590,6 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
         </div>
       </div>
       
-      <!-- TABLA ORIGINAL INTACTA -->
       <p>A continuación se asignan las fases de la Kill Chain a los eventos del escenario analizado:</p>
       <table class="tabla-modelo">
         <thead><tr><th>Evento</th><th>Fase Kill Chain</th></tr></thead>
@@ -756,7 +602,6 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       </table>
     </div>
 
-    <!-- ========== PARTE 04: HILOS DE ACTIVIDAD (APT + PIVOTING) ========= -->
     <div class="seccion">
       <h4><i class="fas fa-code-branch"></i> Parte 04: Hilos de actividad y pivoting</h4>
       <p><strong>Escenario tipo APT:</strong> Phishing dirigido a administrador → Ejecución de malware → Conexión a C2 → Uso del host comprometido como proxy → Ataque a segunda víctima.</p>
@@ -764,10 +609,9 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       <h5><i class="fas fa-arrow-right" style="color: #ff007f;"></i> Hilo 1 (Víctima 1)</h5>
       <p><strong>Descripción:</strong> Un administrador (Víctima 1) recibe un correo de phishing dirigido. Al ejecutar el archivo, se instala un malware que establece una conexión persistente a un servidor C2.</p>
       
-      <!-- ELEMENTO DINÁMICO E INNOVADOR: MARCOS GIRATORIOS DORADOS PARA LAS IMÁGENES -->
       <div class="gold-wrapper">
         <div class="gold-inner">
-          <img src="act18_1.png" alt="Hilo de actividad 1 - Conexión de malware inicial">
+          <img src="act18_1.png" alt="[Aquí va tu imagen act18_1.png - Asegúrate de que esté en la misma carpeta que el archivo HTML]">
         </div>
       </div>
       
@@ -777,7 +621,7 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
 
       <div class="gold-wrapper">
         <div class="gold-inner">
-          <img src="act18_2.png" alt="Hilo de actividad 2 - Proxy y Pivoting hacia Servidores Internos">
+          <img src="act18_2.png" alt="[Aquí va tu imagen act18_2.png - Asegúrate de que esté en la misma carpeta que el archivo HTML]">
         </div>
       </div>
       
@@ -786,7 +630,7 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       
       <div class="gold-wrapper">
         <div class="gold-inner">
-          <img src="act18_3.png" alt="Esquema completo del pivoteo operacional">
+          <img src="act18_3.png" alt="[Aquí va tu imagen act18_3.png - Asegúrate de que esté en la misma carpeta que el archivo HTML]">
         </div>
       </div>
     </div>
@@ -803,17 +647,13 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
       </ul>
     </div>
 
-    <!-- ========== REFLEXIÓN TÉCNICA ========= -->
     <div class="seccion" style="border-left-color: #ff1f6a; background: linear-gradient(145deg, rgba(255,240,248,0.9), rgba(255,255,255,0.95));">
       <h4><i class="fas fa-lightbulb"></i> Reflexión técnica</h4>
       <p>El modelo diamante me ha permitido comprender que un incidente de seguridad no es un evento aislado, sino una interacción dinámica entre cuatro ejes fundamentales. Al aplicar el modelo al escenario de malware con C2, pude identificar claramente cómo el adversario (desconocido pero caracterizable por sus IPs y dominios) utiliza una capacidad (malware con beaconing) sobre una infraestructura (servidores externos) para afectar a una víctima (la organización). Las meta-características (timestamp, fase, resultado, dirección, metodología, recursos) enriquecieron el análisis con granularidad forense.</p>
       <p>Además, el concepto de <strong>hilos de actividad y pivoting</strong> resultó especialmente valioso. En un ataque APT, el adversario no se limita a un solo objetivo; convierte al primer compromiso en parte de su infraestructura para alcanzar activos más valiosos. Esto demuestra que la segmentación de red y la monitorización del tráfico entre hosts son controles críticos. Finalmente, la integración con la Cyber Kill Chain permite ubicar cada evento en el cronograma del ataque y diseñar defensas específicas para cada fase (por ejemplo, detección de beaconing en la fase C2). Ambos modelos son complementarios y deberían formar parte del kit de herramientas de todo analista de seguridad.</p>
     </div>
 
-  </div> <!-- fin card -->
-</div> <!-- fin wrapper -->
-
-<footer class="footer">
+  </div> </div> <footer class="footer">
   <div class="footer-content">
     <p>© 2026 <strong>Laura Ivon Montelongo Martínez</strong> · 177291 · CNO V · Seguridad Informática</p>
     <p>
@@ -914,10 +754,11 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
     card.style.transform = `rotateX(0deg) rotateY(0deg)`;
   });
 
-  // 4. INTERSECTION OBSERVER PARA ANIMACIONES DE CASCADA Y TITULO
+  // 4. INTERSECTION OBSERVER CORREGIDO (ADIÓS ESPACIOS EN BLANCO)
   const rootStyle = document.documentElement.style;
   let titleTimer = null;
 
+  // Ajusté el rootMargin a 0px para que detecte la sección inmediatamente al entrar en la pantalla
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -944,7 +785,7 @@ nav ul li:hover .submenu { opacity: 1; visibility: visible; transform: translate
         }
       }
     });
-  }, { threshold: 0.15, rootMargin: "-5% 0px -30% 0px" });
+  }, { threshold: 0.05, rootMargin: "0px 0px 0px 0px" });
 
   document.querySelectorAll('.seccion').forEach(seccion => {
     observer.observe(seccion);
