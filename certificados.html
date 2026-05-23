@@ -673,49 +673,22 @@ nav ul li:hover .submenu {
 /* =========================================
    📱 RESPONSIVE PARA CELULARES (MOBILE) 📱
 ========================================= */
-@media (max-width: 850px) {
+@media (max-width: 900px) {
+  body { perspective: none; }
   .wrapper { margin: 15px auto; padding: 10px; }
-  .card { padding: 30px 15px; border-radius: 28px; }
-  
-  .header h1 { font-size: 1.8rem; }
-  .header h2 { font-size: 1.1rem; flex-direction: column; gap: 8px; text-align: center; }
-  .alias { display: block; margin-top: 5px; }
-  .meta { font-size: 0.85rem; text-align: center; }
-  
-  /* Navegación centrada */
-  nav ul { flex-wrap: wrap; justify-content: center; gap: 10px; margin: 25px 0; }
-  nav a { padding: 10px 14px; font-size: 0.85rem; }
-  
-  /* Arreglo de submenús en celular */
-  .submenu { left: 50%; transform: translateX(-50%) translateY(20px); }
-  nav ul li:hover .submenu { transform: translateX(-50%) translateY(10px); }
-  
-  .titulo-actividad h3 { font-size: 1.5rem; text-align: center; flex-direction: column; gap: 10px; }
-  
-  /* Tabs - Ahora se acomodan como lista de App (100% ancho) para fácil touch */
-  .tabs { flex-direction: column; width: 100%; gap: 10px; margin-bottom: 25px; }
-  .tab-btn { width: 100%; justify-content: flex-start; padding: 12px 20px; border-radius: 20px; font-size: 0.9rem; }
-  /* Remueve la animación de pulso fuerte en celular para no distraer tanto, deja el fondo */
-  .tab-btn.active { animation: none; transform: scale(1.02); box-shadow: 0 8px 20px rgba(255,79,154,0.4); }
-  
-  /* Tarjeta de certificado */
-  .cert-card { padding: 25px 15px; border-radius: 32px; }
-  .cert-header { flex-direction: column; gap: 15px; text-align: center; }
-  .cert-header h4 { font-size: 1.5rem; padding-right: 0; }
-  
-  /* Badge adaptado para celular */
-  .badge-wrapper { width: 110px; height: 110px; margin: 10px auto; }
-  
-  /* Reseña */
-  .resena { padding: 20px 15px; font-size: 0.95rem; border-radius: 24px; border-left-width: 6px; }
-  
-  /* Botones PDF 100% responsivos */
-  .evidencias { flex-direction: column; width: 100%; gap: 15px; margin-top: 25px; }
-  .btn-pdf { width: 100%; justify-content: center; padding: 14px; font-size: 0.9rem; }
-  
-  /* Modal responsive */
-  .modal-content { padding: 15px; border-radius: 24px; }
-  .close-modal { top: -15px; right: -15px; width: 40px; height: 40px; font-size: 1.8rem; }
+  .card { padding: 30px 15px; border-radius: 30px; }
+  .header h1 { font-size: 2rem; flex-direction: column; gap: 8px; }
+  nav ul { flex-direction: column; gap: 10px; margin-top: 30px; }
+  nav a { justify-content: center; border-radius: 20px; }
+  .submenu { position: static; visibility: visible; opacity: 1; display: none; padding-left: 15px; background: transparent; border: none; box-shadow: none; transform: none;}
+  nav > ul > li:hover .submenu { display: flex; transform: none; }
+  .submenu a { justify-content: flex-start; border-radius: 0; border-left: 3px solid #ff4f9a; background: rgba(255,255,255,0.5); }
+  .titulo-actividad { flex-direction: column; }
+  .titulo-actividad h3 { font-size: 1.6rem; }
+  .seccion { padding: 30px 20px; border-radius: 24px; }
+  .seccion h4 { font-size: 1.5rem; flex-direction: column; align-items: flex-start; }
+  .tabla-metricas { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .gold-wrapper { width: 100%; }
 }
 </style>
 </head>
