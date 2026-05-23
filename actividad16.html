@@ -117,7 +117,7 @@ body {
 .meta { margin-top: 10px; font-size: 1rem; color: #6b3a52; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; font-weight: 600; }
 
 /* ========================================================
-   🛠️ NAVEGACIÓN CORREGIDA (HUECOS Y ESPACIOS REPARADOS) 🛠️
+   🛠️ NAVEGACIÓN
    ======================================================== */
 nav { margin-top: 40px; transform: translateZ(30px); position: relative; z-index: 1000; }
 nav > ul { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; list-style: none; }
@@ -130,12 +130,7 @@ nav a:hover, nav a.activo {
 }
 nav > ul > li { position: relative; }
 
-/* Puente invisible para evitar que se pierda el hover al bajar el mouse */
-.submenu::before {
-  content: ''; position: absolute; top: -25px; left: 0; width: 100%; height: 25px;
-}
-
-/* Reset del submenú para evitar la herencia de gap:15px del nav padre */
+.submenu::before { content: ''; position: absolute; top: -25px; left: 0; width: 100%; height: 25px; }
 .submenu {
   position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(20px); 
   background: rgba(255,255,255,0.98); backdrop-filter: blur(15px); border-radius: 20px; 
@@ -186,16 +181,14 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
 .btn-pdf i { font-size: 1.4rem; transition: transform 0.4s ease; }
 .btn-pdf:hover i { transform: rotate(-15deg) scale(1.25); }
 
-/* --- SECCIONES ESCÁNER (CORREGIDO EL BUG DE OPACIDAD) --- */
+/* --- SECCIONES ESCÁNER (YA VISIBLES POR DEFECTO) --- */
 .seccion {
   background: rgba(255,255,255,0.75); border-radius: 32px; padding: 45px; margin-top: 45px;
   box-shadow: 0 15px 35px rgba(255,122,168,0.1); border-left: 8px solid #ff4f9a;
   position: relative; overflow: hidden; transform-style: preserve-3d;
-  /* Reduje la transformación a 30px en lugar de 50px para evitar que colapse */
   transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  opacity: 0; transform: translateY(30px);
+  /* Se eliminó opacity:0 y translateY para que estén visibles desde el inicio */
 }
-.seccion.visible { opacity: 1; transform: translateY(0); }
 .seccion::after {
   content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
   background: linear-gradient(to right, transparent, #ff1f6a, #ffab3a, #ff1f6a, transparent);
@@ -217,6 +210,8 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
 }
 .seccion:hover h5 { transform: translateX(10px); }
 .seccion p { margin-bottom: 18px; line-height: 1.8; font-size: 1.1rem; color: #2a1a24; text-align: justify; }
+.seccion ul { padding-left: 20px; }
+.seccion ul li { margin-bottom: 10px; font-size: 1.1rem; line-height: 1.6; color: #2a1a24; }
 
 /* --- TABLAS ESTILIZADAS --- */
 .tabla-modelo {
@@ -227,90 +222,6 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
 .tabla-modelo td { background: rgba(255,255,255,0.6); border-bottom: 1px solid #ffe0ec; font-size: 1.05rem; vertical-align: top;}
 .tabla-modelo tr:last-child td { border-bottom: none; }
 .tabla-modelo tr:hover td { background: rgba(255,245,249,0.9); transition: 0.2s; }
-
-/* ========================================================
-   💎 INTERFAZ DEL DIAMANTE ULTRA-DINÁMICO (FASE 01) 💎
-   ======================================================== */
-.cyber-diamond-container {
-  display: flex; gap: 40px; margin: 40px 0; align-items: center; justify-content: center; flex-wrap: wrap; background: rgba(255, 245, 249, 0.5); padding: 30px; border-radius: 30px; border: 1px dashed #ffb3d9;
-}
-.diamond-canvas { position: relative; width: 420px; height: 420px; display: flex; justify-content: center; align-items: center; }
-.diamond-svg-links { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; pointer-events: none; }
-.diamond-link { stroke: #ffd4e5; stroke-width: 3; fill: none; transition: stroke 0.5s ease, stroke-width 0.3s ease; }
-.diamond-link.flowing { stroke: url(#cyberFlowGradient); stroke-width: 5; stroke-dasharray: 8, 8; animation: dashFlow 1s linear infinite; }
-.diamond-node {
-  position: absolute; width: 90px; height: 90px; background: #fff; border: 3px solid #ffb3d9; border-radius: 50%;
-  display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; z-index: 3; box-shadow: 0 10px 25px rgba(255, 79, 154, 0.15); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.diamond-node i { font-size: 1.7rem; color: #ff1f6a; transition: transform 0.3s; }
-.diamond-node span { font-size: 0.75rem; font-weight: 800; margin-top: 4px; color: #6b3a52; text-transform: uppercase;}
-.node-adversario { top: 15px; left: calc(50% - 45px); }
-.node-capacidad { left: 15px; top: calc(50% - 45px); }
-.node-infraestructura { right: 15px; top: calc(50% - 45px); }
-.node-victima { bottom: 15px; left: calc(50% - 45px); }
-.diamond-node:hover, .diamond-node.active { transform: scale(1.15); background: linear-gradient(135deg, #ff007f, #ff7b00); border-color: #ffffff; animation: pulseNode 1.5s infinite; }
-.diamond-node:hover i, .diamond-node.active i { color: #fff; transform: scale(1.1); }
-.diamond-node:hover span, .diamond-node.active span { color: #fff; }
-.diamond-core { width: 80px; height: 80px; background: linear-gradient(145deg, #fff0f5, #ffe0ec); border: 2px dashed #ff4f9a; border-radius: 20px; transform: rotate(45deg); display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(255, 79, 154, 0.2); }
-.diamond-core i { transform: rotate(-45deg); font-size: 1.8rem; color: #ff4f9a; }
-.diamond-display-panel { flex: 1; min-width: 320px; background: rgba(255, 255, 255, 0.8); border: 2px solid #ff4f9a; border-radius: 32px; padding: 35px; box-shadow: 0 15px 40px rgba(255,31,106,0.15); position: relative; min-height: 280px; }
-.panel-glitch-title { font-size: 1.6rem; font-weight: 900; color: #ff1f6a; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-.panel-body-box { font-size: 1.1rem; line-height: 1.8; color: #3a1c2b; transition: opacity 0.3s ease; }
-.panel-example-badge { display: inline-block; margin-top: 15px; padding: 10px 18px; background: linear-gradient(135deg, #ffe0ec, #ffc2e1); border-radius: 15px; font-weight: 700; font-size: 1rem; color: #ff007f; border: 1px solid rgba(255,0,127,0.2); }
-
-/* ========================================================
-   🌟 NUEVO: TRACKER DINÁMICO DE EVENTOS (FASE 02) 🌟
-   ======================================================== */
-.cyber-tracker { display: flex; flex-direction: column; gap: 15px; margin: 30px 0; position: relative; padding-left: 40px; }
-.cyber-tracker::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #ff1f6a, #ff7b00, #ff1f6a); border-radius: 10px; }
-.tracker-item { position: relative; background: rgba(255,255,255,0.8); border: 1px solid rgba(255,79,154,0.3); padding: 15px 25px; border-radius: 20px; font-size: 1.15rem; color: #3a1c2b; box-shadow: 0 5px 15px rgba(255,79,154,0.1); transition: all 0.3s ease; display: flex; align-items: center; }
-.tracker-item::before { content: counter(step-counter); counter-increment: step-counter; position: absolute; left: -42px; width: 30px; height: 30px; background: linear-gradient(135deg, #ff007f, #ff7b00); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 1rem; box-shadow: 0 0 10px rgba(255,31,106,0.5); border: 3px solid #fff; transition: transform 0.3s; }
-.cyber-tracker { counter-reset: step-counter; }
-.tracker-item:hover { transform: translateX(15px); background: #fff0f5; border-color: #ff007f; box-shadow: 0 10px 25px rgba(255,31,106,0.2); color: #ff007f; font-weight: 600; }
-.tracker-item:hover::before { transform: scale(1.3); box-shadow: 0 0 20px rgba(255,123,0,0.8); }
-
-/* ========================================================
-   🚀 NUEVO: GRID INTERACTIVO KILL CHAIN SUPER MEJORADO (FASE 03) 🚀
-   ======================================================== */
-.killchain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 30px 0; }
-.kc-card {
-  background: rgba(255,255,255,0.85); border-radius: 24px; padding: 30px; border: 1px solid rgba(255,79,154,0.3);
-  position: relative; overflow: hidden; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 10px 20px rgba(255,79,154,0.08); z-index: 1;
-}
-.kc-card::before {
-  content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%;
-  background: linear-gradient(to bottom, #ff1f6a, #ffab3a); transition: width 0.4s ease; z-index: -1;
-}
-.kc-card::after {
-  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(135deg, rgba(255,31,106,0.1) 0%, rgba(255,171,58,0.1) 100%);
-  opacity: 0; transition: opacity 0.4s ease; z-index: -1;
-}
-.kc-card:hover {
-  transform: translateY(-12px) scale(1.03); box-shadow: 0 25px 50px rgba(255,31,106,0.25), 0 0 20px rgba(255,171,58,0.2); border-color: #ffab3a;
-}
-.kc-card:hover::before { width: 100%; opacity: 0.05; }
-.kc-card:hover::after { opacity: 1; }
-.kc-title {
-  font-size: 1.35rem; font-weight: 900; background: linear-gradient(90deg, #ff1f6a, #ff7b00); 
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
-}
-.kc-desc { font-size: 1.05rem; color: #3a1c2b; line-height: 1.7; font-weight: 500; }
-.kc-desc ul { margin-top: 15px; padding-left: 20px; list-style: none; }
-.kc-desc ul li { position: relative; margin-bottom: 8px; }
-.kc-desc ul li::before { content: '⚡'; position: absolute; left: -20px; top: 0; font-size: 0.9rem; }
-.kc-desc ul li span { color: #4a2a36; }
-
-/* ========================================================
-   ✨ MARCO GIRATORIO PREMIUM PARA CAPTURAS (FASE 04) ✨
-   ======================================================== */
-.gold-wrapper { position: relative; width: 75%; margin: 35px auto; padding: 6px; border-radius: 25px; overflow: hidden; display: flex; justify-content: center; align-items: center; animation: pulseGlow 4s infinite alternate; }
-.gold-wrapper::before { content: ''; position: absolute; width: 160%; height: 160%; background: conic-gradient(#d4af37 0%, #ff4f9a 25%, #f3e5ab 50%, #ff7b00 75%, #d4af37 100%); animation: spinBorder 6s linear infinite; z-index: 1; }
-/* Se agregó min-height por si la imagen no carga, para que no colapse */
-.gold-inner { position: relative; width: 100%; min-height: 150px; background: #fff; border-radius: 22px; padding: 15px; z-index: 2; display: flex; justify-content: center; align-items: center; }
-.gold-inner img { width: 100%; height: auto; border-radius: 15px; display: block; transition: transform 0.4s ease; position: relative; z-index: 3; }
-.gold-wrapper:hover .gold-inner img { transform: scale(1.03); }
 
 /* --- FOOTER --- */
 .footer { width: 100%; padding: 30px 0; text-align: center; background: rgba(0,0,0,0.5); border-radius: 30px; margin-top: 80px; backdrop-filter: blur(15px); }
@@ -325,27 +236,19 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
   .wrapper { margin: 15px auto; padding: 10px; }
   .card { padding: 30px 15px; border-radius: 30px; }
   .header h1 { font-size: 2rem; flex-direction: column; gap: 8px; }
+  
+  /* Menú */
   nav ul { flex-direction: column; gap: 10px; margin-top: 30px; }
   nav a { justify-content: center; border-radius: 20px; }
-  
-  /* Submenú responsivo adaptado para móvil (sin hover, directo) */
   .submenu { position: static; visibility: visible; opacity: 1; display: none; padding-left: 15px; background: transparent; border: none; box-shadow: none; transform: none;}
   nav > ul > li:hover .submenu { display: flex; transform: none; }
   .submenu a { justify-content: flex-start; border-radius: 0; border-left: 3px solid #ff4f9a; background: rgba(255,255,255,0.5); }
   
+  /* Títulos y Secciones */
   .titulo-actividad { flex-direction: column; }
   .titulo-actividad h3 { font-size: 1.6rem; }
   .seccion { padding: 30px 20px; border-radius: 24px; }
   .seccion h4 { font-size: 1.5rem; flex-direction: column; align-items: flex-start; }
-  .cyber-diamond-container { flex-direction: column; gap: 30px; }
-  .diamond-canvas { width: 320px; height: 320px; }
-  .diamond-node { width: 75px; height: 75px; }
-  .diamond-node i { font-size: 1.4rem; }
-  .node-adversario { top: 5px; left: calc(50% - 37.5px); }
-  .node-capacidad { left: 5px; top: calc(50% - 37.5px); }
-  .node-infraestructura { right: 5px; top: calc(50% - 37.5px); }
-  .node-victima { bottom: 5px; left: calc(50% - 37.5px); }
-  .gold-wrapper { width: 100%; }
 }
 </style>
 </head>
@@ -388,12 +291,13 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
           <ul class="submenu">
             <li><a href="PR01.html"><i class="fas fa-file-alt"></i>PR01</a></li>
             <li><a href="PR02_01.html"><i class="fas fa-file-alt"></i>PR02</a></li>
+            <li><a href="PR03.html"><i class="fas fa-file-alt"></i>PR03</a></li>
           </ul>
         </li>
         <li><a href="certificados.html"><i class="fas fa-certificate"></i> Certificaciones</a></li>
       </ul>
     </nav>
- 
+
     <div class="titulo-actividad" id="main-title-container">
       <h3 id="main-title"><i class="fas fa-balance-scale"></i> Actividad 16: Dilemas éticos en ciberseguridad</h3>
     </div>
@@ -447,9 +351,9 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
       <h5><i class="fas fa-user-tie"></i> 2. ¿Qué harías tú como especialista?</h5>
       <p>Como experto, procedería a la contención y reporte inmediato:</p>
       <ul>
-        <li>Inhabilitación temporal de permisos: Restringir el acceso del compañero mientras se investiga.</li>
-        <li>Apertura de un Ticket de Incidente: Documentar el hallazgo en los logs para asegurar la trazabilidad.</li>
-        <li>Notificación al CISO y Recursos Humanos: Un acceso no autorizado a correos de nivel C (C‑Suite) es una falta grave que puede derivar en despido justificado, según la Ley Federal del Trabajo y las políticas de la empresa.</li>
+        <li><strong>Inhabilitación temporal de permisos:</strong> Restringir el acceso del compañero mientras se investiga.</li>
+        <li><strong>Apertura de un Ticket de Incidente:</strong> Documentar el hallazgo en los logs para asegurar la trazabilidad.</li>
+        <li><strong>Notificación al CISO y Recursos Humanos:</strong> Un acceso no autorizado a correos de nivel C (C‑Suite) es una falta grave que puede derivar en despido justificado, según la Ley Federal del Trabajo y las políticas de la empresa.</li>
       </ul>
       
       <h5><i class="fas fa-book-open"></i> 3. Justificación desde marcos éticos</h5>
@@ -476,9 +380,9 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
       <h5><i class="fas fa-user-tie"></i> 2. ¿Qué harías tú como especialista?</h5>
       <p>Aplicar el protocolo de Divulgación Responsable (Responsible Disclosure):</p>
       <ul>
-        <li>Reportar inmediatamente: Notificar al contacto técnico del cliente sobre el hallazgo antes de cualquier otra acción.</li>
-        <li>Demostrar valor profesional: Explicar que el hallazgo es parte del valor que aportas como especialista, lo que acelera y justifica la firma del contrato.</li>
-        <li>Cero explotación: No extraer ni un solo centavo, ya que esto invalidaría cualquier defensa legal futuro y destruiría mi reputación permanentemente.</li>
+        <li><strong>Reportar inmediatamente:</strong> Notificar al contacto técnico del cliente sobre el hallazgo antes de cualquier otra acción.</li>
+        <li><strong>Demostrar valor profesional:</strong> Explicar que el hallazgo es parte del valor que aportas como especialista, lo que acelera y justifica la firma del contrato.</li>
+        <li><strong>Cero explotación:</strong> No extraer ni un solo centavo, ya que esto invalidaría cualquier defensa legal futuro y destruiría mi reputación permanentemente.</li>
       </ul>
       
       <h5><i class="fas fa-book-open"></i> 3. Justificación desde marcos éticos</h5>
@@ -505,15 +409,15 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
       <h5><i class="fas fa-user-tie"></i> 2. ¿Qué harías tú como especialista?</h5>
       <p>Ejercer la Objeción de Conciencia Profesional:</p>
       <ul>
-        <li>Negativa rotunda al hostigamiento: Informar al superior que la presión psicológica es una táctica ilegal y poco ética que puede invalidar la investigación.</li>
-        <li>Entrega de evidencia técnica: Entregar los hallazgos OSINT de forma objetiva (direcciones, vínculos, registros) para que el equipo legal o las autoridades los procesen.</li>
-        <li>Preservación de la Cadena de Custodia: Asegurar que la información se use solo para fines probatorios en un juicio, no para ataques personales.</li>
+        <li><strong>Negativa rotunda al hostigamiento:</strong> Informar al superior que la presión psicológica es una táctica ilegal y poco ética que puede invalidar la investigación.</li>
+        <li><strong>Entrega de evidencia técnica:</strong> Entregar los hallazgos OSINT de forma objetiva (direcciones, vínculos, registros) para que el equipo legal o las autoridades los procesen.</li>
+        <li><strong>Preservación de la Cadena de Custodia:</strong> Asegurar que la información se use solo para fines probatorios en un juicio, no para ataques personales.</li>
       </ul>
       
       <h5><i class="fas fa-book-open"></i> 3. Justificación desde marcos éticos</h5>
       <p><strong>A) Ética Utilitarista:</strong> Usar tácticas de presión puede generar una demanda por acoso contra la empresa, resultando en pérdidas millonarias y desprestigio. Es más útil seguir el camino legal.</p>
       <p><strong>B) Enfoque de Derechos:</strong> Todo individuo (incluso un sospechoso) tiene derecho a la dignidad humana y a no ser sometido a tratos crueles o degradantes. Involucrar a la familia viola el derecho a la paz de terceros inocentes.</p>
-      <p><strong>C) Enfoque del Bien Común:</strong> La justicia debe ser impartida por el Estado, no por empresas privadas. Evitar el "vigilantismo digital" protege la paz social y el orden jurídico.</p>
+      <p><strong>C) Enfoque del Bien Común:</strong> La justicia debe ser impartida por el Estado, no por empresas privadas. Evitar el "vigilantismo digital" protege la paz social y el order jurídico.</p>
       
       <h5><i class="fas fa-gavel"></i> 4. Mandamientos de la ética informática</h5>
       <p><strong>Violados:</strong> No usarás una computadora para dañar a otras personas. · Pensarás en las consecuencias sociales del programa que escribes o del sistema que diseñas (aplicado aquí al uso de la metodología de investigación).<br>
@@ -525,7 +429,7 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
 
     <!-- ========== REFLEXIÓN TÉCNICA Y ÉTICA ========= -->
     <div class="seccion" style="border-left-color: #ff1f6a; background: linear-gradient(145deg, rgba(255,240,248,0.9), rgba(255,255,255,0.95));">
-      <h4><i class="fas fa-lightbulb"></i> Reflexión técnica y ética</h4>
+      <h4><i class="fas fa-lightbulb"></i> Reflexión técnica</h4>
       <p>Estos tres escenarios me han hecho reflexionar profundamente sobre la responsabilidad del profesional de ciberseguridad. La primera lección es que <strong>buenas intenciones no justifican malas acciones</strong>: el compañero que accedió a los correos del director general pudo creer que ayudaba, pero violó derechos fundamentales y la política de la empresa. La segunda lección es que <strong>la reputación es el activo más valioso</strong>: explotar una vulnerabilidad financiera antes de firmar contrato no solo es un delito, sino que destruiría para siempre mi carrera como pentester. La tercera lección es que <strong>debemos tener valor para decir "no" a órdenes ilegales</strong>, incluso si vienen de un superior. Usar OSINT para acoso psicológico es convertirnos en victimarios, no en investigadores.</p>
       <p>Además, el análisis desde el utilitarismo, los derechos humanos y el bien común muestra una coincidencia ética: en los tres casos la conducta correcta es reportar, abstenerse y proteger a las personas. Los mandamientos de la ética informática son una guía universal que debemos interiorizar. En el plano legal, las leyes mexicanas (Código Penal Federal, Ley Federal de Protección de Datos Personales) sancionan estas conductas. Como futuros ingenieros, debemos entender que la técnica sin ética es peligrosa, y que la confianza depositada en nosotros exige integridad absoluta.</p>
     </div>
@@ -571,17 +475,15 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
     card.style.transform = `rotateX(0deg) rotateY(0deg)`;
   });
 
-  // 3. INTERSEKTION OBSERVER: ¡MAGIA DE REACCIÓN EN EL TÍTULO!
+  // 3. INTERSECTION OBSERVER: ¡MAGIA DE REACCIÓN EN EL TÍTULO!
   const rootStyle = document.documentElement.style;
   let timerX = null;
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-
         // Cuando una sección cruza la pantalla, el título transmuta a tonos "Sunset Cyberpunk"
-        if(window.innerWidth > 900) {
+        if(window.innerWidth > 900 && entry.target.id === 'tilt-card') {
           clearTimeout(timerX);
           
           // Cambiamos las variables de color globales (Cambio a Rosa Intenso -> Naranja Mandarina)
@@ -606,12 +508,11 @@ nav > ul > li:hover .submenu { opacity: 1; visibility: visible; transform: trans
     });
   }, { 
     threshold: 0.2,
-    rootMargin: "-10% 0px -40% 0px" /* Ajuste de precisión para simular el cruce exacto de la línea */
+    rootMargin: "-10% 0px -40% 0px"
   });
 
-  document.querySelectorAll('.seccion').forEach(seccion => {
-    observer.observe(seccion);
-  });
+  // Observamos el contenedor principal para el efecto del título
+  observer.observe(document.getElementById('tilt-card'));
 
   // 4. LOG DE ACCIÓN DEL BOTÓN
   document.querySelectorAll('.btn-pdf').forEach(btn => {
